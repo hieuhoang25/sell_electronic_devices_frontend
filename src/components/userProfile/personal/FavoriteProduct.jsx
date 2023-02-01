@@ -25,9 +25,6 @@ const FavoriteProduct = () => (
           <span>
             <div>Sữa tươi có đường Vinamilk bịch 220ml</div>
             <div style={{ color: "red", fontSize: "14px" }}>đ7.000</div>
-            <div style={{ textAlign: "right", fontSize: "13px" }}>
-              Đã bán 220 cái
-            </div>
             <div style={{ textAlign: "right" }}>
               <Button style={{ backgroundColor: "orangered", color: "white" }}>
                 Bỏ thích
