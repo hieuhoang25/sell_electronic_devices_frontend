@@ -10,6 +10,9 @@ import Sdata from "./components/shops/Sdata";
 import ProductDetail from "./components/productDetail/ProductDetail";
 import Profile from "./components/userProfile/Profile";
 import Wrapper from "./Wrapper";
+import LoginPage from "./components/LoginPage/LoginPage";
+import SignUp from "./components/SignUpPage/SignUp";
+
 function App() {
   /*
   step1 :  const { productItems } = Data 
@@ -24,6 +27,7 @@ function App() {
   */
 
   //Step 1 :
+
   const { productItems } = Data;
   const { shopItems } = Sdata;
 
@@ -85,6 +89,7 @@ function App() {
     <>
       <Router>
         <Switch>
+
           <Wrapper cartItem={0}>
             <Route path="/" exact>
               <Pages
@@ -107,10 +112,12 @@ function App() {
               <Profile />
             </Route>
           </Wrapper>
+
         </Switch>
       </Router>
     </>
   );
-}
+
+};
 
 export default App;
