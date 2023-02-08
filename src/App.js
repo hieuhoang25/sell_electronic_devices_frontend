@@ -7,8 +7,12 @@ import Data from "./components/Data";
 import Cart from "./common/Cart/Cart";
 import Footer from "./common/footer/Footer";
 import Sdata from "./components/shops/Sdata";
+import ProductDetail from "./components/productDetail/ProductDetail";
+import Profile from "./components/userProfile/Profile";
+import Wrapper from "./Wrapper";
 import LoginPage from "./components/LoginPage/LoginPage";
 import SignUp from "./components/SignUpPage/SignUp";
+
 function App() {
   /*
   step1 :  const { productItems } = Data 
@@ -23,16 +27,7 @@ function App() {
   */
 
   //Step 1 :
-  return (
-    <Router>
-      <Switch>
-        <Route path="/" component={MainApp} />
-        <Route path="/login" component={LoginPage} />
-      </Switch>
-    </Router>
-  );
-}
-const MainApp = () => {
+
   const { productItems } = Data;
   const { shopItems } = Sdata;
 
@@ -93,32 +88,36 @@ const MainApp = () => {
   return (
     <>
       <Router>
-        <Header CartItem={CartItem} />
         <Switch>
-          <Route path="/login" exact>
-              <LoginPage/>
-          </Route>
-          <Route path="/signup" exact>
-              <SignUp/>
-          </Route>
-          <Route path="/" exact>
-            <Pages
-              productItems={productItems}
-              addToCart={addToCart}
-              shopItems={shopItems}
-            />
-          </Route>
-          <Route path="/cart" exact>
-            <Cart
-              CartItem={CartItem}
-              addToCart={addToCart}
-              decreaseQty={decreaseQty}
-            />
-          </Route>
+
+          <Wrapper cartItem={0}>
+            <Route path="/" exact>
+              <Pages
+                productItems={productItems}
+                addToCart={addToCart}
+                shopItems={shopItems}
+              />
+            </Route>
+            <Route path="/cart" exact>
+              <Cart
+                CartItem={CartItem}
+                addToCart={addToCart}
+                decreaseQty={decreaseQty}
+              />
+            </Route>
+            <Route path="/product-detail" exact>
+              <ProductDetail />
+            </Route>
+            <Route path="/profile" exact>
+              <Profile />
+            </Route>
+          </Wrapper>
+
         </Switch>
-        <Footer />
       </Router>
     </>
   );
+
 };
+
 export default App;
