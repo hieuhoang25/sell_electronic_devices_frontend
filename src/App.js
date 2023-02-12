@@ -9,6 +9,8 @@ import Footer from "./common/footer/Footer";
 import Sdata from "./components/shops/Sdata";
 import LoginPage from "./components/LoginPage/LoginPage";
 import SignUp from "./components/SignUpPage/SignUp";
+import Checkout from "./components/checkout/Checkout";
+import CategoryPage from "./components/CategoryPage/CategoryPage"
 function App() {
   /*
   step1 :  const { productItems } = Data 
@@ -114,6 +116,12 @@ const MainApp = () => {
               addToCart={addToCart}
               decreaseQty={decreaseQty}
             />
+          </Route>
+          <Route path="/checkout" exact>
+              <Checkout CartItem={CartItem}/>
+          </Route>
+          <Route path="/category" exact>
+            <CategoryPage />
           </Route>
         </Switch>
         <Footer />

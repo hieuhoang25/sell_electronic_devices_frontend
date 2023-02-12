@@ -1,10 +1,16 @@
 import React from "react"
 import "./style.css"
+import { useHistory } from "react-router-dom";
 
 const Cart = ({ CartItem, addToCart, decreaseQty }) => {
   // Stpe: 7   calucate total of items
   const totalPrice = CartItem.reduce((price, item) => price + item.qty * item.price, 0)
+  let history = useHistory();
 
+  const onCheckoutHandler = () => {
+    history.push("/checkout");
+  }
+  
   // prodcut qty total
   return (
     <>
@@ -25,11 +31,24 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
                     <img src={item.cover} alt='' />
                   </div>
                   <div className='cart-details'>
-                    <h3>{item.name}</h3>
-                    <h4>
-                      ${item.price}.00 * {item.qty}
+                  <div className='cart-details-item-title'>
+                    <h3 className='cart-details-item-name' >{item.name}</h3>
+                    <h4 className='cart-details-item-price' > ${item.price}.00</h4>
+                  </div>
+                    <div className="d_flex">
+                    <h4 className="mt-0 ">Số lượng: {item.qty}</h4>
+                    </div>
+                  
+                    <ul className="cart-product-atrs">variant-attribute-value
+                    <li>Màu: <span>Trắng</span></li>
+                    <li>RAM: <span>128GB</span></li>
+                   
+                    </ul>
+                    
+                    <h3 className="cart-details-total">
+                      {/* ${item.price}.00 * {item.qty} */}
                       <span>${productQty}.00</span>
-                    </h4>
+                    </h3>
                   </div>
                   <div className='cart-items-function'>
                     <div className='removeCart'>
@@ -56,12 +75,17 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
             })}
           </div>
 
-          <div className='cart-total product'>
-            <h2>Cart Summary</h2>
+          <div className='cart-total fix product'>
+            <h2>Thông tin đơn hàng</h2>
             <div className=' d_flex'>
-              <h4>Total Price :</h4>
+              <h4>Giảm giá :</h4>
               <h3>${totalPrice}.00</h3>
             </div>
+            <div className=' d_flex'>
+              <h4>Tổng tiền :</h4>
+              <h3>${totalPrice}.00</h3>
+            </div> 
+            <button onClick={onCheckoutHandler} className='btn-primary w-100'>Thanh toán</button>
           </div>
         </div>
       </section>

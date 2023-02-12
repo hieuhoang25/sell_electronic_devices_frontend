@@ -7,6 +7,8 @@ import Discount from "../components/discount/Discount"
 import Shop from "../components/shops/Shop"
 import Annocument from "../components/annocument/Annocument"
 import Wrapper from "../components/wrapper/Wrapper"
+import TopSales from "../components/topsales/TopSales"
+import CategorySlider from "../components/categoryslider/CategorySlider"
 
 const Pages = ({ productItems, addToCart, CartItem, shopItems }) => {
   return (
@@ -16,6 +18,8 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems }) => {
       <TopCate />
       <NewArrivals />
       <Discount />
+      <TopSales addToCart={addToCart} />
+      <CategorySlider />
       <Shop shopItems={shopItems} addToCart={addToCart} />
       <Annocument />
       <Wrapper />
