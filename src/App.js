@@ -113,6 +113,12 @@ function App() {
             <Route path="/profile" exact>
               <Profile />
             </Route>
+            <Route path="/checkout" exact>
+              <Checkout CartItem={CartItem}/>
+          </Route>
+          <Route path="/category" exact>
+            <CategoryPage />
+          </Route>
           </Wrapper>
 
         </Switch>
