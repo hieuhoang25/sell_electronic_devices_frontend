@@ -13,6 +13,8 @@ import Wrapper from "./Wrapper";
 import LoginPage from "./components/LoginPage/LoginPage";
 import SignUp from "./components/SignUpPage/SignUp";
 
+import Checkout from "./components/checkout/Checkout";
+import CategoryPage from "./components/CategoryPage/CategoryPage"
 function App() {
   /*
   step1 :  const { productItems } = Data 

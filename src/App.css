@@ -247,3 +247,10 @@ button {
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 10px;
 }
+
+
+/*----- sizing -------*/
+.w-100 {
+  width: 100%;
+}
+/*----- sizing -------*/
