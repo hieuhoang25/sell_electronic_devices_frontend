@@ -14,7 +14,6 @@ import LoginPage from "./components/LoginPage/LoginPage";
 import SignUp from "./components/SignUpPage/SignUp";
 
 import Checkout from "./components/checkout/Checkout";
-import CategoryPage from "./components/CategoryPage/CategoryPage"
 function App() {
   /*
   step1 :  const { productItems } = Data 
@@ -107,7 +106,7 @@ function App() {
                 decreaseQty={decreaseQty}
               />
             </Route>
-            <Route path="/product-detail" exact>
+            <Route path="/product-detail/:productId" exact>
               <ProductDetail />
             </Route>
             <Route path="/profile" exact>
@@ -115,9 +114,6 @@ function App() {
             </Route>
             <Route path="/checkout" exact>
               <Checkout CartItem={CartItem}/>
-          </Route>
-          <Route path="/category" exact>
-            <CategoryPage />
           </Route>
           </Wrapper>
 
