@@ -1,4 +1,3 @@
-
 import React, {useState} from 'react';
 
 
@@ -43,4 +42,3 @@ function Card({shopItems, addToCart}) {
   )
 }
 export default Card
-
