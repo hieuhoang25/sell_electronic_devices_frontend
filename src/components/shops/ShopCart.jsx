@@ -47,10 +47,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import HalfRatingRead from "../../common/rating/HalfRatingRead";
+import Favorite from "../../common/favorite/Favorite";
 const ShopCart = ({ shopItems, addToCart }) => {
   const [count, setCount] = useState(0);
   const increment = () => {
     setCount(count + 1);
+  };
+  const [isFavorite, setFavorite] = useState(false);
+  const onChange = (e) => {
+    setFavorite(!isFavorite);
   };
 
   return (
@@ -62,19 +67,18 @@ const ShopCart = ({ shopItems, addToCart }) => {
               <div className="img">
                 <span className="discount">{shopItems.discount}% Off</span>
                 <Link to={`/product-detail/${shopItems.id}`}>
-                  <img src={shopItems.cover} alt="" />
+                  <img src={shopItems.image} alt="" />
                 </Link>
                 <div className="product-like">
-                  <label>{count}</label> <br />
-                  <i className="fa-regular fa-heart" onClick={increment}></i>
+                    <Favorite value={index} onChange={onChange} isFavorite={isFavorite}/>
                 </div>
               </div>
               <div className="product-details">
                 <Link to={`/product-detail/${shopItems.id}`}>
-                  <h3 style={{color:"black"}}>{shopItems.name}</h3> 
+                  <h3 style={{ color: "black" }}>{shopItems.product_name}</h3>
                 </Link>
                 <div className="rate">
-                  <HalfRatingRead value={3.5} />
+                  <HalfRatingRead value={shopItems.average_point} />
                 </div>
                 <div className="price">
                   <h4>${shopItems.price}.00 </h4>
