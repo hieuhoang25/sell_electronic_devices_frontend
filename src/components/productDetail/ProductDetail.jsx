@@ -8,6 +8,7 @@ import ListSpecification from "./ListSpecification";
 import TabReviewAndDescription from "./TabReviewAndDescription";
 import RatingForm from "../../common/rating/RatingForm";
 const ProductDetail = () => {
+
   //Mở form đánh giá
   const [isModalOpen, setIsModalOpen] = useState(false);
   const rate = () => {

@@ -12,9 +12,19 @@ import Profile from "./components/userProfile/Profile";
 import Wrapper from "./Wrapper";
 import LoginPage from "./components/LoginPage/LoginPage";
 import SignUp from "./components/SignUpPage/SignUp";
-
+import axios from "axios";
 import Checkout from "./components/checkout/Checkout";
+import "./components/axios/author"
+import { BASE, PRODUCT, FILTER } from "./constants";
 function App() {
+  // axios({
+  //   method:"get",
+  //   url:`${BASE}${PRODUCT}${FILTER}`,
+  //   data:[{"key":"productName","value":" ","operation":"LIKE"}]
+  // }).then((res) => {
+  //   console.log(res.data);
+  // })
+  // .catch((error) => console.log(error));
   /*
   step1 :  const { productItems } = Data 
   lai pass garne using props
@@ -90,7 +100,6 @@ function App() {
     <>
       <Router>
         <Switch>
-
           <Wrapper cartItem={0}>
             <Route path="/" exact>
               <Pages
@@ -113,15 +122,13 @@ function App() {
               <Profile />
             </Route>
             <Route path="/checkout" exact>
-              <Checkout CartItem={CartItem}/>
-          </Route>
+              <Checkout CartItem={CartItem} />
+            </Route>
           </Wrapper>
-
         </Switch>
       </Router>
     </>
   );
-
-};
+}
 
 export default App;
