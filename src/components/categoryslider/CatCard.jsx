@@ -1,7 +1,7 @@
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
-
+import React,{memo} from "react"
 const SampleNextArrow = (props) => {
   const { onClick } = props
   return (
@@ -56,4 +56,4 @@ const CatCard = ({ categories }) => {
     </>
   )
 }
-export default CatCard
+export default memo(CatCard)

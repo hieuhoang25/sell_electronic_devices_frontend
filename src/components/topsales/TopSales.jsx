@@ -3,7 +3,7 @@ import React from "react"
 import "./style.css"
 import Card from "../UI/Card";
 import Sdata from "../shops/Sdata";
-
+import ShopHome from "../shops/ShopHome";
 const TopSales = ({addToCart}) => {
 
   // list
@@ -24,11 +24,9 @@ const TopSales = ({addToCart}) => {
             </div>
           </div>
 
-          <div className="product-content  grid5">
-          {shopItems.map((shopItems, index) => {
-           return <Card shopItems={shopItems} addToCart={addToCart} />
-          })}
-          </div>
+          <ShopHome
+            shopItems={shopItems}
+          />
           
         </div>
       </section>
