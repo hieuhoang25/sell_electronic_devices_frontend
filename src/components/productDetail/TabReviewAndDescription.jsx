@@ -1,5 +1,5 @@
 import Review from "./Review";
-import React from "react";
+import React,{memo} from "react";
 import { Tabs } from "antd";
 const onChange = (key) => {
   console.log(key);
@@ -22,4 +22,4 @@ const TabReviewAndDescription = ({ listReview, description, handleClick }) => (
     onChange={onChange}
   />
 );
-export default TabReviewAndDescription;
+export default memo(TabReviewAndDescription);

@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState,memo } from "react";
 import { Col, Row, Card, Button, Checkbox, Space, Radio, Form } from "antd";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import HalfRatingRead from "../../common/rating/HalfRatingRead"
@@ -7,8 +7,10 @@ import CustomizedNotification from "../../common/notification/Notification";
 import ListSpecification from "./ListSpecification";
 import TabReviewAndDescription from "./TabReviewAndDescription";
 import RatingForm from "../../common/rating/RatingForm";
+import { useParams } from "react-router-dom";
 const ProductDetail = () => {
-
+  const productId = useParams();
+  console.log(productId)
   //Mở form đánh giá
   const [isModalOpen, setIsModalOpen] = useState(false);
   const rate = () => {
@@ -218,4 +220,4 @@ const ProductDetail = () => {
     </div>
   );
 };
-export default ProductDetail;
+export default memo(ProductDetail);

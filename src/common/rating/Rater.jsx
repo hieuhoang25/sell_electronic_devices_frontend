@@ -1,4 +1,5 @@
 import { Rate } from "antd";
+import React,{memo} from "react"
 const desc = ["Tệ", "Không hài lòng", "Bình thường", "Hài lòng", "Tuyệt vời"];
 
 const Rater = ({ handleChange, value }) => {
@@ -10,4 +11,4 @@ const Rater = ({ handleChange, value }) => {
   );
 };
 
-export default Rater;
+export default memo(Rater);

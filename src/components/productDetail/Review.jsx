@@ -1,4 +1,4 @@
-import React from "react";
+import React,{memo} from "react";
 import { Button, Comment, Form } from "semantic-ui-react";
 import "semantic-ui-css/semantic.min.css";
 import HalfRatingRead from "../../common/rating/HalfRatingRead";
@@ -35,4 +35,4 @@ const Review = ({ listReview, handleClick }) => {
     </Comment.Group>
   );
 };
-export default Review;
+export default memo(Review);
