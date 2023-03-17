@@ -12,7 +12,9 @@ export const BASE = `${API_BASE_URL}/api/un`;
 
 // API FOR PRODUCT
 export const PRODUCT = "/product";
-
+export const PRODUCT_DETAIL = "/product-detail"
+export const PRODUCT_STORAGE = "/product-storage"
+export const PRODUCT_COLOR = "/product-color"
 //API BRAND
 export const BRAND = "/brand";
 // OPTIONS

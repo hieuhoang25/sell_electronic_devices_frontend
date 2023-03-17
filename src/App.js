@@ -109,11 +109,11 @@ function App() {
                 decreaseQty={decreaseQty}
               />
             </Route>
+            <Route path="/profile">
+              <Profile />
+            </Route>
             <Route path="/product-detail/:productId" exact>
               <ProductDetail />
-            </Route>
-            <Route path="/profile" exact>
-              <Profile />
             </Route>
             <Route path="/checkout" exact>
               <Checkout CartItem={CartItem} />
