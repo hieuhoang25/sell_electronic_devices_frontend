@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Header from "./common/header/Header";
 import Pages from "./pages/Pages";
 import Data from "./components/Data";
 import Cart from "./common/Cart/Cart";
-import Footer from "./common/footer/Footer";
 import Sdata from "./components/shops/Sdata";
 import ProductDetail from "./components/productDetail/ProductDetail";
 import Profile from "./components/userProfile/Profile";
@@ -14,17 +12,10 @@ import LoginPage from "./components/LoginPage/LoginPage";
 import SignUp from "./components/SignUpPage/SignUp";
 import axios from "axios";
 import Checkout from "./components/checkout/Checkout";
-import "./components/axios/author"
-import { BASE, PRODUCT, FILTER } from "./constants";
+import Product from "./components/product/Product";
+import { Search } from "semantic-ui-react";
+
 function App() {
-  // axios({
-  //   method:"get",
-  //   url:`${BASE}${PRODUCT}${FILTER}`,
-  //   data:[{"key":"productName","value":" ","operation":"LIKE"}]
-  // }).then((res) => {
-  //   console.log(res.data);
-  // })
-  // .catch((error) => console.log(error));
   /*
   step1 :  const { productItems } = Data 
   lai pass garne using props
@@ -105,8 +96,11 @@ function App() {
               <Pages
                 productItems={productItems}
                 addToCart={addToCart}
-                shopItems={shopItems}
+                shopItems={productItems}
               />
+            </Route>
+            <Route path="/product/:categoryId" exact>
+              <Product />
             </Route>
             <Route path="/cart" exact>
               <Cart
@@ -115,11 +109,11 @@ function App() {
                 decreaseQty={decreaseQty}
               />
             </Route>
+            <Route path="/profile">
+              <Profile />
+            </Route>
             <Route path="/product-detail/:productId" exact>
               <ProductDetail />
-            </Route>
-            <Route path="/profile" exact>
-              <Profile />
             </Route>
             <Route path="/checkout" exact>
               <Checkout CartItem={CartItem} />

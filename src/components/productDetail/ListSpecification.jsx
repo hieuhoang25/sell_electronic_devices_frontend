@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,memo } from "react";
 import { Avatar, List, message, Typography } from "antd";
 import VirtualList from "rc-virtual-list";
 const fakeDataUrl =
@@ -40,4 +40,4 @@ const ListSpecification = () => {
     </List>
   );
 };
-export default ListSpecification;
+export default memo(ListSpecification);

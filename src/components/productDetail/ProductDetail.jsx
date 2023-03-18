@@ -1,14 +1,94 @@
-import { React, useState } from "react";
+import { React, useState, memo, useEffect, useRef } from "react";
 import { Col, Row, Card, Button, Checkbox, Space, Radio, Form } from "antd";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
-import HalfRatingRead from "../../common/rating/HalfRatingRead"
-import axios from "axios";
+import HalfRatingRead from "../../common/rating/HalfRatingRead";
 import CustomizedNotification from "../../common/notification/Notification";
 import ListSpecification from "./ListSpecification";
 import TabReviewAndDescription from "./TabReviewAndDescription";
 import RatingForm from "../../common/rating/RatingForm";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import {
+  FETCH_PRODUCTS_PENDING,
+  FETCH_PRODUCTS_SUCCESS,
+  FETCH_PRODUCTS_ERROR,
+  fetchProductsPending,
+  fetchProductsSuccess,
+  fetchProductsError,
+} from "../../common/action/action";
+// import "./components/axios/author"
+import {
+  BASE,
+  PRODUCT,
+  PRODUCT_COLOR,
+  PRODUCT_DETAIL,
+  PRODUCT_STORAGE,
+} from "../../constants/index";
+import { getImage } from "../../common/img";
+import { NumericFormat } from "react-number-format";
 const ProductDetail = () => {
+  const { productId } = useParams();
+  const [color, setColor] = useState([]);
+  const [storage, setStorage] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [productDetail, setProductDetail] = useState({});
+  const [selectedStorage, setSelectedStorage] = useState();
+  const [selectedColor, setSelectedColor] = useState();
+  const productBody = useRef({
+    productId: productId,
+    colorId: null,
+    storageId: null,
+  });
+  function fetchColor(id) {
+    return axios({
+      method: "get",
+      url: `${BASE}${PRODUCT_COLOR}/${id}`,
+    })
+      .then((res) => {
+        productBody.current.colorId = res.data[0].id;
+        setColor(res.data);
+        setSelectedColor(res.data[0].id);
+      })
+      .catch((error) => error);
+  }
 
+  function fetchStorage(productId, colorId) {
+    return axios({
+      method: "get",
+      url: `${BASE}${PRODUCT_STORAGE}/${productId}/${colorId}`,
+    })
+      .then((res) => {
+        productBody.current.storageId = res.data[0].id;
+        setSelectedStorage(res.data[0].id);
+        setStorage(res.data);
+      })
+      .catch((error) => error);
+  }
+
+  function fetchProductDetail() {
+    return axios({
+      method: "post",
+      url: `${BASE}${PRODUCT_DETAIL}`,
+      data: productBody.current,
+    })
+      .then((res) => {
+        setProductDetail(res.data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log(error)
+        setIsLoading(false);
+      });
+  }
+
+  async function getProductDetail() {
+    await fetchColor(productId);
+    await fetchStorage(productId, productBody.current.colorId);
+    await fetchProductDetail();
+  }
+  useEffect(() => {
+    getProductDetail();
+  }, []);
   //Mở form đánh giá
   const [isModalOpen, setIsModalOpen] = useState(false);
   const rate = () => {
@@ -22,32 +102,28 @@ const ProductDetail = () => {
   };
   //End
 
-  const handleAddToCart = () =>{
+  const handleAddToCart = () => {
     console.log("Đã thêm vào giỏ");
-  }
-
+  };
 
   const [isFavorite, setFavorite] = useState(false);
   const handleClick = () => {
     setFavorite(!isFavorite);
   };
-  //data review
-  const data = [
-    {
-      userName: "Nhật Phú",
-      reviewAt: "Hôm nay lúc 3:40",
-      content: "Sản phẩm tốt quá",
-      ratingPoint: 4,
-    },
-    {
-      userName: "Nhật Phú",
-      reviewAt: "Hôm nay lúc 3:40",
-      content: "Sản phẩm tốt quá",
-      ratingPoint: 4,
-    },
-  ];
+  async function fetchProductDetailByColor(color) {
+    await fetchStorage(productId, color);
+    await fetchProductDetail();
+  }
+  const onChangeColor = ({ target: { value } }) => {
+    setSelectedColor(value);
+    fetchProductDetailByColor(value);
+  };
+
+  const handleStorageChange = ({ target: { value } }) => {
+    setSelectedStorage(value);
+  };
   return (
-    <div style={{marginTop:"5rem",marginBottom:"5rem"}}>
+    <div style={{ marginTop: "5rem", marginBottom: "5rem" }}>
       <Row>
         <Col span={15} offset={6}>
           <div
@@ -66,7 +142,7 @@ const ProductDetail = () => {
                 width="300"
                 height="300"
                 alt="example"
-                src="https://cdn2.cellphones.com.vn/358x/media/catalog/product/v/a/vang-iphone-14-pro_5.png"
+                src={getImage(productDetail.image)}
               />
               <div
                 style={{
@@ -95,29 +171,26 @@ const ProductDetail = () => {
             <div style={{ marginLeft: 2 }}>
               {/*Ten va so sao san pham*/}
               <div>
-                iPhone 14 Pro 128GB | Chính hãng VN/A{" "}
-                <HalfRatingRead value={3.5} />
+                {productDetail.display_name}
+                <HalfRatingRead value={productDetail.product_averagePoint} />
               </div>
               {/*Gia san pham*/}
               <div>
                 <span style={{ color: "red", marginRight: "5px" }}>
-                  28.990.000 ₫
+                  <NumericFormat
+                    value={productDetail.price}
+                    displayType={"text"}
+                    thousandSeparator={true}
+                    suffix={"đ"}
+                  />
                 </span>
                 <span style={{ textDecoration: "line-through" }}>
                   30.990.000 ₫
                 </span>
               </div>
               {/*Phần ram và dung lượng*/}
-              <Form
-                name="validate_other"
-                initialValues={{
-                  "input-number": 3,
-                  "checkbox-group": ["A", "B"],
-                  rate: 3.5,
-                }}
-              >
+              <Form name="validate_other">
                 <Form.Item
-                  name="radio-button"
                   rules={[
                     {
                       required: true,
@@ -125,63 +198,47 @@ const ProductDetail = () => {
                     },
                   ]}
                 >
-                  <Radio.Group>
+                  <Radio.Group
+                    onChange={handleStorageChange}
+                    value={selectedStorage}
+                  >
                     <Space wrap size={[5, 12]} style={{ width: "400px" }}>
-                      <Radio.Button style={{ height: "50px" }} value="a">
-                        <div
-                          style={{ textAlign: "center", lineHeight: "22px" }}
-                        >
-                          <div>256 GB</div>
-                          <div>19.000.000 đ</div>
-                        </div>
-                      </Radio.Button>
-                      <Radio.Button style={{ height: "50px" }} value="b">
-                        <div
-                          style={{ textAlign: "center", lineHeight: "22px" }}
-                        >
-                          <div>256 GB</div>
-                          <div>19.000.000 đ</div>
-                        </div>
-                      </Radio.Button>
-                      <Radio.Button style={{ height: "50px" }} value="c">
-                        <div
-                          style={{ textAlign: "center", lineHeight: "22px" }}
-                        >
-                          <div>256 GB</div>
-                          <div>19.000.000 đ</div>
-                        </div>
-                      </Radio.Button>
+                      {storage.map((item) => (
+                        <Radio.Button key={item.id} value={item.id}>
+                          <div style={{ textAlign: "center" }}>
+                            <div>{item.storage_name}</div>
+                          </div>
+                        </Radio.Button>
+                      ))}
                     </Space>
-
-                    {/*Phần màu sản phẩm nếu có*/}
-
+                  </Radio.Group>
+                  {/*Phần màu sản phẩm nếu có*/}
+                </Form.Item>
+              </Form>
+              <Form name="validate_other">
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please pick an item!",
+                    },
+                  ]}
+                >
+                  <Radio.Group onChange={onChangeColor} value={selectedColor}>
                     <Space wrap size={[1, 1]} style={{ width: "400px" }}>
-                      <div style={{ padding: "15px" }}>Chọn màu để xem giá</div>
+                      <div style={{ padding: "1px" }}>Chọn màu để xem giá</div>
                       <Space wrap size={[5, 12]} style={{ width: "400px" }}>
-                        <Radio.Button style={{ height: "50px" }} value="a">
-                          <div
-                            style={{ textAlign: "center", lineHeight: "22px" }}
-                          >
-                            <div>256 GB</div>
-                            <div>19.000.000 đ</div>
-                          </div>
-                        </Radio.Button>
-                        <Radio.Button style={{ height: "50px" }} value="b">
-                          <div
-                            style={{ textAlign: "center", lineHeight: "22px" }}
-                          >
-                            <div>256 GB</div>
-                            <div>19.000.000 đ</div>
-                          </div>
-                        </Radio.Button>
-                        <Radio.Button style={{ height: "50px" }} value="c">
-                          <div
-                            style={{ textAlign: "center", lineHeight: "22px" }}
-                          >
-                            <div>256 GB</div>
-                            <div>19.000.000 đ</div>
-                          </div>
-                        </Radio.Button>
+                        {color.map((item) => (
+                          <Radio.Button key={item.id} value={item.id}>
+                            <div
+                              style={{
+                                textAlign: "center",
+                              }}
+                            >
+                              <div>{item.color_name}</div>
+                            </div>
+                          </Radio.Button>
+                        ))}
                       </Space>
                     </Space>
                   </Radio.Group>
@@ -206,7 +263,12 @@ const ProductDetail = () => {
             </div>
             {/*Đánh giá và mô tả*/}
           </div>
-          <TabReviewAndDescription handleClick={rate} listReview={data} />
+          <TabReviewAndDescription
+            handleClick={rate}
+            listReview={productDetail.rating}
+            description={"Chưa có mô tả"}
+            loading={isLoading}
+          />
         </Col>
         <RatingForm
           isModalOpen={isModalOpen}
@@ -218,4 +280,4 @@ const ProductDetail = () => {
     </div>
   );
 };
-export default ProductDetail;
+export default memo(ProductDetail);

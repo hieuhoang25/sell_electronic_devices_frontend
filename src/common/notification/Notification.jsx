@@ -1,4 +1,4 @@
-import React from "react";
+import React,{memo} from "react";
 import { Button, notification, Space } from "antd";
 const CustomizedNotification = ({
   type,
@@ -25,4 +25,4 @@ const CustomizedNotification = ({
     </>
   );
 };
-export default CustomizedNotification;
+export default memo(CustomizedNotification);

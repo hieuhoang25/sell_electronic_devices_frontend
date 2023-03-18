@@ -1,54 +1,11 @@
-//import React, { useState } from "react"
-
-//const ShopCart = ({ addToCart, shopItems }) => {
-//  const [count, setCount] = useState(0)
-//  const increment = () => {
-//    setCount(count + 1)
-//  }
-
-//  return (
-//    <>
-//      {shopItems.map((shopItems) => {
-//        return (
-//          <div className='product mtop'>
-//            <div className='img'>
-//              <span className='discount'>{shopItems.discount}% Off</span>
-//              <img src={shopItems.cover} alt='' />
-//              <div className='product-like'>
-//                <label>{count}</label> <br />
-//                <i className='fa-regular fa-heart' onClick={increment}></i>
-//              </div>
-//            </div>
-//            <div className='product-details'>
-//              <h3>{shopItems.name}</h3>
-//              <div className='rate'>
-//                <i className='fa fa-star'></i>
-//                <i className='fa fa-star'></i>
-//                <i className='fa fa-star'></i>
-//                <i className='fa fa-star'></i>
-//                <i className='fa fa-star'></i>
-//              </div>
-//              <div className='price'>
-//                <h4>${shopItems.price}.00 </h4>
-//                <button onClick={() => addToCart(shopItems)}>
-//                  <i className='fa fa-plus'></i>
-//                </button>
-//              </div>
-//            </div>
-//          </div>
-//        )
-//      })}
-//    </>
-//  )
-//}
-
-//export default ShopCart
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import HalfRatingRead from "../../common/rating/HalfRatingRead";
 import Favorite from "../../common/favorite/Favorite";
-const ShopCart = ({ shopItems, addToCart }) => {
+import { NumericFormat } from 'react-number-format';
+import { getImage } from "../../common/img";
+const ShopCart = ({ shopItems}) => {
   const [count, setCount] = useState(0);
   const increment = () => {
     setCount(count + 1);
@@ -65,9 +22,9 @@ const ShopCart = ({ shopItems, addToCart }) => {
           <div className="box">
             <div className="product mtop">
               <div className="img">
-                <span className="discount">{shopItems.discount}% Off</span>
+                <span className="discount">50% Off</span>
                 <Link to={`/product-detail/${shopItems.id}`}>
-                  <img src={shopItems.image} alt="" />
+                  <img src={getImage(shopItems.image)} alt="" />
                 </Link>
                 <div className="product-like">
                     <Favorite value={index} onChange={onChange} isFavorite={isFavorite}/>
@@ -81,7 +38,7 @@ const ShopCart = ({ shopItems, addToCart }) => {
                   <HalfRatingRead value={shopItems.average_point} />
                 </div>
                 <div className="price">
-                  <h4>${shopItems.price}.00 </h4>
+                  <h4><NumericFormat value={shopItems.price} displayType={'text'} thousandSeparator={true} suffix={'đ'} /></h4>
                   {/* step : 3  
                      if hami le button ma click garryo bahne 
                     */}

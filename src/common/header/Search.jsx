@@ -24,7 +24,7 @@ const Search = ({ CartItem }) => {
           </div>
 
           <div className="icon f_flex width">
-            <Link to="profile">
+            <Link to="/profile">
               <i className="fa fa-user icon-circle"></i>
             </Link>
             <div className="cart">

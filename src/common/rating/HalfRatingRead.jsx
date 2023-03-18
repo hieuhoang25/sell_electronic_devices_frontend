@@ -1,6 +1,6 @@
 import { Rate } from "antd";
-
-export default function HalfRatingRead({ value }) {
+import React,{memo} from "react"
+function HalfRatingRead({ value }) {
   return (
     <div>
       <Rate
@@ -13,3 +13,5 @@ export default function HalfRatingRead({ value }) {
     </div>
   );
 }
+
+export default memo(HalfRatingRead)

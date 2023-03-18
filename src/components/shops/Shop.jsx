@@ -1,9 +1,25 @@
-import React from "react";
+import React, { memo } from "react";
 import Catg from "./Catg";
 import ShopCart from "./ShopCart";
 import "./style.css";
 import { Select, Space, Pagination } from "antd";
-const Shop = ({ addToCart, shopItems }) => {
+import "../MainPage/Home.css";
+import Home from "../MainPage/Home";
+
+const Shop = ({
+  shopItems,
+  totalPage,
+  onChangePagination,
+  categories,
+  title,
+  sliderItem,
+  onSelectCategory,
+  onChangeBrand,
+  onChangeStorage,
+  listBrand,
+  listStorage,
+  onClickResult,
+}) => {
   const SortingCombox = () => {
     const handleChange = (value) => {
       console.log(`selected ${value}`);
@@ -45,26 +61,34 @@ const Shop = ({ addToCart, shopItems }) => {
 
   return (
     <>
+      <Home CartItem={sliderItem} />
       <section className="shop background">
         <div className="container d_flex">
-          <Catg />
-
+          <Catg
+            categories={categories}
+            onSelectCategory={onSelectCategory}
+            listBrand={listBrand}
+            listStorage={listStorage}
+            onChangeBrand={onChangeBrand}
+            onChangeStorage={onChangeStorage}
+            onClickResult={onClickResult}
+          />
           <div className="contentWidth">
             <div className="heading d_flex">
               <div className="heading-left row  f_flex">
-                <h2>Mobile Phones</h2>
+                <h2>{title}</h2>
               </div>
               <SortingCombox />
             </div>
             <div className="product-content  grid1">
-              <ShopCart addToCart={addToCart} shopItems={shopItems} />
+              <ShopCart shopItems={shopItems} />
             </div>
             <Pagination
-              className="result-pagination"
-              total={85}
-              showSizeChanger
+              pageSize={1}
+              total={totalPage}
               showQuickJumper
               style={{ textAlign: "center" }}
+              onChange={onChangePagination}
             />
           </div>
         </div>
@@ -73,4 +97,4 @@ const Shop = ({ addToCart, shopItems }) => {
   );
 };
 
-export default Shop;
+export default memo(Shop);

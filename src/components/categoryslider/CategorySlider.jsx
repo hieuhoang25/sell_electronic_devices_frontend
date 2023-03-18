@@ -1,13 +1,10 @@
 import Slider from "react-slick"
-
+import React,{memo} from "react"
 import CatCard from "./CatCard"
 import CatData from "./CatData";
 import "./style.css";
 const CategorySlider = () => {
-
     const {categories} = CatData;
-
-    console.log(categories);
     return (
         <>
           <section className='flash category-flash'>
@@ -22,4 +19,4 @@ const CategorySlider = () => {
         </>
       )
 }
-export default CategorySlider
+export default memo(CategorySlider)
