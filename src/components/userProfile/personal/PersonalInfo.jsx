@@ -1,10 +1,13 @@
-import React, { useState, memo } from "react";
+import React, { useState, memo, useEffect } from "react";
 import dayjs from "dayjs";
 import { Button, Form, Input, Radio, Modal } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
 import DatePickerCalendar from "./DatePicker";
 import "./PersonalInfo.css";
+import { useSelector } from "react-redux";
+
 const ChangeEmailForm = () => {
+ 
   const { TextArea } = Input;
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
@@ -119,6 +122,8 @@ const ChangeEmailForm = () => {
   );
 };
 const UserForm = () => {
+  const infoUser = useSelector(state=>state.infoUserReducer.infoUser)
+
   const [open, setOpen] = useState(false);
   const showModal = () => {
     setOpen(true);
@@ -148,12 +153,12 @@ const UserForm = () => {
         >
           <div>Để tăng cường bảo mật cho tài khoản của bạn, hãy xác minh thông tin</div>
           <Button>Xác minh bằng mã OTP gửi qua email</Button>
-          <ChangeEmailForm />
+         
+          <ChangeEmailForm  />
         </Modal>
       </>
     );
   };
-
   const [form] = Form.useForm();
   const [formLayout, setFormLayout] = useState("horizontal");
   const onFormLayoutChange = ({ layout }) => {
@@ -193,7 +198,7 @@ const UserForm = () => {
         <div>NhatPhu00</div>
       </Form.Item>
       <Form.Item label="Tên">
-        <Input defaultValue="Nhật Phú" />
+        <Input value={infoUser?.full_name}/>
       </Form.Item>
       <Form.Item label="Email">
         <Input
@@ -201,7 +206,7 @@ const UserForm = () => {
           style={{
             width: "calc(100% - 90px)",
           }}
-          defaultValue="synhatphu2@gmail.com"
+          value={infoUser?.email}
         />
         <Button onClick={showModal} type="text">
           Thay đổi
@@ -213,7 +218,7 @@ const UserForm = () => {
           style={{
             width: "calc(100% - 90px)",
           }}
-          defaultValue="0344963174"
+          value={infoUser?.phone}
         />
         <Button type="text">Thay đổi</Button>
       </Form.Item>
@@ -231,7 +236,7 @@ const UserForm = () => {
           Lưu
         </Button>
       </Form.Item>
-      <ModalChangePassword />
+      <ModalChangePassword  />
     </Form>
   );
 };
@@ -281,7 +286,7 @@ function PersonalInfo() {
             Quản lý thông tin hồ sơ để bảo mật tài khoản
           </h5>
           <hr style={{ opacity: 0.2 }} />
-          <UserForm />
+          <UserForm  />
         </div>
       </div>
     </div>

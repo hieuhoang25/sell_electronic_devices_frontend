@@ -12,7 +12,8 @@ import TopSales from "../components/topsales/TopSales";
 import CategorySlider from "../components/categoryslider/CategorySlider";
 import axios from "axios";
 import { BASE, PRODUCT, FILTER } from "../constants/index";
-const Pages = ({ productItems, addToCart, CartItem }) => {
+
+const Pages = ({ productItems, addToCart, CartItem, shopItems }) => {
   const size = 10;
   const [smartphones, setSmartPhones] = useState([]);
   const [laptop, setLaptop] = useState([]);
