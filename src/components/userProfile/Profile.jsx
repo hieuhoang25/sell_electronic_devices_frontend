@@ -1,5 +1,5 @@
 import PersonalInfo from "./personal/PersonalInfo";
-import React, { useState } from "react";
+import React, { useState,memo } from "react";
 import { Tabs } from "antd";
 import Photo from "./personal/Avatar";
 import MyPurchase from "./myPurchase/MyPurchase";
@@ -59,4 +59,4 @@ const Profile = () => {
     </>
   );
 };
-export default Profile;
+export default memo(Profile);

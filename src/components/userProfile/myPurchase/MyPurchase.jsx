@@ -3,43 +3,79 @@ import AllPurchase from "./AllPurchase";
 import ToPay from "./ToPay";
 import Completed from "./Completed";
 import Cancelled from "./Cancelled";
-import { useState,memo } from "react";
+import React, { useState, memo, useRef, useEffect,useCallback } from "react";
+import axios from "axios";
+import { BASE, ORDER_STATUS } from "../../../constants/index";
 const MyPurchase = () => {
-  const items = [
-    {
-      key: "1",
-      label: "Tất cả",
-      children: <AllPurchase />,
-    },
-    {
-      key: "2",
-      label: "Chờ xác nhận",
-      children: <ToPay />,
-    },
-    {
-      key: "3",
-      label: "Đang giao",
-    },
-    {
-      key: "4",
-      label: "Hoàn thành",
-      children: <Completed />,
-    },
-    {
-      key: "5",
-      label: "Đã hủy",
-      children: <Cancelled />,
-    },
-  ];
+  const [status, setStatus] = useState([]);
+  const [tabSelected,setTabSelected] = useState();
+  useEffect(() => {
+    axios({
+      method: "get",
+      url: `${BASE}${ORDER_STATUS}`,
+    })
+      .then((res) => {
+        let d = res.data;
+        d.unshift({ id: 0, name: "Tất cả", title:"" })
+        setStatus(d);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+  let item;
+  if (status.length != 0) {
+    item = status.map(({ id, name }) => {
+      if (id === 0) {
+        return {
+          key: id,
+          label: name,
+          children: <AllPurchase />,
+        };
+      } else if (id === 1) {
+        return {
+          key: id,
+          label: name,
+          children: <ToPay />,
+        };
+      } else if (id === 2) {
+        return {
+          key: id,
+          label: name,
+          children: "",
+        };
+      } else if (id === 3) {
+        return {
+          key: id,
+          label: name,
+          children: <Completed da={1}/>,
+        };
+      } else {
+        return {
+          key: id,
+          
+          label: name,
+          children: <Cancelled />,
+        };
+      }
+    });
+  }
+  const handleChangeTab = useCallback((value) =>{
+    setTabSelected(value)
+  })
   return (
     <>
-      <Tabs
-        style={{padding:"20px"}}
-        centered
-        defaultActiveKey="1"
-        tabPosition="top"
-        items={items}
-      />
+      {status.length != 0 && (
+        <Tabs
+          style={{ padding: "20px" }}
+          centered
+          defaultActiveKey={0}
+          activeKey={tabSelected}
+          onChange={handleChangeTab}
+          tabPosition="top"
+          items={item}
+        />
+      )}
     </>
   );
 };

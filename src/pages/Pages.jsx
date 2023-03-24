@@ -65,8 +65,13 @@ const Pages = ({ productItems, addToCart, CartItem }) => {
       <Discount />
       <TopSales addToCart={addToCart} />
       <CategorySlider />
-      <ShopHome shopItems={smartphones} title={"Điện thoại"} />
-      <ShopHome shopItems={laptop} title={"Laptop"} />
+      {smartphones && smartphones.length != 0 && (
+        <ShopHome shopItems={smartphones} title={"Điện thoại"} />
+      )}
+      {laptop && laptop.length != 0 && (
+        <ShopHome shopItems={laptop} title={"Laptop"} />
+      )}
+
       <Annocument />
       <Wrapper />
     </>

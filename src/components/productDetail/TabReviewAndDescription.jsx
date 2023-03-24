@@ -1,6 +1,7 @@
 import Review from "./Review";
 import React, { memo } from "react";
 import { Tabs } from "antd";
+import Description from "./Description";
 const onChange = (key) => {
   console.log(key);
 };
@@ -16,7 +17,7 @@ const TabReviewAndDescription = ({
       {
         key: "1",
         label: `Mô tả`,
-        children: "{description}",
+        children: <Description data={description}/>,
       },
       {
         key: "2",

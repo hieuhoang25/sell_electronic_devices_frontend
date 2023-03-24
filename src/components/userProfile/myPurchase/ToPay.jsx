@@ -6,6 +6,7 @@ const ToPay = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const loadMoreData = () => {
+
     if (loading) {
       return;
     }
@@ -51,6 +52,7 @@ const ToPay = () => {
                   <ShopOutlined /> Chờ xác nhận
                 </div>
               }
+              
             >
               <Card type="inner">
                 <div style={{ display: "flex" }}>

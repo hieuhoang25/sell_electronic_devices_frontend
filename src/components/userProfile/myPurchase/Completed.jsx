@@ -19,7 +19,9 @@ const Completed = () => {
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  console.log(loading)
   const loadMoreData = () => {
+    
     if (loading) {
       return;
     }
@@ -35,6 +37,7 @@ const Completed = () => {
       .catch(() => {
         setLoading(false);
       });
+
   };
   useEffect(() => {
     loadMoreData();
@@ -53,7 +56,6 @@ const Completed = () => {
         dataLength={data.length}
         next={loadMoreData}
         hasMore={data.length < 50}
-        scrollableTarget="scrollableDiv"
       >
         <List
           dataSource={data}
@@ -321,4 +323,4 @@ const Completed = () => {
     </div>
   );
 };
-export default memo(Completed);
+export default Completed;
