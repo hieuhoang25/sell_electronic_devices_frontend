@@ -1,4 +1,5 @@
-const BASE_USER = "/api/user";
+import {API_BASE_URL} from "./index"
+export const BASE_USER = `${API_BASE_URL}/api/user`;
 const ORDER = "/order";
-const TRACKING = "-tracking";
 const INFO = "/info";
+export const ORDER_TRACKING = "/order-tracking"

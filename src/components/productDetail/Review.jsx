@@ -24,16 +24,6 @@ const Review = ({ listReview, handleClick ,loading}) => {
           </Comment>
         );
       }):"Chưa có đánh giá nào"}
-
-      <Form reply>
-        <Button
-          onClick={handleClick}
-          content="Đánh giá"
-          labelPosition="left"
-          icon="edit"
-          primary
-        />
-      </Form>
     </Comment.Group>
     </Card>
   );

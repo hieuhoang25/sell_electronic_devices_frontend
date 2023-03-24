@@ -1,4 +1,4 @@
-import { React, useState, memo, useEffect, useRef } from "react";
+import { React, useState, memo, useEffect, useRef, useCallback } from "react";
 import { Col, Row, Card, Button, Checkbox, Space, Radio, Form } from "antd";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import HalfRatingRead from "../../common/rating/HalfRatingRead";
@@ -39,6 +39,7 @@ const ProductDetail = () => {
     colorId: null,
     storageId: null,
   });
+  const specificationTable = useRef([]);
   function fetchColor(id) {
     return axios({
       method: "get",
@@ -73,12 +74,17 @@ const ProductDetail = () => {
     })
       .then((res) => {
         setProductDetail(res.data);
+        specificationTable.current = res.data.product_productAttributes;
         setIsLoading(false);
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         setIsLoading(false);
       });
+  }
+
+  function fetchSepcification(){
+    
   }
 
   async function getProductDetail() {
@@ -101,7 +107,6 @@ const ProductDetail = () => {
     setIsModalOpen(false);
   };
   //End
-
   const handleAddToCart = () => {
     console.log("Đã thêm vào giỏ");
   };
@@ -114,14 +119,14 @@ const ProductDetail = () => {
     await fetchStorage(productId, color);
     await fetchProductDetail();
   }
-  const onChangeColor = ({ target: { value } }) => {
+  const onChangeColor = useCallback(({ target: { value } }) => {
     setSelectedColor(value);
     fetchProductDetailByColor(value);
-  };
+  });
 
-  const handleStorageChange = ({ target: { value } }) => {
+  const handleStorageChange = useCallback(({ target: { value } }) => {
     setSelectedStorage(value);
-  };
+  });
   return (
     <div style={{ marginTop: "5rem", marginBottom: "5rem" }}>
       <Row>
@@ -258,15 +263,22 @@ const ProductDetail = () => {
             </div>
             {/*Thông số kỹ thuật*/}
             <div style={{ width: "100%" }}>
-              <div>Thông số kỹ thuật</div>
-              <ListSpecification />
+              {specificationTable.current && (
+                <ListSpecification
+                  data={specificationTable.current}
+                />
+              )}
             </div>
             {/*Đánh giá và mô tả*/}
           </div>
           <TabReviewAndDescription
             handleClick={rate}
             listReview={productDetail.rating}
-            description={"Chưa có mô tả"}
+            description={
+              productDetail.product_description
+                ? productDetail.product_description
+                : "chưa có mô tả"
+            }
             loading={isLoading}
           />
         </Col>

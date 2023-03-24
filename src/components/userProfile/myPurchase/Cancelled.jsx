@@ -26,15 +26,6 @@ const Cancelled = () => {
     loadMoreData();
   }, []);
   return (
-    <div
-      id="scrollableDiv"
-      style={{
-        height: 400,
-        overflow: "auto",
-        padding: "0 16px",
-        border: "1px solid rgba(140, 140, 140, 0.35)",
-      }}
-    >
       <InfiniteScroll
         dataLength={data.length}
         next={loadMoreData}
@@ -294,7 +285,6 @@ const Cancelled = () => {
           )}
         />
       </InfiniteScroll>
-    </div>
   );
 };
 

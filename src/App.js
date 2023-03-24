@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Pages from "./pages/Pages";
@@ -15,7 +15,35 @@ import Checkout from "./components/checkout/Checkout";
 import Product from "./components/product/Product";
 import { Search } from "semantic-ui-react";
 
+import { checkTokenValidity } from "./services/config";
 function App() {
+  const data = { // tài khoản đăng nhập
+    userName: 'long',
+    password: 'long',
+  }
+  useEffect(()=>{
+    checkTokenValidity (data); // call lấy token API của User
+  },[])
+  setInterval(()=>{
+    checkTokenValidity (data)
+  },3000000 ) // cứ 50 phút call lấy token 1 lần 
+  // const datates ={
+  //   userName: "long",
+  // password: "long"}
+  
+  // console.log(datates);
+  // checkTokenValidity(datates)
+
+  // console.log(datates);
+  // axios({
+  //   method:"get",
+  //   url:`${BASE}${PRODUCT}${FILTER}`,
+  //   data:[{"key":"productName","value":" ","operation":"LIKE"}]
+  // }).then((res) => {
+  //   console.log(res.data);
+  // })
+  // .catch((error) => console.log(error));
+
   /*
   step1 :  const { productItems } = Data 
   lai pass garne using props
@@ -27,9 +55,7 @@ function App() {
 
   Step 4 :  addToCart lai chai pass garne using props in pages and cart components
   */
-
   //Step 1 :
-
   const { productItems } = Data;
   const { shopItems } = Sdata;
 

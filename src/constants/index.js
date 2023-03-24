@@ -1,6 +1,6 @@
 export const API_BASE_URL = 'http://localhost:8080';
 export const ACCESS_TOKEN = 'accessToken';
-export const IMAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/image-cloud-98533.appspot.com/o/'
+export const IMAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/bonik-f7b39.appspot.com/o/'
 export const OAUTH2_REDIRECT_URI = 'http://localhost:3000/oauth2/redirect'
 
 export const GOOGLE_AUTH_URL = API_BASE_URL + '/oauth2/authorize/google?redirect_uri=' + OAUTH2_REDIRECT_URI;
@@ -26,3 +26,4 @@ export const CATEGORY = "/category";
 export const LOGIN = "/login";
 
 export const STORAGE = "/storage"
+export const ORDER_STATUS = "/order-status"

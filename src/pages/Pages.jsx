@@ -12,7 +12,8 @@ import TopSales from "../components/topsales/TopSales";
 import CategorySlider from "../components/categoryslider/CategorySlider";
 import axios from "axios";
 import { BASE, PRODUCT, FILTER } from "../constants/index";
-const Pages = ({ productItems, addToCart, CartItem }) => {
+
+const Pages = ({ productItems, addToCart, CartItem, shopItems }) => {
   const size = 10;
   const [smartphones, setSmartPhones] = useState([]);
   const [laptop, setLaptop] = useState([]);
@@ -65,8 +66,13 @@ const Pages = ({ productItems, addToCart, CartItem }) => {
       <Discount />
       <TopSales addToCart={addToCart} />
       <CategorySlider />
-      <ShopHome shopItems={smartphones} title={"Điện thoại"} />
-      <ShopHome shopItems={laptop} title={"Laptop"} />
+      {smartphones && smartphones.length != 0 && (
+        <ShopHome shopItems={smartphones} title={"Điện thoại"} />
+      )}
+      {laptop && laptop.length != 0 && (
+        <ShopHome shopItems={laptop} title={"Laptop"} />
+      )}
+
       <Annocument />
       <Wrapper />
     </>

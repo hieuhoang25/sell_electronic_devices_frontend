@@ -182,18 +182,20 @@ function Product() {
   });
   return (
     <>
-      <Shop
-        shopItems={productsFilter.products}
-        categories={category}
-        onChangePagination={onChangePagination}
-        totalPage={productsFilter.totalPage}
-        onSelectCategory={onSelectCategory}
-        listBrand={brand}
-        listStorage={storage}
-        onChangeBrand={onChangeBrand}
-        onChangeStorage={onChangeStorage}
-        onClickResult={onClickResult}
-      />
+      {productsFilter && (
+        <Shop
+          shopItems={productsFilter.products}
+          categories={category}
+          onChangePagination={onChangePagination}
+          totalPage={productsFilter.totalPage}
+          onSelectCategory={onSelectCategory}
+          listBrand={brand}
+          listStorage={storage}
+          onChangeBrand={onChangeBrand}
+          onChangeStorage={onChangeStorage}
+          onClickResult={onClickResult}
+        />
+      )}
     </>
   );
 }
