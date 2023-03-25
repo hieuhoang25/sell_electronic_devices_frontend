@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -13,125 +12,205 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
+import { useDispatch, useSelector } from 'react-redux';
+import { INIT, login } from '../../redux/actions/AuthAction';
+import { useState } from 'react';
+import axios from '../../services/axios';
+import { useNavigate } from 'react-router-dom';
 
-
-
-const theme = createTheme();
-
-export default function LoginPage() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+const LoginPage = () => {
+    const theme = createTheme();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const auth = useSelector((state) => state.auth);
+    const [formLogin, setFormLogin] = useState({
+        userName: '',
+        password: '',
     });
-  };
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+    };
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random)',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+    const handleLogin = async () => {
+        const response_login = await axios
+            .post(process.env.REACT_APP_URL + 'un/login', formLogin)
+            .catch((error) => console.log(error));
+
+        const { error, access_token } = response_login.data;
+
+        if (response_login.data && error) {
+            return alert(error);
+        }
+        const role = response_login.data.roles[0].authority;
+
+        const response = await axios.get(
+            process.env.REACT_APP_URL + 'user/info',
+        );
+        const fullName = response.data.full_name;
+        dispatch({
+            type: INIT,
+            payload: {
+                isAuthenticated: true,
+                fullName,
+                role: role,
+            },
+        });
+        navigate('/');
+    };
+    const handleChangePassword = (e) => {
+        setFormLogin((pre) => {
+            return {
+                ...pre,
+                password: e.target.value,
+            };
+        });
+    };
+    const handleChangeUsername = (e) => {
+        setFormLogin((pre) => {
+            return {
+                ...pre,
+                userName: e.target.value,
+            };
+        });
+    };
+    console.log(auth);
+    return (
+        <ThemeProvider theme={theme}>
+            <Grid container component="main" sx={{ height: '100vh' }}>
+                <CssBaseline />
+                <Grid
+                    item
+                    xs={false}
+                    sm={4}
+                    md={7}
+                    sx={{
+                        backgroundImage:
+                            'url(https://source.unsplash.com/random)',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundColor: (t) =>
+                            t.palette.mode === 'light'
+                                ? t.palette.grey[50]
+                                : t.palette.grey[900],
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                />
+                <Grid
+                    item
+                    xs={12}
+                    sm={8}
+                    md={5}
+                    component={Paper}
+                    elevation={6}
+                    square
+                >
+                    <Box
+                        sx={{
+                            my: 8,
+                            mx: 4,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                    >
+                        {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               
             </Avatar> */}
-            <Typography component="h1" variant="h5">
-              Đăng nhập
-            </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 1 }}
-              >
-               Đăng nhập
-              </Button>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 1, mb: 1 }}
-                color="error"
-              >
-                <GoogleIcon></GoogleIcon>
-                Đăng nhập với google
-              </Button>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 1, mb: 2 }}
-                color="primary"
-              >
-                <FacebookIcon></FacebookIcon>
-                Đăng nhập với facebook
-              </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
+                        <Typography component="h1" variant="h5">
+                            Đăng nhập
+                        </Typography>
+                        <Box
+                            component="form"
+                            noValidate
+                            onSubmit={handleSubmit}
+                            sx={{ mt: 1 }}
+                        >
+                            <TextField
+                                value={formLogin.username}
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Username"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                onChange={(e, v) => {
+                                    handleChangeUsername(e);
+                                }}
+                            />
+                            <TextField
+                                value={formLogin.password}
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                onChange={(e, v) => {
+                                    handleChangePassword(e);
+                                }}
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        value="remember"
+                                        color="primary"
+                                    />
+                                }
+                                label="Remember me"
+                            />
+                            <Button
+                                // type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 1 }}
+                                onClick={() => {
+                                    handleLogin();
+                                }}
+                            >
+                                Đăng nhập
+                            </Button>
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 1, mb: 1 }}
+                                color="error"
+                            >
+                                <GoogleIcon></GoogleIcon>
+                                Đăng nhập với google
+                            </Button>
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 1, mb: 2 }}
+                                color="primary"
+                            >
+                                <FacebookIcon></FacebookIcon>
+                                Đăng nhập với facebook
+                            </Button>
+                            <Grid container>
+                                <Grid item xs>
+                                    <Link href="#" variant="body2">
+                                        Forgot password?
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link href="/signup" variant="body2">
+                                        {"Don't have an account? Sign Up"}
+                                    </Link>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Box>
                 </Grid>
-                <Grid item>
-                  <Link href="/signup" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-            
-            </Box>
-          </Box>
-        </Grid>
-      </Grid>
-    </ThemeProvider>
-  );
-}
+            </Grid>
+        </ThemeProvider>
+    );
+};
+export default LoginPage;
