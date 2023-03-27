@@ -11,7 +11,6 @@ const AuthReducer = (state = initialState, action) => {
     switch (action.type) {
         case INIT:
             const { isAuthenticated, fullName, role } = action.payload;
-            console.log(action.payload);
             return {
                 ...state,
                 isAuthenticated,
