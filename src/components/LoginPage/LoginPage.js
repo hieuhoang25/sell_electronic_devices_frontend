@@ -36,7 +36,7 @@ const LoginPage = () => {
         const response_login = await axios
             .post(process.env.REACT_APP_URL + 'un/login', formLogin)
             .catch((error) => console.log(error));
-        console.log(response_login.data);
+
         const { error, access_token } = response_login.data;
 
         if (response_login.data && error) {

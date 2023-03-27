@@ -1,3 +1,4 @@
-export function getImage(fileName) {
-    return `${process.env.REACT_APP_BASE_URL_FIREBASE}${fileName}?alt=media`;
+import { IMAGE_URL } from "../../constants";
+export function getImage(fileName){
+    return `${IMAGE_URL}${fileName}?alt=media`
 }
