@@ -13,41 +13,12 @@ import LoginPage from './components/LoginPage/LoginPage';
 import SignUp from './components/SignUpPage/SignUp';
 import Checkout from './components/checkout/Checkout';
 import Product from './components/product/Product';
-import { checkTokenValidity } from './services/config';
 import { useDispatch, useSelector } from 'react-redux';
 import Protected from './App/Protected';
 import axios from './services/axios';
 import TokenService from './services/tokenService';
 import { INIT } from './redux/actions/AuthAction';
 function App() {
-    const data = {
-        // tài khoản đăng nhập
-        userName: 'long',
-        password: 'long',
-    };
-    useEffect(() => {
-        checkTokenValidity(data); // call lấy token API của User
-    }, []);
-    setInterval(() => {
-        checkTokenValidity(data);
-    }, 3000000); // cứ 50 phút call lấy token 1 lần
-    // const datates ={
-    //   userName: "long",
-    // password: "long"}
-
-    // console.log(datates);
-    // checkTokenValidity(datates)
-
-    // console.log(datates);
-    // axios({
-    //   method:"get",
-    //   url:`${BASE}${PRODUCT}${FILTER}`,
-    //   data:[{"key":"productName","value":" ","operation":"LIKE"}]
-    // }).then((res) => {
-    //   console.log(res.data);
-    // })
-    // .catch((error) => console.log(error));
-
     /*
   step1 :  const { productItems } = Data 
   lai pass garne using props
@@ -126,11 +97,10 @@ function App() {
     const dispatch = useDispatch();
     const auth = useSelector((state) => state.auth);
     useEffect(async () => {
-        const rs = await axios.post(
+        const rs = await axios.get(
             process.env.REACT_APP_URL + 'un/refresh-token',
         );
         const access_token = rs.data.access_token;
-
         dispatch({
             type: INIT,
             payload: {
@@ -152,12 +122,13 @@ function App() {
                                 productItems={productItems}
                                 addToCart={addToCart}
                                 shopItems={productItems}
+                                isAuth={auth.isAuthenticated}
                             />
                         }
                     ></Route>
                     <Route
                         path="/product/:categoryId"
-                        element={<Product />}
+                        element={<Product isAuth={auth.isAuthenticated} />}
                     ></Route>
                     <Route
                         path="/cart"
@@ -180,7 +151,9 @@ function App() {
                     ></Route>
                     <Route
                         path="/product-detail/:productId"
-                        element={<ProductDetail />}
+                        element={
+                            <ProductDetail isAuth={auth.isAuthenticated} />
+                        }
                     ></Route>
                     <Route
                         path="/checkout"

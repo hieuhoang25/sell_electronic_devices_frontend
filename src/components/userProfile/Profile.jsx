@@ -51,10 +51,6 @@ const Profile = () => {
             label: 'Đổi mật khẩu',
             children: <ChangePassword />,
         },
-        {
-            key: '7',
-            label: 'Đăng xuất',
-        },
     ];
     return (
         <>
