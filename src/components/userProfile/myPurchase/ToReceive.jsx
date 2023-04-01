@@ -8,7 +8,7 @@ import './Purchase.css';
 import { BASE_USER, ORDER_TRACKING } from '../../../constants/user';
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
-const AllPurchase = ({ status }) => {
+const ToReceive = ({ status }) => {
     //Mở form đánh giá
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [productRating, setProductRating] = useState([]);
@@ -27,7 +27,6 @@ const AllPurchase = ({ status }) => {
     //đánh giá
     const [valueRating, setValueRating] = useState([]);
     const handleChangeRating = useCallback((value, index) => {
-        console.log(valueRating);
         valueRating[index] = value;
         setValueRating([...valueRating]);
     });
@@ -306,26 +305,15 @@ const AllPurchase = ({ status }) => {
                                     >
                                         <Space>
                                             <Button
+                                                disabled
                                                 style={{
                                                     minWidth: '150px',
                                                     minHeight: '40px',
-                                                    backgroundColor: '#ee4d2d',
+                                                    backgroundColor: 'grey',
                                                     color: 'white',
                                                 }}
-                                                onClick={() => {
-                                                    rate(item.orderDetails);
-                                                }}
                                             >
-                                                Đánh giá
-                                            </Button>
-
-                                            <Button
-                                                style={{
-                                                    minWidth: '150px',
-                                                    minHeight: '40px',
-                                                }}
-                                            >
-                                                Mua lại
+                                                Đang giao
                                             </Button>
                                         </Space>
                                     </div>
@@ -347,4 +335,4 @@ const AllPurchase = ({ status }) => {
         </>
     );
 };
-export default memo(AllPurchase);
+export default memo(ToReceive);
