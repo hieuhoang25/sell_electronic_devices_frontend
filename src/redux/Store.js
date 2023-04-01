@@ -16,7 +16,7 @@ let devtools = (x) => x;
 const persistConfig = {
     key: 'root',
     storage: localStorage,
-    whitelist: ['auth'],
+    whitelist: ['auth', 'cart'],
 };
 const persistedReducer = persistReducer(persistConfig, RootReducer);
 const Store1 = createStore(
