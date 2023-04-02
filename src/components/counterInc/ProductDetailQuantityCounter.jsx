@@ -4,7 +4,7 @@ import { QTY_MAX, QTY_MIN } from '../../common/Cart/Cart';
 function ProductDetailQuantityCounter({
     cartQty,
     cartQtyOnChangeHandler,
-    setCartbuttonDisabled,
+    // setCartbuttonDisabled,
 }) {
     // let [num, setNum] = useState(1);
     let incNum = () => {
@@ -28,15 +28,15 @@ function ProductDetailQuantityCounter({
 
     const handleChange = () => {
         console.log('handle', cartQty);
-        if (cartQty >= QTY_MAX || cartQty < QTY_MIN) {
-            setCartbuttonDisabled((prev) => {
-                return true;
-            });
-        } else {
-            setCartbuttonDisabled((prev) => {
-                return false;
-            });
-        }
+        // if (cartQty >= QTY_MAX || cartQty < QTY_MIN) {
+        //     setCartbuttonDisabled((prev) => {
+        //         return true;
+        //     });
+        // } else {
+        //     setCartbuttonDisabled((prev) => {
+        //         return false;
+        //     });
+        // }
     };
 
     /*

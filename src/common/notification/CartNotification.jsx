@@ -23,8 +23,8 @@ const CartNotification = ({
     const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
-        console.log('child useEffect');
-        console.log('isSucces => ', isSuccess);
+        // console.log('child useEffect');
+        // console.log('isSucces => ', isSuccess);
         if (isSuccess == null) {
         } else showNotif();
     }, [isSuccess]);
@@ -51,13 +51,7 @@ const CartNotification = ({
                     <a href="/cart"> Xem giỏ hàng</a>
                 </div>
             ),
-            icon: (
-                <ShoppingCartOutlined
-                    style={{
-                        color: '#7AA874',
-                    }}
-                />
-            ),
+            icon: icon,
             duration: 3,
         });
     };
@@ -87,9 +81,10 @@ const CartNotification = ({
             {contextHolder}
 
             <button
-                class={`add-cart-btn hvr-sweep-to-right ${
-                    isButtonDisabled ? 'disabled' : ''
-                }`}
+                // ${
+                //         isButtonDisabled ? 'disabled' : ''
+                //     }
+                class={`add-cart-btn hvr-sweep-to-right`}
                 onClick={openNotification}
             >
                 {buttonContent}

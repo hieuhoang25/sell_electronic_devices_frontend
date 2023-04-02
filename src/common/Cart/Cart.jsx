@@ -15,7 +15,11 @@ import {
     increment,
     decrement,
 } from '../../redux/slices/CartSlice';
-import { removeItemFromCart } from '../../services/cartService.js';
+import {
+    removeItemFromCart,
+    incrementItemQuantity,
+    decrementItemQuantity,
+} from '../../services/cartService.js';
 import { CURRENCY_SUFFIX } from '../../constants/index';
 import { NumericFormat } from 'react-number-format';
 import { getImage } from '../../common/img';
@@ -23,8 +27,6 @@ export const QTY_MAX = 5;
 export const QTY_MIN = 1;
 
 const Cart = () => {
-    // Stpe: 7   calucate total of items
-    // const Cart = useSelector((state) => state.cart);
     const dispatch = useDispatch();
     const Cart = useSelector((state) => state.cart);
     const { items, total, baseAmount, totalCount, discount } = Cart;
@@ -81,10 +83,10 @@ const Cart = () => {
                         // );
                     }).then((data) => {
                         const request = getCartDetailRequest(
-                            Cart,
+                            { cart_id: Cart.id, quantity: 1, id: id },
                             CartRequestTYPE.DELETE,
                         );
-                        request.id = id;
+                        // request.id = id;
                         console.log('call delete ', request);
                         dispatch(removeItemFromCart(request));
                     });
@@ -110,6 +112,25 @@ const Cart = () => {
 
     const onCheckoutHandler = () => {
         history('/checkout');
+    };
+    const incrementQty = (item) => {
+        let newQty = item.quantity + 1;
+        const request = getCartDetailRequest(
+            { cart_id: Cart.id, id: item.id, quantity: newQty },
+            CartRequestTYPE.UPDATE,
+        );
+
+        console.log('increment request:', request);
+        dispatch(incrementItemQuantity(request));
+    };
+    const decrementQty = (item) => {
+        let newQty = item.quantity - 1;
+        const request = getCartDetailRequest(
+            { cart_id: Cart.id, id: item.id, quantity: newQty },
+            CartRequestTYPE.DECR,
+        );
+        console.log('decrement request:', request);
+        dispatch(decrementItemQuantity(request));
     };
     useEffect(() => {
         console.log('dispatch change');
@@ -257,14 +278,24 @@ const Cart = () => {
                     */}
                                         <div className="cartControl d_flex">
                                             <button
+                                                disabled={
+                                                    item.quantity >= QTY_MAX
+                                                }
                                                 className="incCart"
-                                                onClick={() => addToCart(item)}
+                                                onClick={() =>
+                                                    incrementQty(item)
+                                                }
                                             >
                                                 <i className="fa-solid fa-plus"></i>
                                             </button>
                                             <button
+                                                disabled={
+                                                    item.quantity <= QTY_MIN
+                                                }
                                                 className="desCart"
-                                                onClick={() => decrement(item)}
+                                                onClick={() =>
+                                                    decrementQty(item)
+                                                }
                                             >
                                                 <i className="fa-solid fa-minus"></i>
                                             </button>
@@ -310,28 +341,37 @@ const Cart = () => {
     );
 };
 
-const CartRequestTYPE = {
-    Summer: Symbol('summer'),
+export const CartRequestTYPE = {
     UPDATE: Symbol('update'),
     ADD: Symbol('add'),
     DELETE: Symbol('delete'),
+    DECR: Symbol('decrement'),
 };
-const getCartDetailRequest = (cart, CartRequestTYPE) => {
+export const getCartDetailRequest = (action, CartRequestTYPEz) => {
     const init = {
-        cart_id: cart.id,
-        product_variant_id: 46,
-        quantity: 2,
+        cart_id: action.cart_id,
+        product_variant_id: action.id,
+        quantity: action.quantity,
     };
-    const update = { ...init, id: null };
-    switch (CartRequestTYPE) {
+    const { UPDATE, ADD, DELETE, DECR } = CartRequestTYPE;
+
+    const update = { ...init, id: action.id, quantity: 1 };
+    switch (CartRequestTYPEz) {
         case CartRequestTYPE.UPDATE:
-            return { ...update };
+            return { ...init, id: action.id };
         case CartRequestTYPE.DELETE:
-            return { ...init };
+            return {
+                id: action.id,
+                cart_id: action.cart_id,
+                quantity: action.quantity,
+            };
+        case CartRequestTYPE.DECR:
+            return { ...init, id: action.id };
         default:
             return { ...init };
     }
 };
+
 export const getCurrencyFormatComp = (value, haveSuffix = false) => {
     return haveSuffix ? (
         <NumericFormat
