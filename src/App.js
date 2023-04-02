@@ -124,7 +124,7 @@ function App() {
             })
             .catch((e) => {
                 console.log('fetch cart with error');
-                dispatch(fetchCartFromSever);
+                dispatch(fetchCartFromSever());
                 return;
             });
 
