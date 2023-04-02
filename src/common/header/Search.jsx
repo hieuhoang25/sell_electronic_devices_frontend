@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { reset } from '../../redux/slices/CartSlice';
+
 const Search = ({}) => {
     // fixed Header
     window.addEventListener('scroll', function () {
@@ -55,19 +56,27 @@ const Search = ({}) => {
                             </>
                         ) : (
                             <>
-                                <Link to="/login">
+                                <Link
+                                    className="popup-link"
+                                    data-popup="Đăng nhập"
+                                    to="/login"
+                                >
                                     <i className="fa fa-sign-in icon-circle"></i>
                                 </Link>
                             </>
                         )}
 
-                        <div className="cart">
-                            <Link to="/cart">
+                        <div className="cart popup-link" data-popup="Giỏ hàng">
+                            <Link
+                                // className="popup-link"
+                                data-popup="Giỏ hàng"
+                                to="/cart"
+                            >
                                 <i className="fa fa-shopping-bag icon-circle"></i>
                                 <span>
-                                    {Cart.items.length === 0
+                                    {Cart.totalCount === 0
                                         ? 0
-                                        : Cart.items.length}
+                                        : Cart.totalCount}
                                 </span>
                             </Link>
                         </div>
