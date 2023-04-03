@@ -1,32 +1,16 @@
+import { RssFeed } from '@mui/icons-material';
 import { createSlice } from '@reduxjs/toolkit';
 import axios from '../../services/axios';
-import { fetchCartFromSever } from '../../services/cartService';
+import { fetchCartFromSever,getGuestRequestCartDetail } from '../../services/cartService';
 
-// export const fetchCartFromSever = (cart) => async (dispatch) => {
-//     try {
-//         const { isAnonymous } = cart;
-//         console.log('isAnnon', dispatch(getCart()));
-//         const promt_path = !isAnonymous ? 'user/cart' : null;
-//         if (!isAnonymous) {
-//             console.log('is not annon');
-//             // await axios
-//             //     .get(process.env.REACT_APP_URL + promt_path)
-//             //     .then((response_cart) => {
-//             //         console.log(response_cart.data);
-//             //         dispatch(getCartFromSever(response_cart.data));
-//             //     })
-//             //     .catch((error) => {
-//             //         console.log(error);
-//             //         alert('llo');
-//             //         return;
-//             //     });
-//         } else {
-//             console.log('get from localstorage');
-//         }
-//     } catch (e) {
-//         console.log(e.message);
-//     }
-// };
+const convertGuestCartResponse = (res) => {
+    return {
+        id: res.id,
+        baseAmount: res.price_sum,
+        items: res.cartDetails,
+        time: res.create_date,
+    };
+};
 const initialState = {
     isAnonymous: true,
     id: null,
@@ -37,6 +21,13 @@ const initialState = {
     discount: 0.0,
 };
 
+const generateAutoIncrId = (arr) => {
+    console.log('generate id');
+    if(!arr || arr.length === 0) return 1;
+    else {
+        return Math.max(...arr.map(e => e.id)) + 1;
+    }
+}
 export const CartSlice = createSlice({
     name: 'cart',
     initialState: initialState,
@@ -47,39 +38,43 @@ export const CartSlice = createSlice({
         },
         addToCart: {
             reducer: (state, action) => {
-                console.log('state.items', state.items);
-                if (state.items.length == 0) return;
-                let cartIndex = state.items.findIndex(
-                    (item) => item.id === action.payload.id,
-                );
-                if (cartIndex >= 0) {
-                    state.items[cartIndex].quantity += 1;
-                } else {
-                    let tempProduct = { ...action.payload, quantity: 1 };
-                    state.items.push(tempProduct);
-                }
+                console.log('action in addToCart', action.payload);
+                let id = generateAutoIncrId(state.items);
+                let cart_item = { ...action.payload, id: id };
+                console.log('cart_item: ', cart_item);
+                state.items.push(cart_item);
             },
         },
+        newCart: (state, action) => {
+            state = {
+                ...state,
+                ...convertGuestCartResponse(action.payload),
+            };
+            console.log('newcart: ', state);
+            return { ...state };
+        },
         increment: (state, action) => {
-            if (state.items.length == 0) return;
-            let index = state.items.find((item) => item.id === action.payload);
-            state.items[index].qty += 1;
+            console.log('increment......: ', action.payload);
+            const {items} = state;
+           const index = items.findIndex((i) => i.id === action.payload.id);
+           const product = {...action.payload};
+
+           state.items[index] = product; 
         },
         decrement: (state, action) => {
-            if (state.items.length == 0) return;
-            let index = state.items.find((item) => item.id === action.payload);
-            if (state.cartItems[index].quantity <= 0) {
-                state.cartItems[index].quantity = 0;
-            } else {
-                state.cartItems[index].quantity -= 1;
-            }
+            console.log('decrement....', action.payload);
+            const {items} = state;
+            const index = items.findIndex((i) => i.id === action.payload.id);
+            state.items[index] = {...action.payload}; 
         },
         removeFromCart: (state, action) => {
             if (state.items.length == 0) return;
+
             let index = state.items.findIndex(
-                (item) => item.id === action.payload,
+                (item) => item.id === action.payload.id,
             );
             if (index !== -1) {
+                console.log('removed...');
                 state.items.splice(index, 1);
             }
         },
@@ -94,17 +89,32 @@ export const CartSlice = createSlice({
         getItemsCount: (state, action) => {
             console.log('getItemsCount');
             if (state.items.length == 0) return;
-            let cartCount = state.items.reduce((item, total) => {
+            let cartCount = state.items.reduce((total, item) => {
                 return item.quantity + total;
             }, 0);
             console.log('cartCount', cartCount);
             state.totalCount = cartCount;
         },
         getBaseAmount: (state, action) => {
-            if (state.items.length == 0.0) return;
-            state.baseAmount = state.items.reduce((sub, item) => {
-                return sub + item.price * item.qty;
+            console.log('update..base ammount');
+            if (state.items.length === 0) return 0;
+            state.baseAmount = state.items.reduce(
+                (sub, item) => sub + item.price_detail,
+                0,
+            );
+        },
+        getTotal: (state, action) => {
+            if (state.items.length === 0) return 0;
+            let { items } = state;
+            state.total = state.baseAmount - state.discount;
+        },
+        getDiscountAmount: (state, action) => {
+            console.log('get discount: ');
+            if (state.items.length === 0) return 0;
+            let discount = state.items.reduce((d, item) => {
+                return d + item.discount_amount * item.quantity;
             }, 0);
+            state.discount = discount;
         },
         getCartFromSever: (state, action) => {
             console.log('action', action);
@@ -147,6 +157,9 @@ export const {
     getCartFromSever,
     authenticateCart,
     reset,
+    newCart,
+    getTotal,
+    getDiscountAmount
 } = CartSlice.actions;
 
 export default CartSlice.reducer;
