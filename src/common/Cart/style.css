@@ -79,8 +79,26 @@
   color: #e94560;
 }
 
+.incCart:disabled {
+  background-color: #f6f9fc;
+  color: #c5c1c1;
+}
+
+.incCart:hover {
+  cursor: pointer;
+}
+
 .desCart {
   background: #f6f9fc;
+}
+
+.desCart:disabled:hover,
+.incCart:disabled:hover {
+  cursor: not-allowed;
+}
+
+.desCart:hover {
+  cursor: pointer;
 }
 
 .cart-total h4 {
