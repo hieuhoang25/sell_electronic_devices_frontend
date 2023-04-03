@@ -13,7 +13,7 @@ const paymentData = [
     {p_id: 1, name: 'VISA/MASTER Card'}
 ];
 
-const Checkout = ({ CartItem}) => {
+const Checkout = () => {
 
   return (
     <section className="main-section">
@@ -22,7 +22,7 @@ const Checkout = ({ CartItem}) => {
         <CheckoutForm></CheckoutForm>
     </Col>
     <Col className="gutter-row" span={8}>
-     <OrderList CartItem={CartItem}></OrderList>
+     <OrderList ></OrderList>
     </Col>
     
   </Row>

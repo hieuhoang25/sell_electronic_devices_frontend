@@ -19,7 +19,8 @@ import {
     removeItemFromCart,
     incrementItemQuantity,
     decrementItemQuantity,
-    updateCart
+    updateCart,
+    mergeAnnonCart
 } from '../../services/cartService.js';
 import { CURRENCY_SUFFIX } from '../../constants/index';
 import { NumericFormat } from 'react-number-format';
@@ -79,9 +80,6 @@ const Cart = () => {
                 try {
                     return await new Promise((resolve, reject) => {
                         setTimeout(resolve, 100);
-                        //     Math.random() > 0.1 ? resolve : reject,
-                        //     1000,
-                        // );
                     }).then((data) => {
                         const request = getCartDetailRequest(
                             { cart_id: Cart.id, quantity: 1, id: id },
@@ -90,6 +88,7 @@ const Cart = () => {
                         // request.id = id;
                         console.log('call delete ', request);
                         dispatch(removeItemFromCart(request));
+                        dispatch(updateCart())
                     });
                 } catch {
                     return console.log('Oops errors!');
@@ -131,10 +130,13 @@ const Cart = () => {
         console.log('dispatch change');
         if(Cart.isAnonymous) {
             console.log('updateCart()');
-            dispatch(updateCart());
+            dispatch(updateCart(Cart));
         }
     }, [Cart]);
 
+    const cartAfterLoginHandler = () => {
+        dispatch(mergeAnnonCart());
+    }
     // prodcut qty total
     return (
         <>
@@ -333,6 +335,8 @@ const Cart = () => {
                         >
                             Thanh toán
                         </button>
+
+                        <button onClick={cartAfterLoginHandler}>Merge</button>
                     </div>
                 </div>
             </section>

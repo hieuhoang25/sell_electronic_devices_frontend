@@ -3,7 +3,7 @@ import './Header.css';
 import Search from './Search';
 import Navbar from './Navbar';
 
-const Header = ({ Cart }) => {
+const Header = () => {
     return (
         <>
             <Search  />

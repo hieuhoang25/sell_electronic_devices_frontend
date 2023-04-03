@@ -32,10 +32,11 @@ export const CartSlice = createSlice({
     name: 'cart',
     initialState: initialState,
     reducers: {
-        reset: () => {
-            console.log('reset');
-            return { ...initialState };
-        },
+        reset: () => initialState,
+        // reset: (state,action) => {
+        //     console.log('reset');
+        //     return  initialState ;
+        // },
         addToCart: {
             reducer: (state, action) => {
                 console.log('action in addToCart', action.payload);
@@ -47,10 +48,11 @@ export const CartSlice = createSlice({
         },
         newCart: (state, action) => {
             state = {
-                ...state,
+                ...initialState,
+                // isAnonymous: false,
                 ...convertGuestCartResponse(action.payload),
             };
-            console.log('newcart: ', state);
+            console.log('newcart: ', state.cart);
             return { ...state };
         },
         increment: (state, action) => {
@@ -68,15 +70,17 @@ export const CartSlice = createSlice({
             state.items[index] = {...action.payload}; 
         },
         removeFromCart: (state, action) => {
-            if (state.items.length == 0) return;
-
-            let index = state.items.findIndex(
-                (item) => item.id === action.payload.id,
-            );
-            if (index !== -1) {
-                console.log('removed...');
-                state.items.splice(index, 1);
+            if (state.items.length !== 0) {
+                let index = state.items.findIndex(
+                    (item) => item.id === action.payload.id,
+                );
+                if (index !== -1) {
+                    console.log('removed...');
+                    state.items.splice(index, 1);
+                }
             }
+
+            
         },
         meregeCart: (state) => {},
         clearCart: (state) => {},
@@ -88,33 +92,54 @@ export const CartSlice = createSlice({
         },
         getItemsCount: (state, action) => {
             console.log('getItemsCount');
-            if (state.items.length == 0) return;
-            let cartCount = state.items.reduce((total, item) => {
-                return item.quantity + total;
-            }, 0);
-            console.log('cartCount', cartCount);
-            state.totalCount = cartCount;
+            if (state.items.length !== 0) {
+                let cartCount = state.items.reduce((total, item) => {
+                    return item.quantity + total;
+                }, 0);
+                console.log('cartCount', cartCount);
+                state.totalCount = cartCount;
+            }else {
+                state.totalCount = 0;
+            }
+            console.log('state: ', state.cart);
         },
         getBaseAmount: (state, action) => {
             console.log('update..base ammount');
-            if (state.items.length === 0) return 0;
-            state.baseAmount = state.items.reduce(
-                (sub, item) => sub + item.price_detail,
-                0,
-            );
+            if (state.items.length !== 0) {
+                state.baseAmount = state.items.reduce(
+                    (sub, item) => sub + item.price_detail,
+                    0,
+                );
+            }else {
+                state.baseAmount = 0;
+            }
+           
+            console.log('state: ', state);
         },
         getTotal: (state, action) => {
-            if (state.items.length === 0) return 0;
-            let { items } = state;
-            state.total = state.baseAmount - state.discount;
+            if (state.items.length !== 0)  
+            {
+                let { items } = state;
+                state.total = state.baseAmount - state.discount;
+              
+            }else {
+                state.total = 0;
+            }
+            console.log('state: ', state.cart);
+          
         },
         getDiscountAmount: (state, action) => {
             console.log('get discount: ');
-            if (state.items.length === 0) return 0;
-            let discount = state.items.reduce((d, item) => {
-                return d + item.discount_amount * item.quantity;
-            }, 0);
-            state.discount = discount;
+            if (state.items.length !== 0) {
+                let discount = state.items.reduce((d, item) => {
+                    return d + item.discount_amount * item.quantity;
+                }, 0);
+                state.discount = discount;
+            }else {
+                state.discount = 0;
+            }
+            
+            console.log('state: ', state.cart);
         },
         getCartFromSever: (state, action) => {
             console.log('action', action);
@@ -139,6 +164,8 @@ export const CartSlice = createSlice({
         },
         authenticateCart: (state, action) => {
             state.isAnonymous = action.payload;
+            console.log('state: ', state);
+            
         },
     },
 });

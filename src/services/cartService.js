@@ -1,7 +1,7 @@
 // import { createSlice } from '@reduxjs/toolkit';
 import axios from './axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL } from '../constants/user';
+import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL, MERGE_CART } from '../constants/user';
 import {
     addToCart,
     removeFromCart,
@@ -17,6 +17,7 @@ import {
     newCart,
     getTotal,
     getDiscountAmount,
+    authenticateCart
 } from '../redux/slices/CartSlice';
 
 const ENV_URL = process.env.REACT_APP_URL;
@@ -47,9 +48,7 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
             // console.log('cartId: ', cartId);
             if (!cartId) {
                 console.log('get fresh guest cart...');
-                const cart_new = await getFreshCartForGuest();
-                dispatch(newCart(cart_new));
-                // alert('stope');
+                dispatch(resetToGuestCart());
             }
         }
     } catch (e) {
@@ -57,6 +56,13 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
         console.log(e.message);
     }
 };
+
+export const resetToGuestCart =  () => async (dispatch, getState) => {
+    console.log('get fresh guest cart...');
+                const cart_new = await getFreshCartForGuest();
+                dispatch(newCart(cart_new));
+                dispatch(updateCart());
+}
 // {
 //     "cart_id": 0,
 //     "product_variant_id": 0,
@@ -196,7 +202,33 @@ export const decrementItemQuantity =
         }
     };
 
-const getFreshCartForGuest = async () => {
+const covertMergeCartRequest = (items,cart_id) => {
+        return items.map(i => {return {"cart_id": cart_id,  "product_variant_id": i.productVariant.id, quantity: i.quantity} }  )
+
+}    
+export const mergeAnnonCart = () => async(dispatch, getState) => {
+    console.log('inside merge');
+
+   let {items} = getState().cart;
+   let cart_id =  await( await (await axios.get(`${ENV_URL}${CART}`)).data).id
+   const em = {}
+    let request =  covertMergeCartRequest(items, cart_id);
+    console.log("list request: ", request);
+    if(request) 
+    await axios.post(`${ENV_URL}${MERGE_CART}`, request).then(data => {
+        console.log('cart: ', );
+         return;
+    }).catch(e => {console.log(e.message);})
+    alert('aa')
+    dispatch(authenticateCart(false));
+    dispatch(fetchCartFromSever());
+}   
+
+const getCartId = async() => {
+    return await ( await axios.get(`${ENV_URL}${CART}`)).data;
+} 
+
+export const getFreshCartForGuest = async () => {
     try {
         return await (
             await axios.get(`${ENV_URL}${NEW_GUEST_CART}`)
@@ -205,7 +237,6 @@ const getFreshCartForGuest = async () => {
         console.log(e.message);
     }
 };
-
 
 // {
 //     "variant_id": 0,
@@ -233,9 +264,12 @@ const checkItemInGuestCart = (items, request) => {
     );
 }
 
+
+
 export const updateCart = () => async (dispatch,getState) => {
-    dispatch(getItemsCount());
-    dispatch(getBaseAmount())
-    dispatch(getDiscountAmount());
-    dispatch(getTotal());
+    console.log('update cart: ', getState().cart);
+    dispatch(getItemsCount(getState().cart));
+    dispatch(getBaseAmount(getState().cart))
+    dispatch(getDiscountAmount(getState().cart));
+    dispatch(getTotal(getState().cart));
 }

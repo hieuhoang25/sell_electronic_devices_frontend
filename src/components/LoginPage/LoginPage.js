@@ -17,7 +17,7 @@ import { INIT, login } from '../../redux/actions/AuthAction';
 import { useState } from 'react';
 import axios from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
-import { fetchCartFromSever } from '../../services/cartService';
+import { fetchCartFromSever,mergeAnnonCart } from '../../services/cartService';
 import { authenticateCart } from '../../redux/slices/CartSlice';
 
 const LoginPage = () => {
@@ -61,8 +61,8 @@ const LoginPage = () => {
             },
         });
         console.log('athenticated cart');
-        dispatch(authenticateCart(false));
-        dispatch(fetchCartFromSever(cart));
+        dispatch(mergeAnnonCart());
+      
 
         navigate('/');
     };

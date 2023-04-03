@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
+import {  resetToGuestCart} from '../../services/cartService';
 import { reset } from '../../redux/slices/CartSlice';
 
 const Search = () => {
@@ -22,9 +23,15 @@ const Search = () => {
         await axiosInstance
             .post(process.env.REACT_APP_URL + 'un/logout')
             .catch((error) => console.log(error));
-        dispatch(reset());
+            window.localStorage.removeItem('cart');
+            dispatch(reset());
+           dispatch(resetToGuestCart());
+           console.log('reload');
         window.location.reload('/');
+  
+        // navigate.push('/')
     };
+    console.log('-------');
     console.log('inside Search called "Cart": ', Cart);
     return (
         <>

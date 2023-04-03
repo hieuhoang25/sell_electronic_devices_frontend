@@ -13,3 +13,5 @@ export const CART_ITEM = `/item`;
 export const CHECKOUT = `${USER}/checkout`;
 export const NEW_GUEST_CART = `${API_UNAUTH_BASE}/cart`;
 export const GUEST_CART_DETAIL = `${API_UNAUTH_BASE}/cart/items`;
+export const MERGE_CART = `${CART}add`
+

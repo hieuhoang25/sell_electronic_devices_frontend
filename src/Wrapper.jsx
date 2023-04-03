@@ -5,7 +5,7 @@ import {useLayoutEffect} from 'react'
 const Wrapper = ({ children, Cart }) => {
     return (
         <>
-            <Header Cart={Cart} />
+            <Header  />
             {children}
             <Footer />
         </>

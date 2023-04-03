@@ -5,8 +5,8 @@ import { CURRENCY_SUFFIX } from '../../constants/index';
 import { NumericFormat } from 'react-number-format';
 import { getCurrencyFormatComp } from '../../common/Cart/Cart';
 import { getImage } from '../../common/img';
-const OrderList = ({ CartItem }) => {
-    console.log(CartItem);
+const OrderList = () => {
+    // console.log(CartItem);
 
     const Cart = useSelector((state) => {
         return state.cart;
