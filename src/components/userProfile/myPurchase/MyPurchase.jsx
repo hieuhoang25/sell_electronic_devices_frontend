@@ -6,9 +6,11 @@ import Cancelled from './Cancelled';
 import React, { useState, memo, useRef, useEffect, useCallback } from 'react';
 import axios from '../../../services/axios';
 import { BASE, ORDER_STATUS } from '../../../constants/index';
+import ToReceive from './ToReceive';
 const MyPurchase = () => {
     const [status, setStatus] = useState([]);
-    const [tabSelected, setTabSelected] = useState();
+    const [tabSelected, setTabSelected] = useState(0);
+    //fetch orderStatus
     useEffect(() => {
         axios({
             method: 'get',
@@ -23,6 +25,9 @@ const MyPurchase = () => {
                 console.log(error);
             });
     }, []);
+    const handleChangeTab = useCallback((value) => {
+        setTabSelected(value);
+    });
     let item;
     if (status.length != 0) {
         item = status.map(({ id, name }) => {
@@ -30,39 +35,35 @@ const MyPurchase = () => {
                 return {
                     key: id,
                     label: name,
-                    children: <AllPurchase />,
+                    children: <AllPurchase status={tabSelected} />,
                 };
             } else if (id === 1) {
                 return {
                     key: id,
                     label: name,
-                    children: <ToPay />,
+                    children: <ToPay status={tabSelected} />,
                 };
             } else if (id === 2) {
                 return {
                     key: id,
                     label: name,
-                    children: '',
+                    children: <ToReceive status={tabSelected} />,
                 };
             } else if (id === 3) {
                 return {
                     key: id,
                     label: name,
-                    children: <Completed da={1} />,
+                    children: <Completed status={tabSelected} />,
                 };
             } else {
                 return {
                     key: id,
-
                     label: name,
                     children: <Cancelled />,
                 };
             }
         });
     }
-    const handleChangeTab = useCallback((value) => {
-        setTabSelected(value);
-    });
     return (
         <>
             {status.length != 0 && (
