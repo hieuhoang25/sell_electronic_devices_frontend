@@ -8,6 +8,8 @@ import { persistStore, persistReducer } from 'redux-persist';
 const rootReducer = combineReducers({
     infoUserReducer,
 });
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 const initialState = {};
 const middlewares = [thunk];
 let devtools = (x) => x;
@@ -23,7 +25,8 @@ const Store1 = createStore(
     // RootReducer,
     persistedReducer,
     initialState,
-    compose(applyMiddleware(...middlewares), devtools),
+    // compose(applyMiddleware(...middlewares), devtools),
+    composeEnhancers(applyMiddleware(...middlewares), devtools),
 );
 
 // eslint-disable-next-line import/no-anonymous-default-export
