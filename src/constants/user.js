@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './index';
+import { API_BASE_URL, API_UNAUTH_BASE } from './index';
 export const BASE_USER = `${API_BASE_URL}/api/user`;
 const ORDER = '/order';
 const INFO = '/info';
@@ -11,3 +11,5 @@ export const CART = `${USER}/cart/`;
 
 export const CART_ITEM = `/item`;
 export const CHECKOUT = `${USER}/checkout`;
+export const NEW_GUEST_CART = `${API_UNAUTH_BASE}/cart`;
+export const GUEST_CART_DETAIL = `${API_UNAUTH_BASE}/cart/items`;

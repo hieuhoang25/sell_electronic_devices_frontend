@@ -13,6 +13,7 @@ export const GOOGLE_AUTH_URL =
 
 // BASE API
 export const BASE = `${API_BASE_URL}/api/un`;
+export const API_UNAUTH_BASE = `un`;
 
 // API FOR PRODUCT
 export const PRODUCT = '/product';
@@ -35,3 +36,5 @@ export const ORDER_STATUS = '/order-status';
 export const CART = '/cart';
 
 export const CURRENCY_SUFFIX = 'VNĐ';
+
+export const ENV_URL = process.env.REACT_APP_URL;
