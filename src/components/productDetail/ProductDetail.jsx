@@ -12,7 +12,14 @@ import axios from '../../services/axios';
 import ProductDetailQuantityCounter from '../counterInc/ProductDetailQuantityCounter';
 import CartNotification from '../../common/notification/CartNotification';
 import CartNotification_TYPE from '../../common/notification/CartNotification';
-import { QTY_MAX, QTY_MIN } from '../../common/Cart/Cart';
+import { addItemToCart,updateCart } from '../../services/cartService.js';
+import scrollIntoView from 'scroll-into-view-if-needed'
+import {
+    QTY_MAX,
+    QTY_MIN,
+    getCartDetailRequest,
+    CartRequestTYPE,
+} from '../../common/Cart/Cart';
 
 import {
     FETCH_PRODUCTS_PENDING,
@@ -34,9 +41,11 @@ import { getImage } from '../../common/img';
 import { NumericFormat } from 'react-number-format';
 import { USER, WISHLISTS } from '../../constants/user';
 import { useNavigate } from 'react-router-dom';
+
 const ProductDetail = ({ isAuth }) => {
     let navigate = useNavigate();
-    const { Cart } = useSelector((state) => state.cart);
+    const dispatch = useDispatch();
+    const Cart = useSelector((state) => state.cart);
     const { productId } = useParams();
     const [color, setColor] = useState([]);
     const [storage, setStorage] = useState([]);
@@ -46,6 +55,10 @@ const ProductDetail = ({ isAuth }) => {
     const [selectedColor, setSelectedColor] = useState();
     const [cartQty, setCartQty] = useState(1);
     const [cartButtonDisabled, setCartbuttonDisabled] = useState(false);
+    const myRef = useRef(null);
+    
+
+
     const [cartAddedNotif, setCartAddedNotif] = useState({
         title: 'Thêm vào giỏ hàng',
         message: '',
@@ -97,6 +110,7 @@ const ProductDetail = ({ isAuth }) => {
                 console.log('product-detail: ', res.data);
                 setProductDetail(res.data);
                 specificationTable.current = res.data.product_productAttributes;
+                setCartQty(1);
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -110,9 +124,15 @@ const ProductDetail = ({ isAuth }) => {
         await fetchStorage(productId, productBody.current.colorId);
         await fetchProductDetail();
     }
+
     useEffect(() => {
         getProductDetail();
+        executeScroll();
     }, []);
+
+    const executeScroll = () => {
+        scrollIntoView(myRef.current, { behavior: 'smooth'})
+     }
     //Mở form đánh giá
     const [isModalOpen, setIsModalOpen] = useState(false);
     const rate = () => {
@@ -124,21 +144,91 @@ const ProductDetail = ({ isAuth }) => {
     const handleCancel = () => {
         setIsModalOpen(false);
     };
+
+    useEffect(() => {
+        if(Cart.isAnonymous) {
+            console.log('updateCart()');
+            dispatch(updateCart());
+        }
+    },[Cart])
     //End
     const handleAddToCart = async (callback) => {
         const mess_message = productDetail.display_name;
+
         const mess_title = 'Thêm vào giỏ hàng';
         console.log('handlemessage', mess_message);
         console.log('title:', cartAddedNotif.title);
+        console.log('cart: ', Cart);
 
-        setCartAddedNotif((prev) => {
-            return {
-                ...prev,
-                message: mess_message,
-                title: mess_title,
-                isSuccess: true,
-            };
-        });
+        const item_id = productDetail.id;
+        console.log('item_id: ', item_id);
+        const { items } = Cart;
+        const request = {
+            cart_id: Cart.id,
+            id: item_id,
+            product_variant_id: item_id,
+            quantity: cartQty,
+        };
+        // console.log('items: ', items);
+        let cartIndex = items.findIndex((item) => item.productVariant.id === item_id);
+        // console.log('cartIndex', cartIndex);
+        // console.log('san pham trong gio? ', cartIndex);
+        // sản phẩm có trong giỏ
+        if (cartIndex >= 0) {
+            // console.log(' items[cartIndex]: ', items[cartIndex]);
+            const { quantity: c_qty } = items[cartIndex];
+            console.log('current quty; ', c_qty);
+            if (c_qty >= QTY_MAX) {
+                console.log('failed');
+                setCartAddedNotif((prev) => {
+                    return {
+                        ...prev,
+                        message: `Số lượng sản phẩm trong giỏ không quá ${QTY_MAX} sản phẩm`,
+                        title: 'Không thể thêm vào giỏ',
+                        isSuccess: false,
+                    };
+                });
+            } else {
+                const currentItem = items.find;
+                let fixedQty =
+                    c_qty + cartQty > QTY_MAX ? QTY_MAX - c_qty : cartQty;
+                // const request = {
+                //     cart_id: Cart.id,
+                //     id: item_id,
+                //     quantity: fixedQty,
+                // };
+
+                const requestItem = getCartDetailRequest(
+                    { ...request, quantity: fixedQty },
+                    CartRequestTYPE.ADD,
+                );
+                console.log(' requestItem', requestItem);
+                setCartAddedNotif((prev) => {
+                    return {
+                        ...prev,
+                        message: mess_message,
+                        title: mess_title,
+                        isSuccess: true,
+                    };
+                });
+                dispatch(addItemToCart(requestItem));
+            }
+        } else {
+            const requestItem = getCartDetailRequest(
+                request,
+                CartRequestTYPE.ADD,
+            );
+            console.log(' requestItem', requestItem);
+            dispatch(addItemToCart(requestItem));
+            setCartAddedNotif((prev) => {
+                return {
+                    ...prev,
+                    message: mess_message,
+                    title: mess_title,
+                    isSuccess: true,
+                };
+            });
+        }
 
         // console.log('Đã thêm vào giỏ');
         // console.log('Qty: ', cartQty);
@@ -256,8 +346,8 @@ const ProductDetail = ({ isAuth }) => {
     };
 
     return (
-        <div style={{ marginTop: '5rem', marginBottom: '5rem' }}>
-            <Row>
+        <div id="top-product-page" ref={myRef} style={{ marginTop: '5rem', marginBottom: '5rem', scrollMarginBotom: '8vh' }}>
+            <Row >
                 <Col span={15} offset={6}>
                     <div
                         style={{
@@ -429,7 +519,7 @@ const ProductDetail = ({ isAuth }) => {
                             <ProductDetailQuantityCounter
                                 cartQty={cartQty}
                                 cartQtyOnChangeHandler={cartQtyOnChangeHandler}
-                                setCartbuttonDisabled={setCartbuttonDisabled}
+                                // setCartbuttonDisabled={setCartbuttonDisabled}
                             ></ProductDetailQuantityCounter>
 
                             {/*Them vaoo gio*/}

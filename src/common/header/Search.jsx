@@ -6,7 +6,7 @@ import axiosInstance from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { reset } from '../../redux/slices/CartSlice';
 
-const Search = ({}) => {
+const Search = () => {
     // fixed Header
     window.addEventListener('scroll', function () {
         const search = document.querySelector('.search');

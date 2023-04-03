@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect} from 'react';
 import './style.css';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +19,7 @@ import {
     removeItemFromCart,
     incrementItemQuantity,
     decrementItemQuantity,
+    updateCart
 } from '../../services/cartService.js';
 import { CURRENCY_SUFFIX } from '../../constants/index';
 import { NumericFormat } from 'react-number-format';
@@ -100,23 +101,16 @@ const Cart = () => {
     // showPromiseConfirm('Sản phẩm sẽ bị xoá khỏi giỏ');
     const removeItemHandler = (id) => {};
 
-    // dispatch(addToCart());
-    // dispatch(increment());
-    // dispatch(decrement());
-    // dispatch(getBaseAmount());
-    // const totalPrice = CartItem.reduce(
-    //     (price, item) => price + item.qty * item.price,
-    //     0,
-    // );
     let history = useNavigate();
 
     const onCheckoutHandler = () => {
         history('/checkout');
     };
     const incrementQty = (item) => {
-        let newQty = item.quantity + 1;
+        let newQty = item.quantity + 1
+        console.log('item s id: ', item.id);;
         const request = getCartDetailRequest(
-            { cart_id: Cart.id, id: item.id, quantity: newQty },
+            { cart_id: Cart.id, id: item.id, quantity: newQty,  product_variant_id: item.productVariant.id },
             CartRequestTYPE.UPDATE,
         );
 
@@ -126,7 +120,8 @@ const Cart = () => {
     const decrementQty = (item) => {
         let newQty = item.quantity - 1;
         const request = getCartDetailRequest(
-            { cart_id: Cart.id, id: item.id, quantity: newQty },
+            { cart_id: Cart.id, id: item.id, quantity: newQty,
+                product_variant_id: item.productVariant.id },
             CartRequestTYPE.DECR,
         );
         console.log('decrement request:', request);
@@ -134,6 +129,10 @@ const Cart = () => {
     };
     useEffect(() => {
         console.log('dispatch change');
+        if(Cart.isAnonymous) {
+            console.log('updateCart()');
+            dispatch(updateCart());
+        }
     }, [Cart]);
 
     // prodcut qty total
@@ -350,7 +349,7 @@ export const CartRequestTYPE = {
 export const getCartDetailRequest = (action, CartRequestTYPEz) => {
     const init = {
         cart_id: action.cart_id,
-        product_variant_id: action.id,
+        product_variant_id: action.product_variant_id,
         quantity: action.quantity,
     };
     const { UPDATE, ADD, DELETE, DECR } = CartRequestTYPE;
