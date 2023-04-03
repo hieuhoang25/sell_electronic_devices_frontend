@@ -68,10 +68,11 @@ const Catg = ({
                         onSelectCategory={onSelectCategory}
                     />
                 </div>
-                <div>
+
+                {/* <div>
                     <h3>Giá</h3>
                     <PriceRange />
-                </div>
+                </div> */}
                 <div>
                     <h3>Hãng</h3>
                     <MyCheckBox.Group

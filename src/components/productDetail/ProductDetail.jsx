@@ -72,6 +72,7 @@ const ProductDetail = ({ isAuth }) => {
         storageId: null,
     });
     const specificationTable = useRef([]);
+    console.log(productId);
     function fetchColor(id) {
         console.log('fetchColor: ', id);
         return axios({
@@ -565,12 +566,6 @@ const ProductDetail = ({ isAuth }) => {
                         loading={isLoading}
                     />
                 </Col>
-                <RatingForm
-                    isModalOpen={isModalOpen}
-                    handleCancel={handleCancel}
-                    handleFinish={handleFinish}
-                    isLoading={false}
-                />
             </Row>
         </div>
     );

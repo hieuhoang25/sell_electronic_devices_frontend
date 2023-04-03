@@ -5,7 +5,7 @@ import RatingForm from '../../../common/rating/RatingForm';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from '../../../services/axios';
 import './Purchase.css';
-import { BASE_USER, ORDER_TRACKING } from '../../../constants/user';
+import { BASE_USER, ORDER_TRACKING, ORDER } from '../../../constants/user';
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
 const AllPurchase = ({ status }) => {
@@ -62,7 +62,47 @@ const AllPurchase = ({ status }) => {
     };
     useEffect(() => {
         loadMoreData();
+        return;
     }, []);
+    const reloadOrder = () => {
+        page.current = 0;
+        if (loading) {
+            return;
+        }
+        setLoading(true);
+        axios({
+            method: 'get',
+            url: `${BASE_USER}${ORDER_TRACKING}/${status}`,
+            params: {
+                size: size.current,
+                page: page.current,
+            },
+        })
+            .then((res) => {
+                let dt = res.data;
+                pagination.current = dt;
+                console.log(dt.data);
+                console.log(dt);
+                setData([...dt.data]);
+
+                setLoading(false);
+            })
+            .catch(() => {
+                setLoading(false);
+            });
+    };
+    function updateOrderStatus(orderId) {
+        return axios({
+            method: 'put',
+            url: `${BASE_USER}${ORDER}/${orderId}`,
+        }).catch((error) => {
+            console.log(error.data);
+        });
+    }
+    const handleReceived = useCallback((orderId) => {
+        updateOrderStatus(orderId);
+        reloadOrder();
+    });
     return (
         <>
             {data.length != 0 && (
@@ -304,28 +344,75 @@ const AllPurchase = ({ status }) => {
                                         }}
                                     >
                                         <Space>
-                                            <Button
-                                                style={{
-                                                    minWidth: '150px',
-                                                    minHeight: '40px',
-                                                    backgroundColor: '#ee4d2d',
-                                                    color: 'white',
-                                                }}
-                                                onClick={() => {
-                                                    rate(item.orderDetails);
-                                                }}
-                                            >
-                                                Đánh giá
-                                            </Button>
-
-                                            <Button
-                                                style={{
-                                                    minWidth: '150px',
-                                                    minHeight: '40px',
-                                                }}
-                                            >
-                                                Mua lại
-                                            </Button>
+                                            {item.status_name ==
+                                                'Chờ xác nhận' && (
+                                                <Button
+                                                    disabled
+                                                    style={{
+                                                        minWidth: '150px',
+                                                        minHeight: '40px',
+                                                        backgroundColor: 'grey',
+                                                        color: 'white',
+                                                    }}
+                                                >
+                                                    Đang xử lý
+                                                </Button>
+                                            )}
+                                            {item.status_name ==
+                                                'Hoàn thành' && (
+                                                    <Button
+                                                        style={{
+                                                            minWidth: '150px',
+                                                            minHeight: '40px',
+                                                            backgroundColor:
+                                                                '#ee4d2d',
+                                                            color: 'white',
+                                                        }}
+                                                        onClick={() => {
+                                                            rate(
+                                                                item.orderDetails,
+                                                            );
+                                                        }}
+                                                    >
+                                                        Đánh giá
+                                                    </Button>
+                                                ) && (
+                                                    <Button
+                                                        style={{
+                                                            minWidth: '150px',
+                                                            minHeight: '40px',
+                                                        }}
+                                                    >
+                                                        Mua lại
+                                                    </Button>
+                                                )}
+                                            {item.status_name ==
+                                                'Đang giao' && (
+                                                <Button
+                                                    style={{
+                                                        minWidth: '150px',
+                                                        minHeight: '40px',
+                                                        backgroundColor:
+                                                            '#ee4d2d',
+                                                        color: 'white',
+                                                    }}
+                                                    onClick={() => {
+                                                        handleReceived(item.id);
+                                                    }}
+                                                >
+                                                    Đã nhận hàng
+                                                </Button>
+                                            )}
+                                            {item.status_name == 'Đã hủy' && (
+                                                <Button
+                                                    style={{
+                                                        minWidth: '150px',
+                                                        minHeight: '40px',
+                                                    }}
+                                                >
+                                                    Mua lại
+                                                </Button>
+                                            )}
                                         </Space>
                                     </div>
                                 </div>

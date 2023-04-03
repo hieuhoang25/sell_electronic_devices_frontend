@@ -20,7 +20,7 @@ import TokenService from './services/tokenService';
 import { INIT } from './redux/actions/AuthAction';
 import { INIT_CART } from './redux/actions/CartAction';
 import { authenticateCart } from './redux/slices/CartSlice';
-import { fetchCartFromSever,resetToGuestCart } from './services/cartService';
+import { fetchCartFromSever, resetToGuestCart } from './services/cartService';
 function App() {
     const { productItems } = Data;
     const { shopItems } = Sdata;
@@ -91,7 +91,7 @@ function App() {
 
     useEffect(async () => {
         console.log('App useEffect loading..');
-        
+
         // try {
         await axios
             .get(process.env.REACT_APP_URL + 'un/refresh-token')
@@ -107,34 +107,33 @@ function App() {
                     },
                 });
                 console.log('auth; ', auth);
-                if(!auth.isAuthenticated) {
+                if (!auth.isAuthenticated) {
                     console.log('load cart from server');
-                    dispatch(authenticateCart(true))
+                    dispatch(authenticateCart(true));
                     console.log('cart state in App.js', cart);
                     dispatch(fetchCartFromSever());
                 }
-                
             })
             .catch((e) => {
                 console.log('auth: ', auth);
-                if(!auth.isAuthenticated) {
+                if (!auth.isAuthenticated) {
                     console.log('set to false,reset');
                     // dispatch(resetToGuestCart());
-                    dispatch(authenticateCart(true))
+                    dispatch(authenticateCart(true));
 
                     // dispatch(res)
                 }
-                console.log('cart before fecthc error: ',cart);
+                console.log('cart before fecthc error: ', cart);
                 console.log('fetch cart with error');
                 dispatch(fetchCartFromSever());
                 return;
             });
-            console.log('ending...effect');
+        console.log('ending...effect');
     }, []);
 
     return (
         <>
-            <Wrapper >
+            <Wrapper>
                 <Routes>
                     <Route
                         path="/"
@@ -151,7 +150,12 @@ function App() {
                         path="/product/:categoryId"
                         element={<Product isAuth={auth.isAuthenticated} />}
                     ></Route>
+
                     <Route path="/cart" element={<Cart />}></Route>
+                    <Route
+                        path="/product"
+                        element={<Product isAuth={auth.isAuthenticated} />}
+                    ></Route>
                     <Route path="/login" element={<LoginPage />}></Route>
                     <Route
                         path="/profile"

@@ -15,11 +15,11 @@ axiosInstance.interceptors.response.use(
         if (originalConfig.url !== '/un/login' && err.response) {
             // Access Token was expired
             console.log(!originalConfig._retry);
-            if (err.response.status === 403 && !originalConfig._retry) {
+            if (err.response.status === 401 && !originalConfig._retry) {
                 originalConfig._retry = true;
                 try {
                     const rs = await axiosInstance
-                        .post(process.env.REACT_APP_URL + 'un/refresh-token')
+                        .get(process.env.REACT_APP_URL + 'un/refresh-token')
                         .catch((error) => {
                             // window.location.reload(''); //handle when refreshtoken expired
                         });
@@ -28,7 +28,6 @@ axiosInstance.interceptors.response.use(
                         // window.location.reload('');
                     }
                     TokenService.setCookieAccessToken(rs.data.access_token);
-
                     return axiosInstance(originalConfig);
                 } catch (_error) {
                     return Promise.reject(_error);

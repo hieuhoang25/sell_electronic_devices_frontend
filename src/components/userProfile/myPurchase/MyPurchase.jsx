@@ -35,31 +35,39 @@ const MyPurchase = () => {
                 return {
                     key: id,
                     label: name,
-                    children: <AllPurchase status={tabSelected} />,
+                    children: tabSelected == id && (
+                        <AllPurchase status={tabSelected} />
+                    ),
                 };
             } else if (id === 1) {
                 return {
                     key: id,
                     label: name,
-                    children: <ToPay status={tabSelected} />,
+                    children: tabSelected == id && (
+                        <ToPay status={tabSelected} />
+                    ),
                 };
             } else if (id === 2) {
                 return {
                     key: id,
                     label: name,
-                    children: <ToReceive status={tabSelected} />,
+                    children: tabSelected == id && (
+                        <ToReceive status={tabSelected} />
+                    ),
                 };
             } else if (id === 3) {
                 return {
                     key: id,
                     label: name,
-                    children: <Completed status={tabSelected} />,
+                    children: tabSelected == id && (
+                        <Completed status={tabSelected} />
+                    ),
                 };
             } else {
                 return {
                     key: id,
                     label: name,
-                    children: <Cancelled />,
+                    children: status === id && <Cancelled />,
                 };
             }
         });
