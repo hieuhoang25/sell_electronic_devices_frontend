@@ -7,6 +7,7 @@ import React, {
     useCallback,
     useRef,
 } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from '../../services/axios';
 import {
     FETCH_PRODUCTS_PENDING,
@@ -60,18 +61,44 @@ const reducer = (state, action) => {
 };
 function Product({ isAuth }) {
     const size = 10;
+    const { categoryId } = useParams();
     const [category, setCategory] = useState([]);
     const [productsFilter, dispatch] = useReducer(reducer, initialState);
     const search = useRef([]);
     const [brand, setBrand] = useState([]);
     const [storage, setStorage] = useState([]);
-
-    function fetchProductsByFilter(page = 0, search = []) {
+    const currentPage = useRef(0);
+    const sortValue = useRef('All');
+    const [selectKeys, setSelectKeys] = useState();
+    useEffect(() => {
+        if (typeof categoryId !== 'undefined') {
+            setSelectKeys([parseInt(categoryId)]);
+            const search = [
+                {
+                    key: 'category',
+                    value: categoryId,
+                    operation: 'EQUAL',
+                },
+            ];
+            fetchProductsByFilter(0, search);
+        } else fetchProductsByFilter();
+    }, []);
+    function fetchProductsByFilter(
+        page = 0,
+        search = [],
+        sortField = null,
+        sortType = null,
+    ) {
         axios({
             method: 'post',
             url: `${BASE}${PRODUCT}${FILTER}`,
             data: search,
-            params: { size: size, page: page },
+            params: {
+                size: size,
+                page: page,
+                sortField: sortField,
+                sortType: sortType,
+            },
         })
             .then((res) => {
                 dispatch(fetchProductsSuccess(res.data));
@@ -93,11 +120,6 @@ function Product({ isAuth }) {
     //fetch category
     useEffect(() => {
         fetchCategory();
-    }, []);
-
-    //fetch all products
-    useEffect(() => {
-        fetchProductsByFilter();
     }, []);
 
     //fetch brand
@@ -127,11 +149,13 @@ function Product({ isAuth }) {
     }, []);
 
     //pagination
-    const onChangePagination = useCallback((currentPage) => {
-        fetchProductsByFilter(currentPage - 1, search.current);
+    const onChangePagination = useCallback((page) => {
+        currentPage.current = page - 1;
+        fetchProductsByFilter(page - 1, search.current);
     });
     //choose category
     const onSelectCategory = useCallback((selectedKeys, info) => {
+        setSelectKeys(selectedKeys);
         if (selectedKeys.length != 0) {
             //if search field is not exists, add a new one to array
             if (
@@ -172,12 +196,39 @@ function Product({ isAuth }) {
                 operation: 'IN',
             });
         }
-
-        console.log(search.current);
     });
 
     //choose storage
-    const onChangeStorage = useCallback((checkedValues) => {});
+    const onChangeStorage = useCallback((checkedValues) => {
+        if (search.current.some((item) => item.key === 'storage')) {
+            search.current = search.current.filter(
+                (element) => element.key !== 'storage',
+            );
+        }
+        if (checkedValues.length != 0) {
+            search.current.push({
+                key: 'storage',
+                value: checkedValues.toString(),
+                operation: 'IN',
+            });
+        }
+    });
+
+    //sorting
+    const handleSortingChange = (value) => {
+        sortValue.current = value;
+        if (value == 'All') {
+            fetchProductsByFilter(currentPage.current, search.current);
+        } else {
+            const sort = value.split(' ');
+            fetchProductsByFilter(
+                currentPage.current,
+                search.current,
+                sort[0],
+                sort[1],
+            );
+        }
+    };
 
     //search result
     const onClickResult = useCallback(() => {
@@ -198,6 +249,9 @@ function Product({ isAuth }) {
                     onChangeStorage={onChangeStorage}
                     onClickResult={onClickResult}
                     isAuth={isAuth}
+                    handleSortingChange={handleSortingChange}
+                    sortValue={sortValue.current}
+                    selectedKeys={selectKeys}
                 />
             )}
         </>
