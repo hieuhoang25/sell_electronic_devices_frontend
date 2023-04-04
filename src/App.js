@@ -1,29 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import './App.css';
 import jwtDecode from 'jwt-decode';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Pages from './pages/Pages';
 import Data from './components/Data';
 import Cart from './common/Cart/Cart';
 import Sdata from './components/shops/Sdata';
 import ProductDetail from './components/productDetail/ProductDetail';
-import Profile from './components/userProfile/Profile';
+// import Profile from './components/userProfile/Profile';
 import Wrapper from './Wrapper';
-import LoginPage from './components/LoginPage/LoginPage';
+// import LoginPage from './components/LoginPage/LoginPage';
 import SignUp from './components/SignUpPage/SignUp';
 import Checkout from './components/checkout/Checkout';
 import Product from './components/product/Product';
 import { useDispatch, useSelector } from 'react-redux';
 import Protected from './App/Protected';
 import axios from './services/axios';
-import TokenService from './services/tokenService';
 import { INIT } from './redux/actions/AuthAction';
-import { INIT_CART } from './redux/actions/CartAction';
 import { authenticateCart } from './redux/slices/CartSlice';
-import { fetchCartFromSever,resetToGuestCart } from './services/cartService';
+import { fetchCartFromSever, resetToGuestCart } from './services/cartService';
+import Loadable from './components/Suspense/Loadable';
+const LoginPage = Loadable(
+    lazy(() => import('./components/LoginPage/LoginPage')),
+);
+const Profile = Loadable(
+    lazy(() => import('./components/userProfile/Profile')),
+);
 function App() {
+    const localStorage = JSON.parse(
+        window.localStorage.getItem('persist:root'),
+    );
+    const auth = JSON.parse(localStorage.auth);
     const { productItems } = Data;
     const { shopItems } = Sdata;
+    const dispatch = useDispatch();
+    // const auth = useSelector((state) => state.auth);
+    const cart = useSelector((state) => state.cart);
 
     //Step 2 :
     const [CartItem, setCartItem] = useState([]);
@@ -85,13 +97,10 @@ function App() {
         const decodedToken = jwtDecode(accessToken);
         return decodedToken.roles[0];
     };
-    const dispatch = useDispatch();
-    const auth = useSelector((state) => state.auth);
-    const cart = useSelector((state) => state.cart);
 
     useEffect(async () => {
         console.log('App useEffect loading..');
-        
+
         // try {
         await axios
             .get(process.env.REACT_APP_URL + 'un/refresh-token')
@@ -107,34 +116,33 @@ function App() {
                     },
                 });
                 console.log('auth; ', auth);
-                if(!auth.isAuthenticated) {
+                if (!auth.isAuthenticated) {
                     console.log('load cart from server');
-                    dispatch(authenticateCart(true))
+                    dispatch(authenticateCart(true));
                     console.log('cart state in App.js', cart);
                     dispatch(fetchCartFromSever());
                 }
-                
             })
             .catch((e) => {
                 console.log('auth: ', auth);
-                if(!auth.isAuthenticated) {
+                if (!auth.isAuthenticated) {
                     console.log('set to false,reset');
                     // dispatch(resetToGuestCart());
-                    dispatch(authenticateCart(true))
+                    dispatch(authenticateCart(true));
 
                     // dispatch(res)
                 }
-                console.log('cart before fecthc error: ',cart);
+                console.log('cart before fecthc error: ', cart);
                 console.log('fetch cart with error');
                 dispatch(fetchCartFromSever());
                 return;
             });
-            console.log('ending...effect');
+        console.log('ending...effect');
     }, []);
-
+    useEffect(() => {}, [auth.isAuthenticated]);
     return (
         <>
-            <Wrapper >
+            <Wrapper>
                 <Routes>
                     <Route
                         path="/"
@@ -152,7 +160,16 @@ function App() {
                         element={<Product isAuth={auth.isAuthenticated} />}
                     ></Route>
                     <Route path="/cart" element={<Cart />}></Route>
-                    <Route path="/login" element={<LoginPage />}></Route>
+                    <Route
+                        path="/login"
+                        element={
+                            auth.isAuthenticated ? (
+                                <Navigate to="/" />
+                            ) : (
+                                <LoginPage />
+                            )
+                        }
+                    ></Route>
                     <Route
                         path="/profile"
                         element={
