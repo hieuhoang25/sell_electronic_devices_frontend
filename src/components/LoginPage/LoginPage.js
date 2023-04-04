@@ -13,12 +13,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useDispatch, useSelector } from 'react-redux';
-import { INIT, login } from '../../redux/actions/AuthAction';
+import { INIT, LOGIN } from '../../redux/actions/AuthAction';
 import { useState } from 'react';
 import axios from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
-import { fetchCartFromSever,mergeAnnonCart } from '../../services/cartService';
-import { authenticateCart } from '../../redux/slices/CartSlice';
+import { mergeAnnonCart } from '../../services/cartService';
 
 const LoginPage = () => {
     const theme = createTheme();
@@ -40,7 +39,6 @@ const LoginPage = () => {
         const response_login = await axios
             .post(process.env.REACT_APP_URL + 'un/login', formLogin)
             .catch((error) => console.log(error));
-        console.log(response_login.data);
         const { error, access_token } = response_login.data;
 
         if (response_login.data && error) {
@@ -53,16 +51,16 @@ const LoginPage = () => {
         );
         const fullName = response.data.full_name;
         dispatch({
-            type: INIT,
+            type: LOGIN,
             payload: {
                 isAuthenticated: true,
                 fullName,
                 role: role,
+                accessToken: access_token,
             },
         });
         console.log('athenticated cart');
         dispatch(mergeAnnonCart());
-      
 
         navigate('/');
     };
