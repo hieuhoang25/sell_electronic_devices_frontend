@@ -1,48 +1,167 @@
-import { React, memo, useState, useEffect, useRef, useCallback } from 'react';
+import {
+    React,
+    memo,
+    useState,
+    useEffect,
+    useRef,
+    useCallback,
+    useMemo,
+} from 'react';
 import { Card, Space, Button, Divider, List, Skeleton } from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 import RatingForm from '../../../common/rating/RatingForm';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from '../../../services/axios';
 import './Purchase.css';
-import { BASE_USER, ORDER_TRACKING } from '../../../constants/user';
+import {
+    BASE_USER,
+    ORDER_TRACKING,
+    RATING,
+    IS_RATING,
+} from '../../../constants/user';
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
 const AllPurchase = ({ status }) => {
     //Mở form đánh giá
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [productRating, setProductRating] = useState([]);
-
-    const handleFinish = () => {
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-    //fill form rating
-    const rate = (product) => {
-        setProductRating(product);
-        setIsModalOpen(true);
-    };
-    //đánh giá
-    const [valueRating, setValueRating] = useState([]);
-    const handleChangeRating = useCallback((value, index) => {
-        console.log(valueRating);
-        valueRating[index] = value;
-        setValueRating([...valueRating]);
-    });
-    //End
+    const [formValueRating, setformValueRating] = useState([
+        // {
+        //     value: [
+        //         // {
+        //         //     point: 0,
+        //         //     product_id: null,
+        //         //     orderDetail_id: null,
+        //         //     content: '',
+        //         // },
+        //     ],
+        //     orderId: null,
+        // },
+    ]);
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const pagination = useRef();
     const page = useRef(0);
-    const size = useRef(2);
-    const loadMoreData = () => {
+    const size = useRef(1);
+    let orderIndex = useRef(-1);
+    function fetchRatingProductOfUser(orderId) {
+        return axios({
+            method: 'get',
+            url: `${BASE_USER}${IS_RATING}`,
+            params: {
+                orderId: orderId,
+            },
+        });
+    }
+    //rating star value
+    const handleChangeRating = useCallback(
+        (value, index, productId, orderDetailId) => {
+            let newArr = [...formValueRating];
+            newArr[orderIndex.current].value[index] = {
+                ...newArr[orderIndex.current].value[index],
+                point: value,
+                product_id: productId,
+                orderDetail_id: orderDetailId,
+                content: '',
+            };
+            setformValueRating(newArr);
+        },
+    );
+    //handle content
+    const handleChangeContentRating = useCallback((e, index) => {
+        console.log(formValueRating);
+        let newArr = [...formValueRating];
+        newArr[orderIndex.current].value[index] = {
+            ...newArr[orderIndex.current].value[index],
+            content: e.target.value,
+        };
+        setformValueRating(newArr);
+    });
+    function rateProduct(formValueRating) {
+        setLoading(true);
+        return axios({
+            method: 'post',
+            url: `${BASE_USER}${RATING}`,
+            data: formValueRating,
+        });
+    }
+    const [isRated, setIsRated] = useState([]);
+
+    const handleFinishRating = useCallback(async () => {
+        let ratingForm = formValueRating[orderIndex.current].value.filter(
+            (f) => f.point > 0,
+        );
+
+        await rateProduct(ratingForm)
+            .then((res) => {
+                setLoading(false);
+            })
+            .catch((error) => {
+                setLoading(false);
+                console.log(error);
+            });
+        const promises = formValueRating.map((value) => {
+            return fetchRatingProductOfUser(value.orderId);
+        });
+        Promise.all(promises)
+            .then((responses) => {
+                const rated = responses.map((res) => {
+                    return res.data.length === 0;
+                });
+                console.log(rated);
+                setIsRated(rated);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+        setIsModalOpen(false);
+    });
+
+    const handleCancel = useCallback(() => {
+        setIsModalOpen(false);
+    }, [setIsModalOpen]);
+
+    const handleRate = useCallback(async (orderId, index) => {
+        orderIndex.current = index;
+        try {
+            const res = await fetchRatingProductOfUser(orderId);
+            setProductRating(res.data);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error(error);
+        }
+    });
+
+    function RatingButton({ index, onClick, checkDisplay }) {
+        return (
+            <>
+                {!isRated[index] && (
+                    <Button
+                        style={{
+                            minWidth: '150px',
+                            minHeight: '40px',
+                            backgroundColor: '#ee4d2d',
+                            color: 'white',
+                        }}
+                        onClick={onClick}
+                    >
+                        Đánh giá
+                    </Button>
+                )}
+            </>
+        );
+    }
+
+    //End
+
+    const loadMoreData = async () => {
+        let ordered;
         if (loading) {
             return;
         }
         setLoading(true);
-        axios({
+        await axios({
             method: 'get',
             url: `${BASE_USER}${ORDER_TRACKING}/${status}`,
             params: {
@@ -52,13 +171,33 @@ const AllPurchase = ({ status }) => {
         })
             .then((res) => {
                 let dt = res.data;
+                ordered = dt.data;
                 pagination.current = dt;
                 page.current += 1;
-                setData([...data, ...dt.data]);
+                setData([...data, ...ordered]);
                 setLoading(false);
             })
             .catch(() => {
                 setLoading(false);
+            });
+        const newArr = [...formValueRating];
+        ordered.forEach((value) => {
+            newArr.push({ value: [], orderId: value.id });
+        });
+        setformValueRating(newArr);
+        const promises = newArr.map((value) => {
+            return fetchRatingProductOfUser(value.orderId);
+        });
+        Promise.all(promises)
+            .then((responses) => {
+                const rated = responses.map((res) => {
+                    return res.data.length === 0;
+                });
+                console.log(rated);
+                setIsRated(rated);
+            })
+            .catch((error) => {
+                console.error(error);
             });
     };
     useEffect(() => {
@@ -75,7 +214,7 @@ const AllPurchase = ({ status }) => {
                 >
                     <List
                         dataSource={data}
-                        renderItem={(item) => (
+                        renderItem={(item, index) => (
                             <Card
                                 key={item.id}
                                 style={{ marginBottom: '20px' }}
@@ -305,20 +444,13 @@ const AllPurchase = ({ status }) => {
                                         }}
                                     >
                                         <Space>
-                                            <Button
-                                                style={{
-                                                    minWidth: '150px',
-                                                    minHeight: '40px',
-                                                    backgroundColor: '#ee4d2d',
-                                                    color: 'white',
-                                                }}
+                                            <RatingButton
+                                                index={index}
+                                                checkDisplay={item.id}
                                                 onClick={() => {
-                                                    rate(item.orderDetails);
+                                                    handleRate(item.id, index);
                                                 }}
-                                            >
-                                                Đánh giá
-                                            </Button>
-
+                                            />
                                             <Button
                                                 style={{
                                                     minWidth: '150px',
@@ -330,17 +462,21 @@ const AllPurchase = ({ status }) => {
                                         </Space>
                                     </div>
                                 </div>
-                                <RatingForm
-                                    isModalOpen={isModalOpen}
-                                    handleCancel={handleCancel}
-                                    handleFinish={handleFinish}
-                                    isLoading={false}
-                                    data={productRating}
-                                    valueRating={valueRating}
-                                    handleChangeRating={handleChangeRating}
-                                />
                             </Card>
                         )}
+                    />
+                    <RatingForm
+                        isModalOpen={isModalOpen}
+                        handleCancel={handleCancel}
+                        handleFinish={handleFinishRating}
+                        isLoading={loading}
+                        data={productRating}
+                        valueRating={
+                            orderIndex.current >= 0 &&
+                            formValueRating[orderIndex.current].value
+                        }
+                        handleChangeRating={handleChangeRating}
+                        handleChangeContentRating={handleChangeContentRating}
                     />
                 </InfiniteScroll>
             )}

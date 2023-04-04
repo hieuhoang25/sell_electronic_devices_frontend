@@ -9,27 +9,6 @@ import { BASE_USER, ORDER_TRACKING } from '../../../constants/user';
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
 const ToPay = ({ status }) => {
-    //Mở form đánh giá
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [productRating, setProductRating] = useState([]);
-
-    const handleFinish = () => {
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-    //fill form rating
-    const rate = (product) => {
-        setProductRating(product);
-        setIsModalOpen(true);
-    };
-    //đánh giá
-    const [valueRating, setValueRating] = useState([]);
-    const handleChangeRating = useCallback((value, index) => {
-        valueRating[index] = value;
-        setValueRating([...valueRating]);
-    });
     //End
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
@@ -318,15 +297,6 @@ const ToPay = ({ status }) => {
                                         </Space>
                                     </div>
                                 </div>
-                                <RatingForm
-                                    isModalOpen={isModalOpen}
-                                    handleCancel={handleCancel}
-                                    handleFinish={handleFinish}
-                                    isLoading={false}
-                                    data={productRating}
-                                    valueRating={valueRating}
-                                    handleChangeRating={handleChangeRating}
-                                />
                             </Card>
                         )}
                     />

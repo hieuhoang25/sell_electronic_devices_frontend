@@ -1,41 +1,19 @@
 import { React, memo, useState, useEffect, useRef, useCallback } from 'react';
 import { Card, Space, Button, Divider, List, Skeleton } from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
-import RatingForm from '../../../common/rating/RatingForm';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from '../../../services/axios';
 import './Purchase.css';
-import { BASE_USER, ORDER_TRACKING } from '../../../constants/user';
+import { BASE_USER, ORDER_TRACKING, ORDER } from '../../../constants/user';
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
 const ToReceive = ({ status }) => {
-    //Mở form đánh giá
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [productRating, setProductRating] = useState([]);
-
-    const handleFinish = () => {
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-    //fill form rating
-    const rate = (product) => {
-        setProductRating(product);
-        setIsModalOpen(true);
-    };
-    //đánh giá
-    const [valueRating, setValueRating] = useState([]);
-    const handleChangeRating = useCallback((value, index) => {
-        valueRating[index] = value;
-        setValueRating([...valueRating]);
-    });
     //End
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const pagination = useRef();
     const page = useRef(0);
-    const size = useRef(2);
+    const size = useRef(1);
     const loadMoreData = () => {
         if (loading) {
             return;
@@ -60,9 +38,49 @@ const ToReceive = ({ status }) => {
                 setLoading(false);
             });
     };
+    const reloadOrder = () => {
+        page.current = 0;
+        if (loading) {
+            return;
+        }
+        setLoading(true);
+        axios({
+            method: 'get',
+            url: `${BASE_USER}${ORDER_TRACKING}/${status}`,
+            params: {
+                size: size.current,
+                page: page.current,
+            },
+        })
+            .then((res) => {
+                let dt = res.data;
+                pagination.current = dt;
+                console.log(dt.data);
+                console.log(dt);
+                setData([...dt.data]);
+
+                setLoading(false);
+            })
+            .catch(() => {
+                setLoading(false);
+            });
+    };
     useEffect(() => {
         loadMoreData();
+        return;
     }, []);
+    function updateOrderStatus(orderId) {
+        return axios({
+            method: 'put',
+            url: `${BASE_USER}${ORDER}/${orderId}`,
+        }).catch((error) => {
+            console.log(error.data);
+        });
+    }
+    const handleReceived = useCallback((orderId) => {
+        updateOrderStatus(orderId);
+        reloadOrder();
+    });
     return (
         <>
             {data.length != 0 && (
@@ -72,6 +90,7 @@ const ToReceive = ({ status }) => {
                     hasMore={data.length < pagination.current.totalElement}
                     scrollableTarget="scrollableDiv"
                 >
+                    {console.log(data)}
                     <List
                         dataSource={data}
                         renderItem={(item) => (
@@ -305,28 +324,21 @@ const ToReceive = ({ status }) => {
                                     >
                                         <Space>
                                             <Button
-                                                disabled
                                                 style={{
                                                     minWidth: '150px',
                                                     minHeight: '40px',
-                                                    backgroundColor: 'grey',
+                                                    backgroundColor: '#ee4d2d',
                                                     color: 'white',
                                                 }}
+                                                onClick={() => {
+                                                    handleReceived(item.id);
+                                                }}
                                             >
-                                                Đang giao
+                                                Đã nhận hàng
                                             </Button>
                                         </Space>
                                     </div>
                                 </div>
-                                <RatingForm
-                                    isModalOpen={isModalOpen}
-                                    handleCancel={handleCancel}
-                                    handleFinish={handleFinish}
-                                    isLoading={false}
-                                    data={productRating}
-                                    valueRating={valueRating}
-                                    handleChangeRating={handleChangeRating}
-                                />
                             </Card>
                         )}
                     />
