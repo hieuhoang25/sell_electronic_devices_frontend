@@ -18,19 +18,10 @@ import Protected from './App/Protected';
 import axios from './services/axios';
 import TokenService from './services/tokenService';
 import { INIT } from './redux/actions/AuthAction';
+import { INIT_CART } from './redux/actions/CartAction';
+import { authenticateCart } from './redux/slices/CartSlice';
+import { fetchCartFromSever,resetToGuestCart } from './services/cartService';
 function App() {
-    /*
-  step1 :  const { productItems } = Data 
-  lai pass garne using props
-  
-  Step 2 : item lai cart ma halne using useState
-  ==> CartItem lai pass garre using props from  <Cart CartItem={CartItem} /> ani import garrxa in cartItem ma
- 
-  Step 3 :  chai flashCard ma xa button ma
-
-  Step 4 :  addToCart lai chai pass garne using props in pages and cart components
-  */
-    //Step 1 :
     const { productItems } = Data;
     const { shopItems } = Sdata;
 
@@ -96,24 +87,54 @@ function App() {
     };
     const dispatch = useDispatch();
     const auth = useSelector((state) => state.auth);
+    const cart = useSelector((state) => state.cart);
+
     useEffect(async () => {
-        const rs = await axios.get(
-            process.env.REACT_APP_URL + 'un/refresh-token',
-        );
-        const access_token = rs.data.access_token;
-        dispatch({
-            type: INIT,
-            payload: {
-                isAuthenticated: true,
-                accessToken: access_token,
-                role: roleOfUser(access_token),
-            },
-        });
+        console.log('App useEffect loading..');
+        
+        // try {
+        await axios
+            .get(process.env.REACT_APP_URL + 'un/refresh-token')
+            .then((rs) => {
+                console.log('get accesstoken...');
+                const access_token = rs.data.access_token;
+                dispatch({
+                    type: INIT,
+                    payload: {
+                        isAuthenticated: true,
+                        accessToken: access_token,
+                        role: roleOfUser(access_token),
+                    },
+                });
+                console.log('auth; ', auth);
+                if(!auth.isAuthenticated) {
+                    console.log('load cart from server');
+                    dispatch(authenticateCart(true))
+                    console.log('cart state in App.js', cart);
+                    dispatch(fetchCartFromSever());
+                }
+                
+            })
+            .catch((e) => {
+                console.log('auth: ', auth);
+                if(!auth.isAuthenticated) {
+                    console.log('set to false,reset');
+                    // dispatch(resetToGuestCart());
+                    dispatch(authenticateCart(true))
+
+                    // dispatch(res)
+                }
+                console.log('cart before fecthc error: ',cart);
+                console.log('fetch cart with error');
+                dispatch(fetchCartFromSever());
+                return;
+            });
+            console.log('ending...effect');
     }, []);
 
     return (
         <>
-            <Wrapper cartItem={0}>
+            <Wrapper >
                 <Routes>
                     <Route
                         path="/"
@@ -130,16 +151,7 @@ function App() {
                         path="/product/:categoryId"
                         element={<Product isAuth={auth.isAuthenticated} />}
                     ></Route>
-                    <Route
-                        path="/cart"
-                        element={
-                            <Cart
-                                CartItem={CartItem}
-                                addToCart={addToCart}
-                                decreaseQty={decreaseQty}
-                            />
-                        }
-                    ></Route>
+                    <Route path="/cart" element={<Cart />}></Route>
                     <Route path="/login" element={<LoginPage />}></Route>
                     <Route
                         path="/profile"
@@ -157,7 +169,11 @@ function App() {
                     ></Route>
                     <Route
                         path="/checkout"
-                        element={<Checkout CartItem={CartItem} />}
+                        element={
+                            <Protected isSignedIn={auth.isAuthenticated}>
+                                <Checkout CartItem={CartItem} />
+                            </Protected>
+                        }
                     ></Route>
                 </Routes>
             </Wrapper>

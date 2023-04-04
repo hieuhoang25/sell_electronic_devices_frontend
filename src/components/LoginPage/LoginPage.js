@@ -17,12 +17,16 @@ import { INIT, login } from '../../redux/actions/AuthAction';
 import { useState } from 'react';
 import axios from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
+import { fetchCartFromSever,mergeAnnonCart } from '../../services/cartService';
+import { authenticateCart } from '../../redux/slices/CartSlice';
 
 const LoginPage = () => {
     const theme = createTheme();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const auth = useSelector((state) => state.auth);
+    const cart = useSelector((state) => state.cart);
+
     const [formLogin, setFormLogin] = useState({
         userName: '',
         password: '',
@@ -56,6 +60,10 @@ const LoginPage = () => {
                 role: role,
             },
         });
+        console.log('athenticated cart');
+        dispatch(mergeAnnonCart());
+      
+
         navigate('/');
     };
     const handleChangePassword = (e) => {

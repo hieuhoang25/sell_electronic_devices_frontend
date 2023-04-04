@@ -1,14 +1,15 @@
-import Header from "./common/header/Header"
-import Footer from "./common/footer/Footer"
-const Wrapper = ({children,cartItem}) =>{
-
+import Header from './common/header/Header';
+import Footer from './common/footer/Footer';
+import { useLocation } from "react-router-dom";
+import {useLayoutEffect} from 'react'
+const Wrapper = ({ children, Cart }) => {
     return (
         <>
-        <Header CartItem={cartItem}/>
-        {children}
-        <Footer/>
+            <Header  />
+            {children}
+            <Footer />
         </>
-    )
-}
+    );
+};
 
-export default Wrapper
+export default Wrapper;

@@ -1,58 +1,67 @@
-import React from "react"
-import "./style.css"
+import React from 'react';
+import './style.css';
 
 const Footer = () => {
-  return (
-    <>
-      <footer>
-        <div className='container grid2'>
-          <div className='box'>
-            <h1>Bonik</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor libero id et, in gravida. Sit diam duis mauris nulla cursus. Erat et lectus vel ut sollicitudin elit at amet.</p>
-            <div className='icon d_flex'>
-              <div className='img d_flex'>
-                <i className='fa-brands fa-google-play'></i>
-                <span>Google Play</span>
-              </div>
-              <div className='img d_flex'>
-                <i className='fa-brands fa-app-store-ios'></i>
-                <span>App Store</span>
-              </div>
-            </div>
-          </div>
+    return (
+        <>
+            <footer>
+                <div className="container grid2">
+                    <div className="box">
+                        <h1>Bonik</h1>
+                        <p>
+                            Bonik chuyên cung cấp các sản phẩm điện tử chất
+                            lượng tốt nhất đến tay người tiêu dùng. Với một kho
+                            hàng lớn và đa dạng các sản phẩm, chúng tôi mong
+                            muốn mang lại sự hài lòng tuyệt đối cho khách hàng
+                            của mình. Hãy tìm hiểu thêm về chúng tôi và bắt đầu
+                            trải nghiệm một trang web mua sắm điện tử tuyệt vời
+                        </p>
+                        <div className="icon d_flex">
+                            <div className="img d_flex">
+                                <i className="fa-brands fa-google-play"></i>
+                                <span>Google Play</span>
+                            </div>
+                            <div className="img d_flex">
+                                <i className="fa-brands fa-app-store-ios"></i>
+                                <span>App Store</span>
+                            </div>
+                        </div>
+                    </div>
 
-          <div className='box'>
-            <h2>About Us</h2>
-            <ul>
-              <li>Careers</li>
-              <li>Our Stores</li>
-              <li>Our Cares</li>
-              <li>Terms & Conditions</li>
-              <li>Privacy Policy</li>
-            </ul>
-          </div>
-          <div className='box'>
-            <h2>Customer Care</h2>
-            <ul>
-              <li>Help Center </li>
-              <li>How to Buy </li>
-              <li>Track Your Order </li>
-              <li>Corporate & Bulk Purchasing </li>
-              <li>Returns & Refunds </li>
-            </ul>
-          </div>
-          <div className='box'>
-            <h2>Contact Us</h2>
-            <ul>
-              <li>70 Washington Square South, New York, NY 10012, United States </li>
-              <li>Email: uilib.help@gmail.com</li>
-              <li>Phone: +1 1123 456 780</li>
-            </ul>
-          </div>
-        </div>
-      </footer>
-    </>
-  )
-}
+                    <div className="box">
+                        <h2>Liên kết</h2>
+                        <ul>
+                            <li>Trang chủ</li>
+                            <li>Sản phẩm nổi bật</li>
+                            <li>Sản phẩm mới nhất</li>
+                            <li>Hướng dẫn mua hàng</li>
+                            <li>Liên hệ</li>
+                        </ul>
+                    </div>
+                    <div className="box">
+                        <h2>Điều khoản</h2>
+                        <ul>
+                            <li>Chính sách bảo hành </li>
+                            <li>Chính sách đổi trả và hoàn tiền</li>
+                            <li>Chính sách vận chuyển </li>
+                            <li>Chính sách bảo mật thông tin. </li>
+                        </ul>
+                    </div>
+                    <div className="box">
+                        <h2>Thông tin liên hệ</h2>
+                        <ul>
+                            <li>
+                                12A Trường Chinh, phường 13, Quận Tân Bình, TP
+                                Hồ Chí Minh
+                            </li>
+                            <li>Email: bonkik@gmail.com</li>
+                            <li>Phone: +(84) 1123 456 780</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+        </>
+    );
+};
 
-export default Footer
+export default Footer;

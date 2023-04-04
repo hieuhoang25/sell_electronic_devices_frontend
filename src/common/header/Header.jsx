@@ -1,17 +1,15 @@
-import React from "react"
-import "./Header.css"
-import Search from "./Search"
-import Navbar from "./Navbar"
+import React, { memo } from 'react';
+import './Header.css';
+import Search from './Search';
+import Navbar from './Navbar';
 
-const Header = ({ CartItem }) => {
-  return (
-    <>
-      
-      <Search CartItem={CartItem} />
- 
-      <Navbar />
-    </>
-  )
-}
+const Header = () => {
+    return (
+        <>
+            <Search  />
+            <Navbar />
+        </>
+    );
+};
 
-export default Header
+export default memo(Header);

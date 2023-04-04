@@ -1,25 +1,38 @@
-import React from 'react';
+import React, { memo } from 'react';
 import logo from '../../components/assets/images/logo.svg';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
+import {  resetToGuestCart} from '../../services/cartService';
+import { reset } from '../../redux/slices/CartSlice';
 
-const Search = ({ CartItem }) => {
+const Search = () => {
     // fixed Header
     window.addEventListener('scroll', function () {
         const search = document.querySelector('.search');
         search.classList.toggle('active', window.scrollY > 100);
     });
     const auth = useSelector((state) => state.auth);
+    const Cart = useSelector((state) => state.cart);
+
     const navigate = useNavigate();
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
     const handleLogout = async () => {
+        console.log('logout...');
         await axiosInstance
             .post(process.env.REACT_APP_URL + 'un/logout')
             .catch((error) => console.log(error));
+            window.localStorage.removeItem('cart');
+            dispatch(reset());
+           dispatch(resetToGuestCart());
+           console.log('reload');
         window.location.reload('/');
+  
+        // navigate.push('/')
     };
+    console.log('-------');
+    console.log('inside Search called "Cart": ', Cart);
     return (
         <>
             <section className="search">
@@ -50,19 +63,27 @@ const Search = ({ CartItem }) => {
                             </>
                         ) : (
                             <>
-                                <Link to="/login">
+                                <Link
+                                    className="popup-link"
+                                    data-popup="Đăng nhập"
+                                    to="/login"
+                                >
                                     <i className="fa fa-sign-in icon-circle"></i>
                                 </Link>
                             </>
                         )}
 
-                        <div className="cart">
-                            <Link to="/cart">
+                        <div className="cart popup-link" data-popup="Giỏ hàng">
+                            <Link
+                                // className="popup-link"
+                                data-popup="Giỏ hàng"
+                                to="/cart"
+                            >
                                 <i className="fa fa-shopping-bag icon-circle"></i>
                                 <span>
-                                    {CartItem.length === 0
-                                        ? ''
-                                        : CartItem.length}
+                                    {Cart.totalCount === 0
+                                        ? 0
+                                        : Cart.totalCount}
                                 </span>
                             </Link>
                         </div>
@@ -73,4 +94,4 @@ const Search = ({ CartItem }) => {
     );
 };
 
-export default Search;
+export default memo(Search);

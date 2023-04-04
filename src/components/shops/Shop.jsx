@@ -73,6 +73,7 @@ const Shop = ({
                         onChangeBrand={onChangeBrand}
                         onChangeStorage={onChangeStorage}
                         onClickResult={onClickResult}
+                        key={categories.key}
                     />
                     <div className="contentWidth">
                         <div className="heading d_flex">
