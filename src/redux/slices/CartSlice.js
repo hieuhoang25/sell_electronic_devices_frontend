@@ -36,7 +36,7 @@ export const CartSlice = createSlice({
     initialState: initialState,
     reducers: {
         reset: () => {
-            window.localStorage.removeItem('persist:root');
+            // window.localStorage.removeItem('persist:root');
             return initialState;
         },
         // reset: (state,action) => {
