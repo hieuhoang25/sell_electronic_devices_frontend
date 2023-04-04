@@ -21,7 +21,8 @@ const rootReducer = combineReducers({
 });
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const initialState = loadFromLocalStorage();
+// const initialState = loadFromLocalStorage();
+const initialState =  {};
 
 
 function saveToLocalStorage(store) {
@@ -50,8 +51,8 @@ let devtools = (x) => x;
 //lưu state vào storage
 const persistConfig = {
     key: 'root',
-    // storage: localStorage,
-    storage,
+    storage: localStorage,
+    // storage,
     whitelist: ['auth', 'cart'],
 };
 const persistedReducer = persistReducer(persistConfig, RootReducer);
