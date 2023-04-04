@@ -23,6 +23,10 @@ body {
   display: flex;
   justify-content: space-between;
 }
+.d_flex_jus_center {
+  display: flex;
+  justify-content: center;
+}
 .c_flex {
   display: flex;
   justify-content: space-between;
@@ -262,3 +266,4 @@ button {
   width: 100%;
 }
 /*----- sizing -------*/
+

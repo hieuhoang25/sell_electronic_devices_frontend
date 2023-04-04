@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Button, Modal, Space } from 'antd';
+import { Link } from 'react-router-dom';
 import {
     addToCart,
     removeFromCart,
@@ -172,6 +173,7 @@ const Cart = () => {
                                     <div className="cart-details">
                                         <div className="cart-details-item-title">
                                             <h3 className="cart-details-item-name">
+                                            <Link to></Link>
                                                 {getProductName(item)}
                                             </h3>
 
@@ -188,7 +190,7 @@ const Cart = () => {
                                                         ).price
                                                     }
                                                     displayType={'text'}
-                                                    thousandSeparator={true}
+                                                  thousandSeparator={true}
                                                     suffix={'đ'}
                                                 /> */}
                                             </h4>
@@ -335,8 +337,6 @@ const Cart = () => {
                         >
                             Thanh toán
                         </button>
-
-                        <button onClick={cartAfterLoginHandler}>Merge</button>
                     </div>
                 </div>
             </section>

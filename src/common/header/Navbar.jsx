@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import './Header.css';
+import CategoriesDropDown from './CategoriesDropDown';
 
 const Navbar = () => {
     // Toogle Menu
     const [MobileMenu, setMobileMenu] = useState(false);
     return (
-        <>
+        <React.Fragment>
             <header className="header">
                 <div className="container d_flex">
-                    <div className="navlink">
+                    <div className="navlink header-action">
                         <ul
-                            className={
+                            className={`${
                                 MobileMenu
                                     ? 'nav-links-MobileMenu'
                                     : 'link f_flex capitalize'
-                            }
+                            } header-action-btn`}
                             onClick={() => setMobileMenu(false)}
                         >
-                            {/*<ul className='link f_flex uppercase {MobileMenu ? "nav-links-MobileMenu" : "nav-links"} onClick={() => setMobileMenu(false)}'>*/}
+                            <li>
+                                <CategoriesDropDown></CategoriesDropDown>
+                            </li>
                             <li>
                                 <Link to="/">Trang chủ</Link>
                             </li>
@@ -25,13 +29,13 @@ const Navbar = () => {
                                 <Link to="/product">Sản phẩm</Link>
                             </li>
                             <li>
-                                <Link to="/contact">Liên hệ</Link>
+                                <Link to="/product">Liên hệ</Link>
                             </li>
                         </ul>
                     </div>
                 </div>
             </header>
-        </>
+        </React.Fragment>
     );
 };
 

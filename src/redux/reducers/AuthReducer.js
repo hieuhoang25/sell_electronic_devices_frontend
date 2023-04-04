@@ -10,23 +10,23 @@ const initialState = {
 const AuthReducer = (state = initialState, action) => {
     switch (action.type) {
         case INIT:
-            const { isAuthenticated, fullName, role } = action.payload;
+            const { isAuthenticated, role } = action.payload;
             return {
                 ...state,
                 isAuthenticated,
                 isInitialised: true,
-                fullName,
                 role,
             };
 
         case LOGIN: {
-            const { isAuthenticated, fullName, access_token } = action.payload;
-            console.log(access_token);
+            const { isAuthenticated, fullName, accessToken } = action.payload;
+            console.log(action.payload);
             return {
                 ...state,
                 isAuthenticated,
                 fullName,
-                accessToken: access_token,
+                accessToken: accessToken,
+                isInitialised: true,
             };
         }
         case 'LOGOUT': {

@@ -1,7 +1,13 @@
 // import { createSlice } from '@reduxjs/toolkit';
 import axios from './axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL, MERGE_CART } from '../constants/user';
+import {
+    CART,
+    CART_ITEM,
+    NEW_GUEST_CART,
+    GUEST_CART_DETAIL,
+    MERGE_CART,
+} from '../constants/user';
 import {
     addToCart,
     removeFromCart,
@@ -17,7 +23,7 @@ import {
     newCart,
     getTotal,
     getDiscountAmount,
-    authenticateCart
+    authenticateCart,
 } from '../redux/slices/CartSlice';
 
 const ENV_URL = process.env.REACT_APP_URL;
@@ -57,11 +63,11 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
     }
 };
 
-export const resetToGuestCart =  () => async (dispatch, getState) => {
+export const resetToGuestCart = () => async (dispatch, getState) => {
     console.log('get fresh guest cart...');
                 const cart_new = await getFreshCartForGuest();
                 dispatch(newCart(cart_new));
-                dispatch(updateCart());
+                // dispatch(updateCart());
 }
 // {
 //     "cart_id": 0,
@@ -90,8 +96,7 @@ export const removeItemFromCart =
                     console.log('erorr: ', error.message);
                     return 0;
                 });
-        }else {
-
+        } else {
             console.log('remove item in localstroge...');
             console.log('remove_request: ', requestItem);
 
@@ -113,47 +118,49 @@ export const addItemToCart = (request) => async (dispatch, getState) => {
     } else {
         // dispatch(addToCart());
         console.log('update state in localStorge...');
-        
-        let requestIndex = checkItemInGuestCart(items,request);
-        if(requestIndex >= 0) {
-            console.log("variant already in cart: ");
-            console.log("Move to increase... ");
+
+        let requestIndex = checkItemInGuestCart(items, request);
+        if (requestIndex >= 0) {
+            console.log('variant already in cart: ');
+            console.log('Move to increase... ');
             console.log('request: ', request);
             // dispatch(incrementItemQuantity({...request, index:requestIndex}));
-            dispatch(guestCarIncrementItemQuantity({...request, index:requestIndex}));
-        }else {
+            dispatch(
+                guestCarIncrementItemQuantity({
+                    ...request,
+                    index: requestIndex,
+                }),
+            );
+        } else {
             let res = await getGuestRequestCartDetail(request);
             console.log('guest cart detail response: ', res);
-            dispatch(addToCart(res))
-           
-
+            dispatch(addToCart(res));
         }
         // dispatch(updateCart());
-       
-
     }
 };
 
-export const guestCarIncrementItemQuantity =  (request) => async (dispatch, getState) => {
-    const {items} = getState().cart;
-    console.log('request: ', request);
-    let {quantity: reQty, index} = request;
-    // let itemIndex = items.findIndex(i => i.id === id)
-    let item = items[index];
-    
-    console.log('item: ', item);
-    let id = item.id;
-    let oldQty = item.quantity;
-    console.log('reQty: ', reQty);
-    let newQty = oldQty + reQty;
+export const guestCarIncrementItemQuantity =
+    (request) => async (dispatch, getState) => {
+        const { items } = getState().cart;
+        console.log('request: ', request);
+        let { quantity: reQty, index } = request;
+        // let itemIndex = items.findIndex(i => i.id === id)
+        let item = items[index];
 
-    request = {...request, quantity: newQty}
-    console.log('increase state in localStorge..');
-    console.log('increase: ', request);
-    let req = await getGuestRequestCartDetail(request);
-    dispatch(increment({...req, index: index, id: id}));
-    // dispatch(updateCart());
-}
+        console.log('item: ', item);
+        let id = item.id;
+        let oldQty = item.quantity;
+        console.log('reQty: ', reQty);
+        let newQty = oldQty + reQty;
+
+        request = { ...request, quantity: newQty };
+        console.log('increase state in localStorge..');
+        console.log('increase: ', request);
+        let req = await getGuestRequestCartDetail(request);
+        dispatch(increment({ ...req, index: index, id: id }));
+        // dispatch(updateCart());
+    };
 
 export const incrementItemQuantity =
     (request) => async (dispatch, getState) => {
@@ -168,13 +175,13 @@ export const incrementItemQuantity =
                 });
             console.log('send add request...');
         } else {
-            const {items} = getState().cart;
-       
-            let {id} = request;
+            const { items } = getState().cart;
+
+            let { id } = request;
             console.log('request_increase: ', request);
             let req = await getGuestRequestCartDetail(request);
-            
-            dispatch(increment({...req, id: id}));
+
+            dispatch(increment({ ...req, id: id }));
             // dispatch(updateCart());
         }
     };
@@ -191,42 +198,53 @@ export const decrementItemQuantity =
                 });
             console.log('send add request...');
         } else {
-            const {items} = getState().cart;
+            const { items } = getState().cart;
             console.log('decrease state in localStorge..');
             console.log('request: ', request);
             let req = await getGuestRequestCartDetail(request);
             // let index = checkItemInGuestCart(items,request)
             // console.log('index: ',index);
-            dispatch(decrement({...req, id: request.id}));
+            dispatch(decrement({ ...req, id: request.id }));
             // updateCart();
         }
     };
 
-const covertMergeCartRequest = (items,cart_id) => {
-        return items.map(i => {return {"cart_id": cart_id,  "product_variant_id": i.productVariant.id, quantity: i.quantity} }  )
-
-}    
-export const mergeAnnonCart = () => async(dispatch, getState) => {
+const covertMergeCartRequest = (items, cart_id) => {
+    return items.map((i) => {
+        return {
+            cart_id: cart_id,
+            product_variant_id: i.productVariant.id,
+            quantity: i.quantity,
+        };
+    });
+};
+export const mergeAnnonCart = () => async (dispatch, getState) => {
     console.log('inside merge');
 
-   let {items} = getState().cart;
-   let cart_id =  await( await (await axios.get(`${ENV_URL}${CART}`)).data).id
-   const em = {}
-    let request =  covertMergeCartRequest(items, cart_id);
-    console.log("list request: ", request);
-    if(request) 
-    await axios.post(`${ENV_URL}${MERGE_CART}`, request).then(data => {
-        console.log('cart: ', );
-         return;
-    }).catch(e => {console.log(e.message);})
-    alert('aa')
+    let { items } = getState().cart;
+    let cart_id = await (await (await axios.get(`${ENV_URL}${CART}`)).data).id;
+    const em = {};
+    let request = covertMergeCartRequest(items, cart_id);
+    console.log('list request: ', request);
+    if (request)
+        await axios
+            .post(`${ENV_URL}${MERGE_CART}`, request)
+            .then((data) => {
+                console.log('cart: ');
+                return;
+            })
+            .catch((e) => {
+                console.log(e.message);
+            });
     dispatch(authenticateCart(false));
     dispatch(fetchCartFromSever());
-}   
+};
 
-const getCartId = async() => {
-    return await ( await axios.get(`${ENV_URL}${CART}`)).data;
-} 
+const getCartId = async () => {
+    return await (
+        await axios.get(`${ENV_URL}${CART}`)
+    ).data;
+};
 
 export const getFreshCartForGuest = async () => {
     try {
@@ -244,32 +262,48 @@ export const getFreshCartForGuest = async () => {
 //   }
 const getGuestRequestCartDetail = async (request) => {
     const convertGuestRequest = (req) => {
-        return {variant_id: request.product_variant_id, quantity: request.quantity};
-    }
+        return {
+            variant_id: request.product_variant_id,
+            quantity: request.quantity,
+        };
+    };
     try {
         console.log('reqeustItem for guest: ', request);
         console.log(`${ENV_URL}${GUEST_CART_DETAIL}`);
-  
+
         console.log('request send: ', convertGuestRequest(request));
-        return await (await axios.post(`${ENV_URL}${GUEST_CART_DETAIL}`,{...convertGuestRequest()})).data
+        return await (
+            await axios.post(`${ENV_URL}${GUEST_CART_DETAIL}`, {
+                ...convertGuestRequest(),
+            })
+        ).data;
     } catch (e) {
         console.log(e.message);
     }
 };
 
 const checkItemInGuestCart = (items, request) => {
-    const {product_variant_id} = request;
+    const { product_variant_id } = request;
     console.log('request pv id: ', product_variant_id);
-    return items.findIndex((item) => item.productVariant.id === request.product_variant_id
+    return items.findIndex(
+        (item) => item.productVariant.id === request.product_variant_id,
     );
-}
+};
 
 
 
 export const updateCart = () => async (dispatch,getState) => {
-    console.log('update cart: ', getState().cart);
-    dispatch(getItemsCount(getState().cart));
-    dispatch(getBaseAmount(getState().cart))
-    dispatch(getDiscountAmount(getState().cart));
-    dispatch(getTotal(getState().cart));
+    console.log('%cupdate cart: ',"font: 20px, color: red", getState().cart);
+    
+    // dispatch(getItemsCount(getState().cart));
+    // dispatch(getBaseAmount(getState().cart))
+    // dispatch(getDiscountAmount(getState().cart));
+    // dispatch(getTotal(getState().cart));
+
+    // 
+
+    dispatch(getItemsCount());
+    dispatch(getBaseAmount())
+    dispatch(getDiscountAmount());
+    dispatch(getTotal());
 }

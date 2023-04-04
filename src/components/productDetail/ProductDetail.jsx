@@ -43,6 +43,9 @@ import { USER, WISHLISTS } from '../../constants/user';
 import { useNavigate } from 'react-router-dom';
 
 const ProductDetail = ({ isAuth }) => {
+
+
+
     let navigate = useNavigate();
     const dispatch = useDispatch();
     const Cart = useSelector((state) => state.cart);
@@ -164,6 +167,9 @@ const ProductDetail = ({ isAuth }) => {
         const item_id = productDetail.id;
         console.log('item_id: ', item_id);
         const { items } = Cart;
+
+        console.log("%cITEMS: ", "color:red",items,);
+
         const request = {
             cart_id: Cart.id,
             id: item_id,
