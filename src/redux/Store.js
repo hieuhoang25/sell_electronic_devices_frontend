@@ -11,7 +11,8 @@ const rootReducer = combineReducers({
 });
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const initialState = loadFromLocalStorage();
+// const initialState = loadFromLocalStorage();
+const initialState =  {};
 
 function saveToLocalStorage(store) {
     try {
