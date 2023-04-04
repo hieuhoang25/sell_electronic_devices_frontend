@@ -215,24 +215,30 @@ function Product({ isAuth }) {
     });
 
     //sorting
+    const sort = useRef([null, null]);
     const handleSortingChange = (value) => {
         sortValue.current = value;
         if (value == 'All') {
             fetchProductsByFilter(currentPage.current, search.current);
         } else {
-            const sort = value.split(' ');
+            sort.current = value.split(' ');
             fetchProductsByFilter(
                 currentPage.current,
                 search.current,
-                sort[0],
-                sort[1],
+                sort.current[0],
+                sort.current[1],
             );
         }
     };
 
     //search result
     const onClickResult = useCallback(() => {
-        fetchProductsByFilter(0, search.current);
+        fetchProductsByFilter(
+            0,
+            search.current,
+            sort.current[0],
+            sort.current[1],
+        );
     });
     return (
         <>
