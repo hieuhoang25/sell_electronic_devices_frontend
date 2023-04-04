@@ -21,7 +21,7 @@ axiosInstance.interceptors.response.use(
                     const rs = await axiosInstance
                         .get(process.env.REACT_APP_URL + 'un/refresh-token')
                         .catch((error) => {
-                            // window.location.reload(''); //handle when refreshtoken expired
+                            window.location.reload(''); //handle when refreshtoken expired
                         });
 
                     if (!rs.data.access_token) {

@@ -31,13 +31,22 @@ const generateAutoIncrId = (arr) => {
         return Math.max(...arr.map((e) => e.id)) + 1;
     }
 };
-export const CartSlice = createSlice({
+// export const CartSlice =  createSlice(async () => {return {
+export const CartSlice =  createSlice({
     name: 'cart',
     initialState: initialState,
     reducers: {
-        reset: () => {
-            // window.localStorage.removeItem('persist:root');
-            return initialState;
+       reset: () => {
+            window.localStorage.removeItem('persist:root');
+            return {
+                isAnonymous: true,
+                id: null,
+                items: [],
+                total: 0.0,
+                baseAmount: 0.0,
+                totalCount: 0,
+                discount: 0.0,
+            }
         },
         // reset: (state,action) => {
         //     console.log('reset');
@@ -167,7 +176,8 @@ export const CartSlice = createSlice({
             state.isAnonymous = action.payload;
             console.log('state: ', state);
         },
-    },
+    }
+
 });
 
 export const {

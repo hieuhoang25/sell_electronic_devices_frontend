@@ -17,15 +17,20 @@ const Search = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
     const handleLogout = async () => {
         console.log('logout...');
         await axiosInstance
             .post(process.env.REACT_APP_URL + 'un/logout')
             .catch((error) => console.log(error));
-        dispatch(reset());
+       
+            dispatch(reset());
         // window.localStorage.removeItem('cart');
         // dispatch(resetToGuestCart());
-        window.location.reload('/');
+        // setInterval(() =>{
+            window.location.reload('/');
+        // },3000)
+       
     };
     console.log('-------');
     console.log('inside Search called "Cart": ', Cart);
