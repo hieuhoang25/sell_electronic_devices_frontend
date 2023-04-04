@@ -20,38 +20,42 @@ const Shop = ({
     listStorage,
     onClickResult,
     isAuth,
+    handleSortingChange,
+    sortValue,
+    selectedKeys,
 }) => {
-    const SortingCombox = () => {
-        const handleChange = (value) => {
-            console.log(`selected ${value}`);
-        };
+    const SortingCombox = ({ handleSortingChange, sortValue }) => {
         return (
             <Space wrap>
                 <Select
-                    defaultValue="Bán chạy"
+                    value={sortValue}
                     style={{
                         width: 150,
                     }}
-                    onChange={handleChange}
+                    onChange={handleSortingChange}
                     options={[
                         {
-                            value: 'Bán chạy',
+                            value: 'All',
+                            label: 'Tất cả',
+                        },
+                        {
+                            value: 'Bán chạy desc',
                             label: 'Bán chạy',
                         },
                         {
-                            value: 'price asc',
+                            value: 'price desc',
                             label: 'Giá cao đến thấp',
                         },
                         {
-                            value: 'price desc',
+                            value: 'price asc',
                             label: 'Giá thấp đến cao',
                         },
                         {
-                            value: 'discount',
+                            value: 'discount desc',
                             label: 'Giảm giá',
                         },
                         {
-                            value: 'discount',
+                            value: 'averagePoint desc',
                             label: 'Đánh giá',
                         },
                     ]}
@@ -74,24 +78,37 @@ const Shop = ({
                         onChangeStorage={onChangeStorage}
                         onClickResult={onClickResult}
                         key={categories.key}
+                        selectedKeys={selectedKeys}
                     />
                     <div className="contentWidth">
                         <div className="heading d_flex">
                             <div className="heading-left row  f_flex">
                                 <h2>{title}</h2>
                             </div>
-                            <SortingCombox />
+                            <SortingCombox
+                                handleSortingChange={handleSortingChange}
+                                sortValue={sortValue}
+                            />
                         </div>
                         <div className="product-content  grid1">
-                            <ShopCart shopItems={shopItems} isAuth={isAuth} />
+                            {shopItems.length != 0 ? (
+                                <ShopCart
+                                    shopItems={shopItems}
+                                    isAuth={isAuth}
+                                />
+                            ) : (
+                                'Không tìm thấy sản phẩm phù hợp'
+                            )}
                         </div>
-                        <Pagination
-                            pageSize={1}
-                            total={totalPage}
-                            showQuickJumper
-                            style={{ textAlign: 'center' }}
-                            onChange={onChangePagination}
-                        />
+                        {totalPage != 0 && (
+                            <Pagination
+                                pageSize={1}
+                                total={totalPage}
+                                showQuickJumper
+                                style={{ textAlign: 'center' }}
+                                onChange={onChangePagination}
+                            />
+                        )}
                     </div>
                 </div>
             </section>
