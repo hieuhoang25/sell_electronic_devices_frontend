@@ -65,10 +65,10 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
 
 export const resetToGuestCart = () => async (dispatch, getState) => {
     console.log('get fresh guest cart...');
-    const cart_new = await getFreshCartForGuest();
-    dispatch(newCart(cart_new));
-    dispatch(updateCart());
-};
+                const cart_new = await getFreshCartForGuest();
+                dispatch(newCart(cart_new));
+                // dispatch(updateCart());
+}
 // {
 //     "cart_id": 0,
 //     "product_variant_id": 0,
@@ -290,10 +290,20 @@ const checkItemInGuestCart = (items, request) => {
     );
 };
 
-export const updateCart = () => async (dispatch, getState) => {
-    console.log('update cart: ', getState().cart);
-    dispatch(getItemsCount(getState().cart));
-    dispatch(getBaseAmount(getState().cart));
-    dispatch(getDiscountAmount(getState().cart));
-    dispatch(getTotal(getState().cart));
-};
+
+
+export const updateCart = () => async (dispatch,getState) => {
+    console.log('%cupdate cart: ',"font: 20px, color: red", getState().cart);
+    
+    // dispatch(getItemsCount(getState().cart));
+    // dispatch(getBaseAmount(getState().cart))
+    // dispatch(getDiscountAmount(getState().cart));
+    // dispatch(getTotal(getState().cart));
+
+    // 
+
+    dispatch(getItemsCount());
+    dispatch(getBaseAmount())
+    dispatch(getDiscountAmount());
+    dispatch(getTotal());
+}

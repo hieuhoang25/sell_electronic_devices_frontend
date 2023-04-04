@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
-import {  resetToGuestCart} from '../../services/cartService';
 import { reset } from '../../redux/slices/CartSlice';
 
 const Search = () => {
@@ -23,13 +22,10 @@ const Search = () => {
         await axiosInstance
             .post(process.env.REACT_APP_URL + 'un/logout')
             .catch((error) => console.log(error));
-            window.localStorage.removeItem('cart');
-            dispatch(reset());
-           dispatch(resetToGuestCart());
-           console.log('reload');
+        dispatch(reset());
+        // window.localStorage.removeItem('cart');
+        // dispatch(resetToGuestCart());
         window.location.reload('/');
-  
-        // navigate.push('/')
     };
     console.log('-------');
     console.log('inside Search called "Cart": ', Cart);
@@ -51,28 +47,6 @@ const Search = () => {
                     </div>
 
                     <div className="icon f_flex width">
-                        {auth.isAuthenticated ? (
-                            <>
-                                {' '}
-                                <Link to="/profile">
-                                    <i className="fa fa-user icon-circle"></i>
-                                </Link>
-                                <Link onClick={handleLogout}>
-                                    <i className="fa fa-sign-out icon-circle"></i>
-                                </Link>
-                            </>
-                        ) : (
-                            <>
-                                <Link
-                                    className="popup-link"
-                                    data-popup="Đăng nhập"
-                                    to="/login"
-                                >
-                                    <i className="fa fa-sign-in icon-circle"></i>
-                                </Link>
-                            </>
-                        )}
-
                         <div className="cart popup-link" data-popup="Giỏ hàng">
                             <Link
                                 // className="popup-link"
@@ -87,6 +61,35 @@ const Search = () => {
                                 </span>
                             </Link>
                         </div>
+                        {auth.isAuthenticated ? (
+                            <>
+                                {' '}
+                                <Link
+                                    to="/profile"
+                                    className="popup-link"
+                                    data-popup="Tài khoản"
+                                >
+                                    <i className="fa fa-user icon-circle"></i>
+                                </Link>
+                                <Link
+                                    className="popup-link"
+                                    data-popup="Đăng xuất"
+                                    onClick={handleLogout}
+                                >
+                                    <i className="fa fa-sign-out icon-circle"></i>
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    className="popup-link"
+                                    data-popup="Đăng nhập"
+                                    to="/login"
+                                >
+                                    <i className="fa fa-sign-in icon-circle"></i>
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </div>
             </section>

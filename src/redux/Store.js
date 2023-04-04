@@ -40,7 +40,6 @@ let devtools = (x) => x;
 const persistConfig = {
     key: 'root',
     storage: localStorage,
-    // storage,
     whitelist: ['auth', 'cart'],
 };
 const persistedReducer = persistReducer(persistConfig, RootReducer);

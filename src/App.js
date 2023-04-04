@@ -193,7 +193,7 @@ function App() {
                         path="/checkout"
                         element={
                             <Protected isSignedIn={auth.isAuthenticated}>
-                                <Checkout CartItem={CartItem} />
+                                <Checkout />
                             </Protected>
                         }
                     ></Route>
