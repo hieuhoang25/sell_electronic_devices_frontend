@@ -27,14 +27,30 @@ const Profile = Loadable(
     lazy(() => import('./components/userProfile/Profile')),
 );
 function App() {
-    const localStorage = JSON.parse(
-        window.localStorage.getItem('persist:root'),
-    );
-    const auth = JSON.parse(localStorage.auth);
+
+
+    
+    // const auth = JSON.parse(localStorage.auth);
+
+
     const { productItems } = Data;
     const { shopItems } = Sdata;
     const dispatch = useDispatch();
+    
     // const auth = useSelector((state) => state.auth);
+
+    const localStorage = JSON.parse(
+        window.localStorage.getItem('persist:root'),
+    );
+    const authRedux = useSelector((state) => state.auth);
+    var auth = '';
+    if (localStorage) {
+        auth = JSON.parse(localStorage.auth);
+    } else {
+        auth = authRedux;
+    }
+
+
     const cart = useSelector((state) => state.cart);
 
     //Step 2 :
