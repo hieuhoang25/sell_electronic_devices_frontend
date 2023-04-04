@@ -36,6 +36,7 @@ const Catg = ({
     listBrand,
     listStorage,
     onClickResult,
+    selectedKeys,
 }) => {
     const MyCheckBox = styled(Checkbox)`
         &.ant-checkbox-wrapper {
@@ -66,6 +67,7 @@ const Catg = ({
                     <Category
                         treeData={categories}
                         onSelectCategory={onSelectCategory}
+                        selectedKeys={selectedKeys}
                     />
                 </div>
 
