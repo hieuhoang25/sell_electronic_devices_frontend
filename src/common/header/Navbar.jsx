@@ -23,10 +23,13 @@ const Navbar = () => {
                                 <CategoriesDropDown></CategoriesDropDown>
                             </li>
                             <li>
-                                <Link to="/">home</Link>
+                                <Link to="/">Trang chủ</Link>
                             </li>
                             <li>
-                                <Link to="/contact">contact</Link>
+                                <Link to="/product">Sản phẩm</Link>
+                            </li>
+                            <li>
+                                <Link to="/product">Liên hệ</Link>
                             </li>
                         </ul>
                     </div>

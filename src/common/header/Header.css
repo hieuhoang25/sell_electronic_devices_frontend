@@ -206,7 +206,7 @@ header ul li a:hover {
 }
 
 header .navlink.header-action {
-  width: 40% !important;
+  width: 100% !important;
   padding-bottom: 0;
 }
 
