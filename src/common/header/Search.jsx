@@ -1,11 +1,13 @@
-import React, { memo } from 'react';
+import React, { memo,useState } from 'react';
 import logo from '../../components/assets/images/logo.svg';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { reset } from '../../redux/slices/CartSlice';
-
+import {Badge,List} from 'antd'
+import VirtualList from 'rc-virtual-list';
+import './Header.css';
 const Search = () => {
     // fixed Header
     window.addEventListener('scroll', function () {
@@ -32,6 +34,55 @@ const Search = () => {
         // },3000)
        
     };
+    const [modalBell, setModalBell] = useState(false);
+    const handleNotification = () => {
+        modalBell ? setModalBell(false) : setModalBell(true);
+    };
+    const ContainerHeight = 600;
+    const data = [
+        {
+            title: ' Title 1',
+            img: 'https://cdn.tgdd.vn/Products/Images/1363/292623/mieng-dan-lung-iphone-14-ta-thumb-600x600.jpg',
+            content:
+                'Vui lòng kiểm tra tất cả các sản phẩm trong đơn hàng trước khi xác nhận "Đã nhận được hàng".',
+        },
+        {
+            title: ' Title 2',
+            img: 'https://cdn.tgdd.vn/Products/Images/1363/292623/mieng-dan-lung-iphone-14-ta-thumb-600x600.jpg',
+            content:
+                'Vui lòng kiểm tra tất cả các sản phẩm trong đơn hàng trước khi xác nhận "Đã nhận được hàng".',
+        },
+        {
+            title: 'Title 3',
+            img: 'https://cdn.tgdd.vn/Products/Images/1363/292623/mieng-dan-lung-iphone-14-ta-thumb-600x600.jpg',
+            content:
+                'Vui lòng kiểm tra tất cả các sản phẩm trong đơn hàng trước khi xác nhận "Đã nhận được hàng".',
+        },
+        {
+            title: 'Title 4',
+            img: 'https://cdn.tgdd.vn/Products/Images/1363/292623/mieng-dan-lung-iphone-14-ta-thumb-600x600.jpg',
+            content:
+                'Vui lòng kiểm tra tất cả các sản phẩm trong đơn hàng trước khi xác nhận "Đã nhận được hàng".',
+        },
+        {
+            title: 'Title 4',
+            img: 'https://cdn.tgdd.vn/Products/Images/1363/292623/mieng-dan-lung-iphone-14-ta-thumb-600x600.jpg',
+            content:
+                'Vui lòng kiểm tra tất cả các sản phẩm trong đơn hàng trước khi xác nhận "Đã nhận được hàng".',
+        },
+        {
+            title: 'Title 4',
+            img: 'https://cdn.tgdd.vn/Products/Images/1363/292623/mieng-dan-lung-iphone-14-ta-thumb-600x600.jpg',
+            content:
+                'Vui lòng kiểm tra tất cả các sản phẩm trong đơn hàng trước khi xác nhận "Đã nhận được hàng".',
+        },
+        {
+            title: 'Title 4',
+            img: 'https://cdn.tgdd.vn/Products/Images/1363/292623/mieng-dan-lung-iphone-14-ta-thumb-600x600.jpg',
+            content:
+                'Vui lòng kiểm tra tất cả các sản phẩm trong đơn hàng trước khi xác nhận "Đã nhận được hàng".',
+        },
+    ];
     console.log('-------');
     console.log('inside Search called "Cart": ', Cart);
     return (
@@ -66,6 +117,24 @@ const Search = () => {
                                 </span>
                             </Link>
                         </div>
+                        <div
+                            className=" popup-link notification "
+                            style={{color:'#4183c4'}}
+                            onClick={handleNotification}
+                            data-popup="Thông báo"
+                        >
+                            <Link
+                            >
+                                <span>
+                                    <Badge count={data.length}>
+                                        <i
+                                            className="fa fa-bell icon-circle"
+                                            style={{ color: '#4183c4' }}
+                                        ></i>
+                                    </Badge>
+                                </span>
+                            </Link>
+                        </div>
                         {auth.isAuthenticated ? (
                             <>
                                 {' '}
@@ -97,6 +166,46 @@ const Search = () => {
                         )}
                     </div>
                 </div>
+                {modalBell ? (
+                    <div className="myList_v1">
+                        <List>
+                            <VirtualList
+                                data={data}
+                                height={ContainerHeight}
+                                itemHeight={47}
+                                itemKey="title"
+                            >
+                                {(item) => (
+                                    <List.Item>
+                                        <div className="myItem_List">
+                                            <img
+                                                src={item.img}
+                                                alt="#"
+                                                style={{
+                                                    width: 60,
+                                                    paddingRight: 10,
+                                                }}
+                                            />
+                                            <div>
+                                                <h2
+                                                    style={{
+                                                        fontSize: 16,
+                                                        margin: 0,
+                                                    }}
+                                                >
+                                                    {item.title}
+                                                </h2>
+                                                <p>{item.content}</p>
+                                            </div>
+                                        </div>
+                                    </List.Item>
+                                )}
+                            </VirtualList>
+                        </List>
+                    </div>
+                ) : (
+                    ''
+                )}
             </section>
         </>
     );

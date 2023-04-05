@@ -326,3 +326,17 @@ header .ant-dropdown::before {
 .category .box .ant-dropdown-menu-item {
   padding: 0;
 }
+.myList_v1 {
+  background-color: rgb(250, 250, 250);
+  width: 400px;
+  position: fixed;
+  right: 0;
+  z-index: 10;
+  border-radius: 5px;
+  border: 1px solid rgb(216, 216, 216);
+}
+.myItem_List {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+}
