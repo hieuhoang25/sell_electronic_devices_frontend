@@ -3,25 +3,25 @@ import { HashLink as Link } from 'react-router-hash-link';
 import axios from 'axios';
 import { BASE, CATEGORY } from '../../constants/index';
 const Categories = () => {
-    const [categories, setCategories] = useState([]);
-    useEffect(() => {
-        axios({
-            method: 'get',
-            url: `${BASE}${CATEGORY}`,
-        })
-            .then((res) => {
-                setCategories(() => res.data);
-            })
-            .catch((error) => console.log(error));
-    }, []);
+    // const [categories, setCategories] = useState([]);
+    // useEffect(() => {
+    //     axios({
+    //         method: 'get',
+    //         url: `${BASE}${CATEGORY}`,
+    //     })
+    //         .then((res) => {
+    //             setCategories(() => res.data);
+    //         })
+    //         .catch((error) => console.log(error));
+    // }, []);
 
     return (
         <>
-            <div className="category">
+            {/* <div className="category">
                 {categories.map((value, index) => {
                     return (
                         <Link
-                            to={`/product/${value.key}#section-product`}
+                            to={`/product#section-product`}
                             scroll={(element) =>
                                 element.scrollIntoView({
                                     behavior: 'smooth',
@@ -43,7 +43,7 @@ const Categories = () => {
                         </Link>
                     );
                 })}
-            </div>
+            </div> */}
         </>
     );
 };
