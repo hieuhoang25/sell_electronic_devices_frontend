@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.REACT_APP_BASE_URL_API;
+export const API_BASE_URL = 'http://localhost:8080';
 export const ACCESS_TOKEN = 'accessToken';
 export const IMAGE_URL =
     'https://firebasestorage.googleapis.com/v0/b/bonik-f7b39.appspot.com/o/';
