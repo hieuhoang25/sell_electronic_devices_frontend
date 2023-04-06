@@ -89,12 +89,13 @@ function Product({ isAuth }) {
         sortField = null,
         sortType = null,
     ) {
+        dispatch(fetchProductsPending());
         axios({
             method: 'post',
             url: `${BASE}${PRODUCT}${FILTER}`,
             data: search,
             params: {
-                size: size,
+                size: 10,
                 page: page,
                 sortField: sortField,
                 sortType: sortType,
@@ -242,24 +243,23 @@ function Product({ isAuth }) {
     });
     return (
         <>
-            {productsFilter && (
-                <Shop
-                    shopItems={productsFilter.products}
-                    categories={category}
-                    onChangePagination={onChangePagination}
-                    totalPage={productsFilter.totalPage}
-                    onSelectCategory={onSelectCategory}
-                    listBrand={brand}
-                    listStorage={storage}
-                    onChangeBrand={onChangeBrand}
-                    onChangeStorage={onChangeStorage}
-                    onClickResult={onClickResult}
-                    isAuth={isAuth}
-                    handleSortingChange={handleSortingChange}
-                    sortValue={sortValue.current}
-                    selectedKeys={selectKeys}
-                />
-            )}
+            <Shop
+                shopItems={productsFilter.products}
+                categories={category}
+                onChangePagination={onChangePagination}
+                totalPage={productsFilter.totalPage}
+                onSelectCategory={onSelectCategory}
+                listBrand={brand}
+                listStorage={storage}
+                onChangeBrand={onChangeBrand}
+                onChangeStorage={onChangeStorage}
+                onClickResult={onClickResult}
+                isAuth={isAuth}
+                handleSortingChange={handleSortingChange}
+                sortValue={sortValue.current}
+                selectedKeys={selectKeys}
+                isLoading={productsFilter.pending}
+            />
         </>
     );
 }

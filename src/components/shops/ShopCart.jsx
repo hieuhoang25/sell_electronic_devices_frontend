@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { HashLink as Link } from 'react-router-hash-link';
 import HalfRatingRead from '../../common/rating/HalfRatingRead';
 import Favorite from '../../common/favorite/Favorite';
 import { NumericFormat } from 'react-number-format';
@@ -7,7 +7,10 @@ import { getImage } from '../../common/img';
 import axios from '../../services/axios';
 import { USER, WISHLISTS } from '../../constants/user';
 import { useNavigate } from 'react-router-dom';
-const ShopCart = ({ shopItems, isAuth }) => {
+import { Card, Avatar } from 'antd';
+const { Meta } = Card;
+const ShopCart = ({ shopItems, isAuth, isLoading }) => {
+    console.log(isLoading);
     const [count, setCount] = useState(0);
     const [isFavorite, setFavorite] = useState([]);
     let navigate = useNavigate();
@@ -69,7 +72,7 @@ const ShopCart = ({ shopItems, isAuth }) => {
     };
     return (
         <>
-            {shopItems &&
+            {!isLoading ? (
                 shopItems.map((shopItems, index) => {
                     return (
                         <div key={index} className="box">
@@ -121,14 +124,87 @@ const ShopCart = ({ shopItems, isAuth }) => {
                                             />
                                         </h4>
                                         {/* step : 3  
-                     if hami le button ma click garryo bahne 
-                    */}
+                 if hami le button ma click garryo bahne 
+                */}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     );
-                })}
+                })
+            ) : (
+                <>
+                    {new Array(10).fill(null).map((index) => {
+                        return (
+                            <Card
+                                loading={isLoading}
+                                style={{
+                                    marginBottom: 16,
+                                    marginTop: 16,
+                                }}
+                            >
+                                <div key={index} className="box">
+                                    <div className="product mtop">
+                                        <div className="img">
+                                            <span className="discount">
+                                                50% Off
+                                            </span>
+                                            {/* <Link
+                                            to={`/product-detail/${shopItems.id}`}
+                                        >
+                                            <img
+                                                src={getImage(shopItems.image)}
+                                                alt=""
+                                            />
+                                        </Link> */}
+                                            <div className="product-like">
+                                                {/* <Favorite
+                                                value={shopItems.id}
+                                                onChange={(e) =>
+                                                    handleChangeFavorite(
+                                                        e,
+                                                        index,
+                                                        shopItems.id,
+                                                    )
+                                                }
+                                                isFavorite={isFavorite}
+                                            /> */}
+                                            </div>
+                                        </div>
+                                        <div className="product-details">
+                                            {/* <Link
+                                            to={`/product-detail/${shopItems.id}`}
+                                        >
+                                            <h3 style={{ color: 'black' }}>
+                                                {shopItems.product_name}
+                                            </h3>
+                                        </Link> */}
+                                            <div className="rate">
+                                                {/* <HalfRatingRead
+                                                value={shopItems.average_point}
+                                            /> */}
+                                            </div>
+                                            <div className="price">
+                                                <h4>
+                                                    {/* <NumericFormat
+                                                    value={shopItems.price}
+                                                    displayType={'text'}
+                                                    thousandSeparator={true}
+                                                    suffix={'đ'}
+                                                /> */}
+                                                </h4>
+                                                {/* step : 3  
+                     if hami le button ma click garryo bahne 
+                    */}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+                        );
+                    })}
+                </>
+            )}
         </>
     );
 };

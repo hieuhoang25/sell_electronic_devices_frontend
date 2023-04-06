@@ -5,7 +5,6 @@ import './style.css';
 import { Select, Space, Pagination } from 'antd';
 import '../MainPage/Home.css';
 import Home from '../MainPage/Home';
-
 const Shop = ({
     shopItems,
     totalPage,
@@ -23,6 +22,7 @@ const Shop = ({
     handleSortingChange,
     sortValue,
     selectedKeys,
+    isLoading,
 }) => {
     const SortingCombox = ({ handleSortingChange, sortValue }) => {
         return (
@@ -68,7 +68,7 @@ const Shop = ({
         <>
             <Home CartItem={sliderItem} />
             <section className="shop background">
-                <div className="container d_flex">
+                <div id="section-product" className="container d_flex">
                     <Catg
                         categories={categories}
                         onSelectCategory={onSelectCategory}
@@ -91,14 +91,11 @@ const Shop = ({
                             />
                         </div>
                         <div className="product-content  grid1">
-                            {shopItems.length != 0 ? (
-                                <ShopCart
-                                    shopItems={shopItems}
-                                    isAuth={isAuth}
-                                />
-                            ) : (
-                                'Không tìm thấy sản phẩm phù hợp'
-                            )}
+                            <ShopCart
+                                shopItems={shopItems}
+                                isAuth={isAuth}
+                                isLoading={isLoading}
+                            />
                         </div>
                         {totalPage != 0 && (
                             <Pagination
