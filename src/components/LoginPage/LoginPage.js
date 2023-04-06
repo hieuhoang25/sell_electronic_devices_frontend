@@ -21,7 +21,7 @@ import { mergeAnnonCart } from '../../services/cartService';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import axiosInstance from '../../services/axios';
-
+import { GOOGLE_AUTH_URL } from '../../constants/index';
 const LoginPage = () => {
     const theme = createTheme();
     const navigate = useNavigate();
@@ -63,9 +63,7 @@ const LoginPage = () => {
                 accessToken: access_token,
             },
         });
-        console.log('athenticated cart');
         dispatch(mergeAnnonCart());
-
         navigate('/');
     };
     const handleChangePassword = (e) => {
@@ -84,44 +82,6 @@ const LoginPage = () => {
             };
         });
     };
-    const handleLoginGoogle = () => {
-        window.location.replace(
-            process.env.REACT_APP_BASE_URL +
-                '/oauth2/authorize/google?redirect_uri=' +
-                process.env.REACT_APP_BASE_URL +
-                '/login',
-        );
-    };
-    useEffect(async () => {
-        const accessToken = searchParams.get('access_token');
-        const refreshToken = searchParams.get('refresh_token');
-        if (accessToken && refreshToken) {
-            await Promise.resolve(
-                axiosInstance.get(
-                    process.env.REACT_APP_URL +
-                        'un/token-login-google?accessToken=' +
-                        accessToken +
-                        '&refreshToken=' +
-                        refreshToken,
-                ),
-            );
-
-            const response = await axios.get(
-                process.env.REACT_APP_URL + 'user/info',
-            );
-            const fullName = response.data.full_name;
-            dispatch({
-                type: LOGIN,
-                payload: {
-                    isAuthenticated: true,
-                    fullName,
-                    role: 'user',
-                    accessToken: accessToken,
-                },
-            });
-            navigate('/');
-        }
-    }, []);
     return (
         <ThemeProvider theme={theme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
@@ -227,14 +187,12 @@ const LoginPage = () => {
                                 variant="contained"
                                 sx={{ mt: 1, mb: 1 }}
                                 color="error"
-                                onClick={() => {
-                                    handleLoginGoogle();
-                                }}
+                                href={GOOGLE_AUTH_URL}
                             >
                                 <GoogleIcon></GoogleIcon>
                                 Đăng nhập với google
                             </Button>
-                            <Button
+                            {/* <Button
                                 type="submit"
                                 fullWidth
                                 variant="contained"
@@ -243,7 +201,7 @@ const LoginPage = () => {
                             >
                                 <FacebookIcon></FacebookIcon>
                                 Đăng nhập với facebook
-                            </Button>
+                            </Button> */}
                             <Grid container>
                                 <Grid item xs>
                                     <Link href="#" variant="body2">

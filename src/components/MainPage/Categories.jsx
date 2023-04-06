@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { HashLink as Link } from 'react-router-hash-link';
 import axios from 'axios';
 import { BASE, CATEGORY } from '../../constants/index';
 const Categories = () => {
@@ -20,7 +20,17 @@ const Categories = () => {
             <div className="category">
                 {categories.map((value, index) => {
                     return (
-                        <Link to={`/product/${value.key}`} key={value.key}>
+                        <Link
+                            to={`/product/${value.key}#section-product`}
+                            scroll={(element) =>
+                                element.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'end',
+                                    inline: 'nearest',
+                                })
+                            }
+                            key={value.key}
+                        >
                             <div className="box " key={index}>
                                 <a
                                     className="f_flex"
