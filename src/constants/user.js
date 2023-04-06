@@ -1,5 +1,5 @@
 import { API_BASE_URL, API_UNAUTH_BASE } from './index';
-export const BASE_USER = `${API_BASE_URL}/api/user`;
+export const BASE_USER = `${API_BASE_URL}user`;
 export const ORDER = '/order';
 const INFO = '/info';
 export const ORDER_TRACKING = '/order-tracking';
