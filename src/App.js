@@ -20,6 +20,7 @@ import { INIT } from './redux/actions/AuthAction';
 import { authenticateCart } from './redux/slices/CartSlice';
 import { fetchCartFromSever, resetToGuestCart } from './services/cartService';
 import Loadable from './components/Suspense/Loadable';
+import OAuth2RedirectHandler from './components/LoginPage/OAuth2RedirectHandler';
 const LoginPage = Loadable(
     lazy(() => import('./components/LoginPage/LoginPage')),
 );
@@ -207,6 +208,10 @@ function App() {
                                 <Checkout />
                             </Protected>
                         }
+                    ></Route>
+                    <Route
+                        path="/oauth2/redirect"
+                        element={<OAuth2RedirectHandler />}
                     ></Route>
                 </Routes>
             </Wrapper>
