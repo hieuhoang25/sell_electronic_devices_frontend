@@ -2,8 +2,7 @@ export const API_BASE_URL = `${process.env.REACT_APP_URL}`;
 export const ACCESS_TOKEN = 'accessToken';
 export const IMAGE_URL =
     'https://firebasestorage.googleapis.com/v0/b/bonik-f7b39.appspot.com/o/';
-export const OAUTH2_REDIRECT_URI =
-    process.env.REACT_APP_BASE_URL + '/oauth2/redirect';
+export const OAUTH2_REDIRECT_URI = process.env.REACT_APP_BASE_URL + '/';
 const GOOGLE_URL = API_BASE_URL.replace('/api/', '');
 export const GOOGLE_AUTH_URL =
     GOOGLE_URL + '/oauth2/authorize/google?redirect_uri=' + OAUTH2_REDIRECT_URI;
