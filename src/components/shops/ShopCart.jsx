@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Avatar } from 'antd';
 const { Meta } = Card;
 const ShopCart = ({ shopItems, isAuth, isLoading }) => {
-    console.log(isLoading);
     const [count, setCount] = useState(0);
     const [isFavorite, setFavorite] = useState([]);
     let navigate = useNavigate();
