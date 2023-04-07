@@ -21,7 +21,6 @@ const TopSales = ({ isAuth }) => {
             })
             .then((res) => {
                 const value = res.data;
-                console.log(value.data);
                 setTopSales(value.data);
                 setIsLoading(false);
             })

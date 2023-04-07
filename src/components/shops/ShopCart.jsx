@@ -24,7 +24,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                     setFavorite(res.data); // if user wishlists is match with product id then fill red color
                 })
                 .catch((error) => {
-                    console.log(error);
+                    // console.log(error);
                 });
         }
     }, [isAuth]);
@@ -35,7 +35,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
             url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}`,
             data: [{ product_id: product_id }],
         }).catch((error) => {
-            console.log(error);
+            // console.log(error);
         });
     }
     function removeWishlists(product_id) {
@@ -44,7 +44,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
             url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}`,
             data: [{ product_id: product_id }],
         }).catch((error) => {
-            console.log(error);
+            // console.log(error);
         });
     }
 

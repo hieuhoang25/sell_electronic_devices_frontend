@@ -19,7 +19,6 @@ const Cart = () => {
             })
             .then((res) => {
                 const value = res.data;
-                console.log(value.data);
                 setProductArrival(value.data);
                 setLoading(false);
             })
