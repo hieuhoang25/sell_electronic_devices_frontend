@@ -19,9 +19,8 @@ import axios from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { mergeAnnonCart } from '../../services/cartService';
 import { useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
-import axiosInstance from '../../services/axios';
 import { GOOGLE_AUTH_URL } from '../../constants/index';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 const LoginPage = () => {
     const theme = createTheme();
     const navigate = useNavigate();
@@ -82,6 +81,10 @@ const LoginPage = () => {
             };
         });
     };
+    const responseFacebook = (response) => {
+        console.log(response);
+    };
+
     return (
         <ThemeProvider theme={theme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
@@ -192,16 +195,24 @@ const LoginPage = () => {
                                 <GoogleIcon></GoogleIcon>
                                 Đăng nhập với google
                             </Button>
-                            {/* <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 1, mb: 2 }}
-                                color="primary"
-                            >
-                                <FacebookIcon></FacebookIcon>
-                                Đăng nhập với facebook
-                            </Button> */}
+                            <FacebookLogin
+                                appId="962796138066972"
+                                callback={responseFacebook}
+                                render={(renderProps) => (
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        sx={{ mt: 1, mb: 2 }}
+                                        color="primary"
+                                        onClick={renderProps.onClick}
+                                    >
+                                        <FacebookIcon></FacebookIcon>
+                                        Đăng nhập với facebook
+                                    </Button>
+                                )}
+                            />
+
                             <Grid container>
                                 <Grid item xs>
                                     <Link href="#" variant="body2">
