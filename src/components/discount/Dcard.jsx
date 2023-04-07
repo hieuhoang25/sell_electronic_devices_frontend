@@ -56,22 +56,35 @@ const Dcard = () => {
                                             alt=""
                                             width="100%"
                                         />
-                                        <span
-                                            style={{ color: 'white' }}
-                                            className="discount"
-                                        >
-                                            -{value.discount}% Off
-                                        </span>
+                                        {value.discount != 0 && (
+                                            <span
+                                                style={{ color: 'white' }}
+                                                className="discount"
+                                            >
+                                                -{value.discount}% Off
+                                            </span>
+                                        )}
                                     </div>
                                     <h4>{value.product_name}</h4>
-                                    <span>
-                                        <NumericFormat
-                                            value={value.discount_price}
-                                            displayType={'text'}
-                                            thousandSeparator={true}
-                                            suffix={'VNĐ'}
-                                        />
-                                    </span>
+                                    {value.discount != 0 ? (
+                                        <span>
+                                            <NumericFormat
+                                                value={value.discount_price}
+                                                displayType={'text'}
+                                                thousandSeparator={true}
+                                                suffix={'VNĐ'}
+                                            />
+                                        </span>
+                                    ) : (
+                                        <span>
+                                            <NumericFormat
+                                                value={value.price}
+                                                displayType={'text'}
+                                                thousandSeparator={true}
+                                                suffix={'VNĐ'}
+                                            />
+                                        </span>
+                                    )}
                                 </div>
                             </Link>
                         );
