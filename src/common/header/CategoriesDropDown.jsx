@@ -23,6 +23,7 @@ function CategoriesDropDown() {
                     <Link
                         to={`/product/${value.key}#section-product`}
                         key={value.key}
+                        smooth
                         scroll={(element) =>
                             element.scrollIntoView({
                                 behavior: 'smooth',

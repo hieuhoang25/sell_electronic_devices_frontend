@@ -67,7 +67,9 @@ const MyPurchase = () => {
                 return {
                     key: id,
                     label: name,
-                    children: status === id && <Cancelled />,
+                    children: tabSelected == id && (
+                        <Cancelled status={tabSelected} />
+                    ),
                 };
             }
         });

@@ -1,5 +1,5 @@
 import { React, memo, useState, useEffect, useRef, useCallback } from 'react';
-import { Card, Space, Button, Divider, List, Skeleton } from 'antd';
+import { Card, Space, Button, Divider, List, Skeleton, Empty } from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 import RatingForm from '../../../common/rating/RatingForm';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -10,16 +10,12 @@ import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
 const ToPay = ({ status }) => {
     //End
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const pagination = useRef();
     const page = useRef(0);
     const size = useRef(1);
     const loadMoreData = () => {
-        if (loading) {
-            return;
-        }
-        setLoading(true);
         axios({
             method: 'get',
             url: `${BASE_USER}${ORDER_TRACKING}/${status}`,
@@ -44,7 +40,7 @@ const ToPay = ({ status }) => {
     }, []);
     return (
         <>
-            {data.length != 0 && (
+            {!loading && data.length != 0 ? (
                 <InfiniteScroll
                     dataLength={data.length}
                     next={loadMoreData}
@@ -301,6 +297,11 @@ const ToPay = ({ status }) => {
                         )}
                     />
                 </InfiniteScroll>
+            ) : (
+                <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={<span>Chưa có đơn hàng nào</span>}
+                />
             )}
         </>
     );

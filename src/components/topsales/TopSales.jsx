@@ -1,8 +1,5 @@
 import React, { useEffect, memo, useState, useRef } from 'react';
-
 import './style.css';
-import Card from '../UI/Card';
-import Sdata from '../shops/Sdata';
 import ShopProduct from './ShopProduct';
 import axios from '../../services/axios';
 import { PRODUCT_TOP_SALES, BASE } from '../../constants';

@@ -5,7 +5,8 @@ import { Slider } from 'antd';
 import { Checkbox, Col, Row } from 'antd';
 import styled from 'styled-components';
 import Category from './Category';
-
+import { Alert, Space, Spin } from 'antd';
+import './spin.css';
 const PriceRange = () => {
     const marks = {
         500000: '500,000',
@@ -37,6 +38,7 @@ const Catg = ({
     listStorage,
     onClickResult,
     selectedKeys,
+    loading,
 }) => {
     const MyCheckBox = styled(Checkbox)`
         &.ant-checkbox-wrapper {
@@ -61,65 +63,86 @@ const Catg = ({
 
     return (
         <>
-            <div className="filter">
-                <div className="">
-                    <h3>Danh mục</h3>
-                    <Category
-                        treeData={categories}
-                        onSelectCategory={onSelectCategory}
-                        selectedKeys={selectedKeys}
-                    />
-                </div>
+            {!loading ? (
+                <div className="filter">
+                    <div className="">
+                        <h3>Danh mục</h3>
+                        <Category
+                            treeData={categories}
+                            onSelectCategory={onSelectCategory}
+                            selectedKeys={selectedKeys}
+                        />
+                    </div>
 
-                {/* <div>
+                    {/* <div>
                     <h3>Giá</h3>
                     <PriceRange />
                 </div> */}
-                <div>
-                    <h3>Hãng</h3>
-                    <MyCheckBox.Group
+                    <div>
+                        <h3>Hãng</h3>
+                        <MyCheckBox.Group
+                            style={{
+                                width: '100%',
+                            }}
+                            onChange={onChangeBrand}
+                        >
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                {listBrand.map((item) => (
+                                    <MyCheckBox
+                                        key={item.id}
+                                        style={{ margin: '10px' }}
+                                        value={item.id}
+                                    >
+                                        {item.brand_name}
+                                    </MyCheckBox>
+                                ))}
+                            </div>
+                        </MyCheckBox.Group>
+                    </div>
+                    <div>
+                        <h3>Dung lượng</h3>
+                        <Checkbox.Group
+                            style={{
+                                width: '100%',
+                            }}
+                            onChange={onChangeStorage}
+                        >
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                {listStorage.map((item) => (
+                                    <MyCheckBox
+                                        style={{ margin: '10px' }}
+                                        value={item.id}
+                                    >
+                                        {item.storage_name}
+                                    </MyCheckBox>
+                                ))}
+                            </div>
+                        </Checkbox.Group>
+                    </div>
+                    <div>
+                        <Button onClick={onClickResult}>Xem kết quả</Button>
+                    </div>
+                </div>
+            ) : (
+                <div className="filter">
+                    <Space
+                        direction="vertical"
                         style={{
                             width: '100%',
+                            marginLeft: '9em',
+                            height: '550px',
+                            position: 'relative',
+                            top: 250,
                         }}
-                        onChange={onChangeBrand}
                     >
-                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                            {listBrand.map((item) => (
-                                <MyCheckBox
-                                    key={item.id}
-                                    style={{ margin: '10px' }}
-                                    value={item.id}
-                                >
-                                    {item.brand_name}
-                                </MyCheckBox>
-                            ))}
-                        </div>
-                    </MyCheckBox.Group>
+                        <Space style={{ margin: '12px' }}>
+                            <Spin tip="Loading">
+                                <div className="content" />
+                            </Spin>
+                        </Space>
+                    </Space>
                 </div>
-                <div>
-                    <h3>Dung lượng</h3>
-                    <Checkbox.Group
-                        style={{
-                            width: '100%',
-                        }}
-                        onChange={onChangeStorage}
-                    >
-                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                            {listStorage.map((item) => (
-                                <MyCheckBox
-                                    style={{ margin: '10px' }}
-                                    value={item.id}
-                                >
-                                    {item.storage_name}
-                                </MyCheckBox>
-                            ))}
-                        </div>
-                    </Checkbox.Group>
-                </div>
-                <div>
-                    <Button onClick={onClickResult}>Xem kết quả</Button>
-                </div>
-            </div>
+            )}
         </>
     );
 };

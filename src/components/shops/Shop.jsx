@@ -79,6 +79,7 @@ const Shop = ({
                         onClickResult={onClickResult}
                         key={categories.key}
                         selectedKeys={selectedKeys}
+                        loading={isLoading}
                     />
                     <div className="contentWidth">
                         <div className="heading d_flex">
