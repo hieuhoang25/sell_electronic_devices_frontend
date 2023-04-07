@@ -18,7 +18,7 @@ function CategoriesDropDown() {
     }, []);
     const menuI = categories.map((value, index) => {
         return (
-            <div className={'box'}>
+            <div key={index} className={'box'}>
                 <Menu.Item key={index}>
                     <Link
                         to={`/product/${value.key}#section-product`}

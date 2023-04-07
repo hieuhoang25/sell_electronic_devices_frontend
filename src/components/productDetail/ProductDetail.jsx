@@ -12,8 +12,8 @@ import axios from '../../services/axios';
 import ProductDetailQuantityCounter from '../counterInc/ProductDetailQuantityCounter';
 import CartNotification from '../../common/notification/CartNotification';
 import CartNotification_TYPE from '../../common/notification/CartNotification';
-import { addItemToCart,updateCart } from '../../services/cartService.js';
-import scrollIntoView from 'scroll-into-view-if-needed'
+import { addItemToCart, updateCart } from '../../services/cartService.js';
+import scrollIntoView from 'scroll-into-view-if-needed';
 import {
     QTY_MAX,
     QTY_MIN,
@@ -43,9 +43,6 @@ import { USER, WISHLISTS } from '../../constants/user';
 import { useNavigate } from 'react-router-dom';
 
 const ProductDetail = ({ isAuth }) => {
-
-
-
     let navigate = useNavigate();
     const dispatch = useDispatch();
     const Cart = useSelector((state) => state.cart);
@@ -59,8 +56,6 @@ const ProductDetail = ({ isAuth }) => {
     const [cartQty, setCartQty] = useState(1);
     const [cartButtonDisabled, setCartbuttonDisabled] = useState(false);
     const myRef = useRef(null);
-    
-
 
     const [cartAddedNotif, setCartAddedNotif] = useState({
         title: 'Thêm vào giỏ hàng',
@@ -135,8 +130,8 @@ const ProductDetail = ({ isAuth }) => {
     }, []);
 
     const executeScroll = () => {
-        scrollIntoView(myRef.current, { behavior: 'smooth'})
-     }
+        scrollIntoView(myRef.current, { behavior: 'smooth' });
+    };
     //Mở form đánh giá
     const [isModalOpen, setIsModalOpen] = useState(false);
     const rate = () => {
@@ -150,11 +145,11 @@ const ProductDetail = ({ isAuth }) => {
     };
 
     useEffect(() => {
-        if(Cart.isAnonymous) {
+        if (Cart.isAnonymous) {
             console.log('updateCart()');
             dispatch(updateCart());
         }
-    },[Cart])
+    }, [Cart]);
     //End
     const handleAddToCart = async (callback) => {
         const mess_message = productDetail.display_name;
@@ -168,7 +163,7 @@ const ProductDetail = ({ isAuth }) => {
         console.log('item_id: ', item_id);
         const { items } = Cart;
 
-        console.log("%cITEMS: ", "color:red",items,);
+        console.log('%cITEMS: ', 'color:red', items);
 
         const request = {
             cart_id: Cart.id,
@@ -177,7 +172,9 @@ const ProductDetail = ({ isAuth }) => {
             quantity: cartQty,
         };
         // console.log('items: ', items);
-        let cartIndex = items.findIndex((item) => item.productVariant.id === item_id);
+        let cartIndex = items.findIndex(
+            (item) => item.productVariant.id === item_id,
+        );
         // console.log('cartIndex', cartIndex);
         // console.log('san pham trong gio? ', cartIndex);
         // sản phẩm có trong giỏ
@@ -353,8 +350,16 @@ const ProductDetail = ({ isAuth }) => {
     };
 
     return (
-        <div id="top-product-page" ref={myRef} style={{ marginTop: '5rem', marginBottom: '5rem', scrollMarginBotom: '8vh' }}>
-            <Row >
+        <div
+            id="top-product-page"
+            ref={myRef}
+            style={{
+                marginTop: '5rem',
+                marginBottom: '5rem',
+                scrollMarginBotom: '8vh',
+            }}
+        >
+            <Row>
                 <Col span={15} offset={6}>
                     <div
                         style={{
@@ -415,21 +420,60 @@ const ProductDetail = ({ isAuth }) => {
                             </div>
                             {/*Gia san pham*/}
                             <div>
-                                <span
-                                    style={{ color: 'red', marginRight: '5px' }}
-                                >
-                                    <NumericFormat
-                                        value={productDetail.price}
-                                        displayType={'text'}
-                                        thousandSeparator={true}
-                                        suffix={'đ'}
-                                    />
-                                </span>
-                                <span
-                                    style={{ textDecoration: 'line-through' }}
-                                >
-                                    30.990.000 ₫
-                                </span>
+                                {productDetail.discount != 0 ? (
+                                    <span
+                                        style={{
+                                            color: 'red',
+                                            marginRight: '5px',
+                                        }}
+                                    >
+                                        <NumericFormat
+                                            value={productDetail.discount_price}
+                                            displayType={'text'}
+                                            thousandSeparator={true}
+                                            suffix={'đ'}
+                                        />
+                                    </span>
+                                ) : (
+                                    <span
+                                        style={{
+                                            color: 'red',
+                                            marginRight: '5px',
+                                        }}
+                                    >
+                                        <NumericFormat
+                                            value={productDetail.price}
+                                            displayType={'text'}
+                                            thousandSeparator={true}
+                                            suffix={'đ'}
+                                        />
+                                    </span>
+                                )}
+
+                                {productDetail.discount != 0 && (
+                                    <span
+                                        style={{
+                                            textDecoration: 'line-through',
+                                        }}
+                                    >
+                                        <NumericFormat
+                                            value={productDetail.price}
+                                            displayType={'text'}
+                                            thousandSeparator={true}
+                                            suffix={'đ'}
+                                        />
+                                    </span>
+                                )}
+                                {productDetail.discount != 0 && (
+                                    <span
+                                        style={{
+                                            color: 'red',
+                                            marginLeft: '5px',
+                                        }}
+                                    >
+                                        -{productDetail.discount}% off
+                                    </span>
+                                )}
                             </div>
                             {/*Phần ram và dung lượng*/}
                             <Form name="validate_other">

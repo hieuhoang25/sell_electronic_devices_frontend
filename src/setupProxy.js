@@ -11,7 +11,7 @@ module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'http://vongtayyeuthuong.shop',
+            target: 'https://api.bonikphone.shop',
             changeOrigin: true,
         }),
     );
