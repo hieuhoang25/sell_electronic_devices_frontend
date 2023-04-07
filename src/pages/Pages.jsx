@@ -98,7 +98,7 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
             <TopCate />
             <NewArrivals />
             <Discount />
-            <TopSales addToCart={addToCart} />
+            <TopSales isAuth={isAuth} />
             <CategorySlider />
             {smartphones && smartphones.length != 0 && (
                 <ShopHome
