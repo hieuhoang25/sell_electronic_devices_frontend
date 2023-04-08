@@ -1,4 +1,11 @@
-import React, { lazy, useEffect, useState } from 'react';
+import React, {
+    lazy,
+    useEffect,
+    useState,
+    useRef,
+    useContext,
+    useMemo,
+} from 'react';
 import './App.css';
 import jwtDecode from 'jwt-decode';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -27,22 +34,19 @@ const Profile = Loadable(
     lazy(() => import('./components/userProfile/Profile')),
 );
 function App() {
-
-
-    
     // const auth = JSON.parse(localStorage.auth);
-
 
     const { productItems } = Data;
     const { shopItems } = Sdata;
     const dispatch = useDispatch();
-    
+
     // const auth = useSelector((state) => state.auth);
 
     const localStorage = JSON.parse(
         window.localStorage.getItem('persist:root'),
     );
     const authRedux = useSelector((state) => state.auth);
+
     var auth = '';
     if (localStorage) {
         auth = JSON.parse(localStorage.auth);
@@ -50,6 +54,7 @@ function App() {
         auth = authRedux;
     }
 
+    console.log('authRedux', authRedux);
 
     const cart = useSelector((state) => state.cart);
 
@@ -136,8 +141,11 @@ function App() {
                     console.log('load cart from server');
                     dispatch(authenticateCart(true));
                     console.log('cart state in App.js', cart);
-                    dispatch(fetchCartFromSever());
+                } else {
+                    console.log('set guest cart');
+                    dispatch(authenticateCart(false));
                 }
+                dispatch(fetchCartFromSever());
             })
             .catch((e) => {
                 console.log('auth: ', auth);
