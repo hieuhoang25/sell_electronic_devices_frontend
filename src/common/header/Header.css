@@ -61,6 +61,26 @@
   padding: 10px;
 }
 
+.search-bar .container .left,
+.search-bar .container .right {
+  flex: 2;
+
+}
+
+.search-bar .container .left {
+  margin: 0 2rem 0 0;
+}
+
+.search-bar .container .right {
+  margin: 0 0 0 1rem;
+}
+
+
+.search-bar .container .search-box {
+  flex: 0 auto;
+  margin: 0 2rem;
+}
+
 .cart {
   position: relative;
 }
@@ -135,7 +155,7 @@ header ul li a:hover {
 }
 
 .search.active {
-  height: 25vh;
+  height: 15vh;
   position: fixed;
   top: 0;
   z-index: 1000;
@@ -174,6 +194,8 @@ header ul li a:hover {
   header .link {
     display: none;
   }
+
+
 
   .close,
   .open {
@@ -216,14 +238,16 @@ header .navlink.header-action {
   padding-bottom: 0;
   align-items: baseline;
 }
+
 header .header-action-btn .ant-dropdown-button {
-       color: #4183c4;
-    text-decoration: none;
-    transition: 0.5s;
-    font-size: 15px;
-    font-weight: 400;
-    font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  color: #4183c4;
+  text-decoration: none;
+  transition: 0.5s;
+  font-size: 15px;
+  font-weight: 400;
+  font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }
+
 header .header-action-btn .ant-dropdown-button:hover {
   color: white !important;
   background-color: #e94560;
@@ -326,6 +350,7 @@ header .ant-dropdown::before {
 .category .box .ant-dropdown-menu-item {
   padding: 0;
 }
+
 .myList_v1 {
   background-color: rgb(250, 250, 250);
   width: 400px;
@@ -335,8 +360,149 @@ header .ant-dropdown::before {
   border-radius: 5px;
   border: 1px solid rgb(216, 216, 216);
 }
+
 .myItem_List {
   display: flex;
   justify-items: center;
   align-items: center;
+}
+
+.popover-footer-button.MuiButton-outlinedPrimary {
+  background-color: rgb(227 233 239) !important;
+  outline: none;
+  border: none;
+  font-weight: 400;
+  border-radius: 0;
+}
+
+.popover-footer-button.MuiButton-outlinedPrimary:hover {
+  background-color: rgb(244, 120, 141) !important;
+  color: white;
+  outline: none;
+  border: none;
+  border-radius: 0;
+}
+
+/* ::-webkit-scrollbar {
+  display: none !important;
+} */
+#demo-popup-popover {
+  /* overflow-x: hidden; */
+  scrollbar-width: none;
+  scrollbar-x: hidden;
+}
+
+::-webkit-scrollbar-track {
+  overflow-x: hidden;
+  -webkit-box-shadow: none !important;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar {
+  overflow-x: hidden;
+  width: 3px !important;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  overflow-x: hidden;
+  background-color: transparent;
+}
+
+#demo-popup-popover .MuiTypography-root {
+  overflow-x: hidden;
+  padding: 16px 0;
+}
+
+#demo-popup-popover .popover-title.MuiBox-root {
+  /* background-color:#ddd;  */
+  background-color: #bbd3ea;
+  border-bottom: 1px solid #0f3460;
+  padding: .5rem;
+  padding-left: 15px;
+  /* margin: -16px;
+  margin-bottom: 1.4rem; */
+  margin-top: -16px;
+}
+
+#demo-popup-popover .MuiPopover-paper {
+  top: 80px;
+}
+
+#demo-popup-popover .promo-badge .MuiBadge-badge {
+  right: -1.2rem;
+  top: -1rem;
+  background-color: crimson;
+}
+
+#demo-popup-popover .card-content .info .varaint-attr {
+
+  background-color: gray;
+  color: white;
+  border-radius: 15px;
+  border: 1px solid transparent;
+  padding: 5px;
+  font-size: 10px;
+
+}
+
+#demo-popup-popover .card-content .info .info-row {
+  padding-bottom: .5rem;
+  margin-bottom: .5rem;
+}
+
+#demo-popup-popover .card-content .info .info-row:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+#demo-popup-popover .card-content .info .info-row .quantity,
+#demo-popup-popover .card-content .info .info-row .price {
+  font-weight: bold;
+
+}
+
+#demo-popup-popover .card-content .MuiTypography-root.product-name {
+  padding: 4px 0;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#demo-popup-popover .origin-price.old {
+  text-decoration: line-through;
+  font-weight: lighter;
+  font-size: 12px;
+  color: grey
+    /* color: rgb(164, 28, 28); */
+}
+
+#demo-popup-popover .price.dicount-price {
+  color: crimson;
+
+}
+
+#demo-popup-popover .total-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+  /* padding: .2rem 2rem 1rem 2rem; */
+  padding-left: 25px;
+  padding-right: 25px;
+  padding: .5rem 2rem;
+}
+
+#demo-popup-popover .total-section span {
+  margin-bottom: 0;
+}
+
+#demo-popup-popover .total-section span:first-child {
+  /* font-weight: lighter; */
+}
+
+#demo-popup-popover .total-section .popover-total {
+  display: inline-block;
+  /* font-weight: 500; */
+  padding-left: .5rem;
 }

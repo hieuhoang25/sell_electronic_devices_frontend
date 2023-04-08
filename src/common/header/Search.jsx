@@ -1,13 +1,16 @@
-import React, { memo,useState } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import logo from '../../components/assets/images/logo.svg';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { reset } from '../../redux/slices/CartSlice';
-import {Badge,List} from 'antd'
+import { Badge, List } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import './Header.css';
+
+import HoverCartPopover from '../../common/header/HoverCartPopover';
+
 const Search = () => {
     // fixed Header
     window.addEventListener('scroll', function () {
@@ -25,14 +28,11 @@ const Search = () => {
         await axiosInstance
             .post(process.env.REACT_APP_URL + 'un/logout')
             .catch((error) => console.log(error));
-       
-            dispatch(reset());
-        // window.localStorage.removeItem('cart');
+
+        dispatch(reset());
+        window.localStorage.removeItem('cart');
         // dispatch(resetToGuestCart());
-        // setInterval(() =>{
-            window.location.reload('/');
-        // },3000)
-       
+        window.location.reload('/');
     };
     const [modalBell, setModalBell] = useState(false);
     const handleNotification = () => {
@@ -87,10 +87,14 @@ const Search = () => {
     console.log('inside Search called "Cart": ', Cart);
     return (
         <>
-            <section className="search">
+            <section className="search search-bar">
                 <div className="container c_flex">
-                    <div className="logo width ">
-                        <img src={logo} alt="" />
+                    <div className="logo width left">
+                        <Link to="/">
+                            {' '}
+                            <img src={logo} alt="" />{' '}
+                        </Link>
+                        {/* <img src={logo} alt="" /> */}
                     </div>
 
                     <div className="search-box f_flex">
@@ -102,8 +106,10 @@ const Search = () => {
                         <span>All Category</span>
                     </div>
 
-                    <div className="icon f_flex width">
-                        <div className="cart popup-link" data-popup="Giỏ hàng">
+                    {/* <CartPopover></CartPopover> */}
+
+                    <div className="icon f_flex width right">
+                        {/* <div className="cart popup-link" data-popup="Giỏ hàng">
                             <Link
                                 // className="popup-link"
                                 data-popup="Giỏ hàng"
@@ -135,6 +141,8 @@ const Search = () => {
                                 </span>
                             </Link>
                         </div>
+                        </div> */}
+                        <HoverCartPopover Cart={Cart}></HoverCartPopover>
                         {auth.isAuthenticated ? (
                             <>
                                 {' '}
