@@ -5,6 +5,7 @@ const INFO = '/info';
 export const ORDER_TRACKING = '/order-tracking';
 export const USER = 'user';
 export const WISHLISTS = '/wishlists';
+export const USER_WISHLIST = `${USER}${WISHLISTS}/items`
 
 //  user/cart
 export const CART = `${USER}/cart/`;
@@ -16,3 +17,5 @@ export const GUEST_CART_DETAIL = `${API_UNAUTH_BASE}/cart/items`;
 export const MERGE_CART = `${CART}add`;
 export const RATING = '/rating';
 export const IS_RATING = '/is-rating';
+
+export const USER_INFOS = `${USER}/info`;

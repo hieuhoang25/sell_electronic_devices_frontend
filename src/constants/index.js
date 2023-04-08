@@ -34,6 +34,7 @@ export const STORAGE = '/storage';
 export const ORDER_STATUS = '/order-status';
 
 export const CART = '/cart';
+export const PAYMETHOD = `${API_UNAUTH_BASE}/paymethod`;
 
 export const CURRENCY_SUFFIX = 'VNĐ';
 
