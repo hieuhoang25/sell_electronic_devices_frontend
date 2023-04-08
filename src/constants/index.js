@@ -1,18 +1,17 @@
-export const API_BASE_URL = 'http://localhost:8080';
+export const ENV_URL = process.env.REACT_APP_URL;
+export const API_BASE_URL = ENV_URL;
 export const ACCESS_TOKEN = 'accessToken';
 export const IMAGE_URL =
     'https://firebasestorage.googleapis.com/v0/b/bonik-f7b39.appspot.com/o/';
-export const OAUTH2_REDIRECT_URI = 'http://localhost:3000/oauth2/redirect';
-
+export const OAUTH2_REDIRECT_URI = process.env.REACT_APP_BASE_URL + '/';
+const GOOGLE_URL = API_BASE_URL.replace('/api/', '');
 export const GOOGLE_AUTH_URL =
-    API_BASE_URL +
-    '/oauth2/authorize/google?redirect_uri=' +
-    OAUTH2_REDIRECT_URI;
+    GOOGLE_URL + '/oauth2/authorize/google?redirect_uri=' + OAUTH2_REDIRECT_URI;
 // export const FACEBOOK_AUTH_URL = API_BASE_URL + '/oauth2/authorize/facebook?redirect_uri=' + OAUTH2_REDIRECT_URI;
 // export const GITHUB_AUTH_URL = API_BASE_URL + '/oauth2/authorize/github?redirect_uri=' + OAUTH2_REDIRECT_URI;
 
 // BASE API
-export const BASE = `${API_BASE_URL}/api/un`;
+export const BASE = `${API_BASE_URL}un`;
 export const API_UNAUTH_BASE = `un`;
 
 // API FOR PRODUCT
@@ -37,4 +36,6 @@ export const CART = '/cart';
 
 export const CURRENCY_SUFFIX = 'VNĐ';
 
-export const ENV_URL = process.env.REACT_APP_URL;
+export const PRODUCT_TOP_SALES = '/product-top-sales';
+export const PRODUCT_BIG_DISCOUNT = '/product-big-discount';
+export const PRODUCT_NEW_ARRIVAL = '/product-arrival';

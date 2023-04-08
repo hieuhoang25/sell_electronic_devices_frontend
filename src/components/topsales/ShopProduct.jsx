@@ -9,77 +9,18 @@ import { USER, WISHLISTS } from '../../constants/user';
 import { useNavigate } from 'react-router-dom';
 import { Card, Avatar } from 'antd';
 const { Meta } = Card;
-const ShopCart = ({ shopItems, isAuth, isLoading }) => {
-    const [count, setCount] = useState(0);
-    const [isFavorite, setFavorite] = useState([]);
-    let navigate = useNavigate();
-    //fetch wishlists of user
-    useEffect(() => {
-        if (isAuth) {
-            axios({
-                method: 'get',
-                url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}`,
-            })
-                .then((res) => {
-                    setFavorite(res.data); // if user wishlists is match with product id then fill red color
-                })
-                .catch((error) => {
-                    // console.log(error);
-                });
-        }
-    }, [isAuth]);
-
-    function addWishlists(product_id) {
-        axios({
-            method: 'post',
-            url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}`,
-            data: [{ product_id: product_id }],
-        }).catch((error) => {
-            // console.log(error);
-        });
-    }
-    function removeWishlists(product_id) {
-        axios({
-            method: 'delete',
-            url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}`,
-            data: [{ product_id: product_id }],
-        }).catch((error) => {
-            // console.log(error);
-        });
-    }
-
-    const handleChangeFavorite = (e, index, productId) => {
-        if (isAuth) {
-            //check if wishlists is exists
-            let existsFavorite = isFavorite.findIndex(
-                (item) => item.product_id === productId,
-            );
-            if (existsFavorite != -1) {
-                //if exists then remove
-                removeWishlists(productId);
-                setFavorite(
-                    isFavorite.filter(
-                        ({ product_id }) => product_id !== productId,
-                    ),
-                );
-            } else {
-                //if user is not like then add
-                addWishlists(productId);
-                setFavorite([...isFavorite, { product_id: productId }]);
-            }
-        } else return navigate('/login');
-    };
+const ShopProduct = ({ shopItems, isLoading }) => {
     return (
         <>
             {!isLoading ? (
                 shopItems.map((shopItems, index) => {
                     return (
-                        <div key={index} className="box">
+                        <div key={shopItems.id} className="box">
                             <div className="product mtop">
                                 <div className="img">
                                     {shopItems.discount != 0 && (
                                         <span className="discount">
-                                            -{shopItems.discount}% Off
+                                            {shopItems.discount}% Off
                                         </span>
                                     )}
                                     <Link
@@ -90,19 +31,6 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                                             alt=""
                                         />
                                     </Link>
-                                    <div className="product-like">
-                                        <Favorite
-                                            value={shopItems.id}
-                                            onChange={(e) =>
-                                                handleChangeFavorite(
-                                                    e,
-                                                    index,
-                                                    shopItems.id,
-                                                )
-                                            }
-                                            isFavorite={isFavorite}
-                                        />
-                                    </div>
                                 </div>
                                 <div className="product-details">
                                     <Link
@@ -118,27 +46,17 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                                         />
                                     </div>
                                     <div className="price">
-                                        {shopItems.discount != 0 ? (
-                                            <h4>
-                                                <NumericFormat
-                                                    value={
-                                                        shopItems.discount_price
-                                                    }
-                                                    displayType={'text'}
-                                                    thousandSeparator={true}
-                                                    suffix={'VNĐ'}
-                                                />
-                                            </h4>
-                                        ) : (
-                                            <h4>
-                                                <NumericFormat
-                                                    value={shopItems.price}
-                                                    displayType={'text'}
-                                                    thousandSeparator={true}
-                                                    suffix={'VNĐ'}
-                                                />
-                                            </h4>
-                                        )}
+                                        <h4>
+                                            <NumericFormat
+                                                value={shopItems.price}
+                                                displayType={'text'}
+                                                thousandSeparator={true}
+                                                suffix={'VNĐ'}
+                                            />
+                                        </h4>
+                                        {/* step : 3  
+                 if hami le button ma click garryo bahne 
+                */}
                                     </div>
                                 </div>
                             </div>
@@ -147,16 +65,17 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                 })
             ) : (
                 <>
-                    {new Array(10).fill(null).map((index) => {
+                    {new Array(10).fill(null).map((value, index) => {
                         return (
                             <Card
+                                key={index}
                                 loading={isLoading}
                                 style={{
                                     marginBottom: 16,
                                     marginTop: 16,
                                 }}
                             >
-                                <div key={index} className="box">
+                                <div className="box">
                                     <div className="product mtop">
                                         <div className="img">
                                             <span className="discount">
@@ -222,4 +141,4 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
     );
 };
 
-export default memo(ShopCart);
+export default memo(ShopProduct);

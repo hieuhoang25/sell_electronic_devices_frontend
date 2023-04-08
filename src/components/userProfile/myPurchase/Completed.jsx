@@ -7,7 +7,7 @@ import {
     useCallback,
     useMemo,
 } from 'react';
-import { Card, Space, Button, Divider, List, Skeleton } from 'antd';
+import { Card, Space, Button, Divider, List, Skeleton, Empty } from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 import RatingForm from '../../../common/rating/RatingForm';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -38,7 +38,7 @@ const AllPurchase = ({ status }) => {
         //     orderId: null,
         // },
     ]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const pagination = useRef();
     const page = useRef(0);
@@ -129,7 +129,7 @@ const AllPurchase = ({ status }) => {
             setProductRating(res.data);
             setIsModalOpen(true);
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     });
 
@@ -157,10 +157,6 @@ const AllPurchase = ({ status }) => {
 
     const loadMoreData = async () => {
         let ordered;
-        if (loading) {
-            return;
-        }
-        setLoading(true);
         await axios({
             method: 'get',
             url: `${BASE_USER}${ORDER_TRACKING}/${status}`,
@@ -193,11 +189,10 @@ const AllPurchase = ({ status }) => {
                 const rated = responses.map((res) => {
                     return res.data.length === 0;
                 });
-                console.log(rated);
                 setIsRated(rated);
             })
             .catch((error) => {
-                console.error(error);
+                // console.error(error);
             });
     };
     useEffect(() => {
@@ -205,7 +200,7 @@ const AllPurchase = ({ status }) => {
     }, []);
     return (
         <>
-            {data.length != 0 && (
+            {!loading && data.length != 0 ? (
                 <InfiniteScroll
                     dataLength={data.length}
                     next={loadMoreData}
@@ -451,14 +446,14 @@ const AllPurchase = ({ status }) => {
                                                     handleRate(item.id, index);
                                                 }}
                                             />
-                                            <Button
+                                            {/* <Button
                                                 style={{
                                                     minWidth: '150px',
                                                     minHeight: '40px',
                                                 }}
                                             >
                                                 Mua lại
-                                            </Button>
+                                            </Button> */}
                                         </Space>
                                     </div>
                                 </div>
@@ -479,6 +474,11 @@ const AllPurchase = ({ status }) => {
                         handleChangeContentRating={handleChangeContentRating}
                     />
                 </InfiniteScroll>
+            ) : (
+                <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={<span>Chưa có đơn hàng nào</span>}
+                />
             )}
         </>
     );

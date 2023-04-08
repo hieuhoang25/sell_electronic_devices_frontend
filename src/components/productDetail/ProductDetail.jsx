@@ -1,6 +1,17 @@
 import { React, useState, memo, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Col, Row, Card, Button, Checkbox, Space, Radio, Form } from 'antd';
+import {
+    Col,
+    Row,
+    Card,
+    Button,
+    Checkbox,
+    Space,
+    Radio,
+    Form,
+    Alert,
+    Spin,
+} from 'antd';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import HalfRatingRead from '../../common/rating/HalfRatingRead';
 import CustomizedNotification from '../../common/notification/Notification';
@@ -12,8 +23,8 @@ import axios from '../../services/axios';
 import ProductDetailQuantityCounter from '../counterInc/ProductDetailQuantityCounter';
 import CartNotification from '../../common/notification/CartNotification';
 import CartNotification_TYPE from '../../common/notification/CartNotification';
-import { addItemToCart,updateCart } from '../../services/cartService.js';
-import scrollIntoView from 'scroll-into-view-if-needed'
+import { addItemToCart, updateCart } from '../../services/cartService.js';
+import scrollIntoView from 'scroll-into-view-if-needed';
 import {
     QTY_MAX,
     QTY_MIN,
@@ -43,9 +54,6 @@ import { USER, WISHLISTS } from '../../constants/user';
 import { useNavigate } from 'react-router-dom';
 
 const ProductDetail = ({ isAuth }) => {
-
-
-
     let navigate = useNavigate();
     const dispatch = useDispatch();
     const Cart = useSelector((state) => state.cart);
@@ -59,8 +67,6 @@ const ProductDetail = ({ isAuth }) => {
     const [cartQty, setCartQty] = useState(1);
     const [cartButtonDisabled, setCartbuttonDisabled] = useState(false);
     const myRef = useRef(null);
-    
-
 
     const [cartAddedNotif, setCartAddedNotif] = useState({
         title: 'Thêm vào giỏ hàng',
@@ -135,26 +141,15 @@ const ProductDetail = ({ isAuth }) => {
     }, []);
 
     const executeScroll = () => {
-        scrollIntoView(myRef.current, { behavior: 'smooth'})
-     }
-    //Mở form đánh giá
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const rate = () => {
-        setIsModalOpen(true);
-    };
-    const handleFinish = () => {
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
+        scrollIntoView(myRef.current, { behavior: 'smooth' });
     };
 
     useEffect(() => {
-        if(Cart.isAnonymous) {
+        if (Cart.isAnonymous) {
             console.log('updateCart()');
             dispatch(updateCart());
         }
-    },[Cart])
+    }, [Cart]);
     //End
     const handleAddToCart = async (callback) => {
         const mess_message = productDetail.display_name;
@@ -168,7 +163,7 @@ const ProductDetail = ({ isAuth }) => {
         console.log('item_id: ', item_id);
         const { items } = Cart;
 
-        console.log("%cITEMS: ", "color:red",items,);
+        console.log('%cITEMS: ', 'color:red', items);
 
         const request = {
             cart_id: Cart.id,
@@ -177,7 +172,9 @@ const ProductDetail = ({ isAuth }) => {
             quantity: cartQty,
         };
         // console.log('items: ', items);
-        let cartIndex = items.findIndex((item) => item.productVariant.id === item_id);
+        let cartIndex = items.findIndex(
+            (item) => item.productVariant.id === item_id,
+        );
         // console.log('cartIndex', cartIndex);
         // console.log('san pham trong gio? ', cartIndex);
         // sản phẩm có trong giỏ
@@ -353,195 +350,281 @@ const ProductDetail = ({ isAuth }) => {
     };
 
     return (
-        <div id="top-product-page" ref={myRef} style={{ marginTop: '5rem', marginBottom: '5rem', scrollMarginBotom: '8vh' }}>
-            <Row >
-                <Col span={15} offset={6}>
-                    <div
+        <>
+            {isLoading ? (
+                <div ref={myRef} id="top-product-page">
+                    <Space
+                        direction="vertical"
                         style={{
-                            display: 'flex',
-                            p: 1,
-                            padding: '0px',
-                            flexDirection: {
-                                xs: 'column', // mobile
-                                sm: 'row', // tablet and up
-                            },
+                            width: '100%',
                         }}
                     >
-                        <div
-                            style={{
-                                position: 'relative',
-                                display: 'inline-block',
-                            }}
-                        >
-                            <img
-                                width="300"
-                                height="300"
-                                alt="example"
-                                src={getImage(productDetail.image)}
+                        <Spin tip="Loading">
+                            <Alert
+                                message="Alert message title"
+                                description="Further details about the context of this alert."
+                                type="info"
                             />
+                        </Spin>
+                    </Space>
+                </div>
+            ) : (
+                <div
+                    id="top-product-page"
+                    ref={myRef}
+                    style={{
+                        marginTop: '5rem',
+                        marginBottom: '5rem',
+                        scrollMarginBotom: '8vh',
+                    }}
+                >
+                    <Row>
+                        <Col span={15} offset={6}>
                             <div
                                 style={{
-                                    position: 'absolute',
-                                    zIndex: 2,
-                                    borderRadius: '50%',
-                                    right: '20rem',
-                                    top: 0,
-                                    transform: 'translateY(50%)',
+                                    display: 'flex',
+                                    p: 1,
+                                    padding: '0px',
+                                    flexDirection: {
+                                        xs: 'column', // mobile
+                                        sm: 'row', // tablet and up
+                                    },
                                 }}
                             >
-                                <Button
-                                    onClick={handleFavoriteClick}
-                                    shape="circle"
-                                    icon={
-                                        isFavorite ? (
-                                            <HeartFilled
-                                                style={{ color: 'red' }}
-                                            />
-                                        ) : (
-                                            <HeartOutlined />
-                                        )
-                                    }
-                                />
-                            </div>
-                        </div>
-
-                        <div style={{ marginLeft: 2 }}>
-                            {/*Ten va so sao san pham*/}
-                            <div>
-                                {productDetail.display_name}
-                                <HalfRatingRead
-                                    value={productDetail.product_averagePoint}
-                                />
-                            </div>
-                            {/*Gia san pham*/}
-                            <div>
-                                <span
-                                    style={{ color: 'red', marginRight: '5px' }}
+                                <div
+                                    style={{
+                                        position: 'relative',
+                                        display: 'inline-block',
+                                    }}
                                 >
-                                    <NumericFormat
-                                        value={productDetail.price}
-                                        displayType={'text'}
-                                        thousandSeparator={true}
-                                        suffix={'đ'}
+                                    <img
+                                        width="300"
+                                        height="300"
+                                        alt="example"
+                                        src={getImage(productDetail.image)}
                                     />
-                                </span>
-                                <span
-                                    style={{ textDecoration: 'line-through' }}
-                                >
-                                    30.990.000 ₫
-                                </span>
-                            </div>
-                            {/*Phần ram và dung lượng*/}
-                            <Form name="validate_other">
-                                <Form.Item
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Please pick an item!',
-                                        },
-                                    ]}
-                                >
-                                    <Radio.Group
-                                        onChange={handleStorageChange}
-                                        value={selectedStorage}
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            zIndex: 2,
+                                            borderRadius: '50%',
+                                            right: '20rem',
+                                            top: 0,
+                                            transform: 'translateY(50%)',
+                                        }}
                                     >
-                                        <Space
-                                            wrap
-                                            size={[5, 12]}
-                                            style={{ width: '400px' }}
+                                        <Button
+                                            onClick={handleFavoriteClick}
+                                            shape="circle"
+                                            icon={
+                                                isFavorite ? (
+                                                    <HeartFilled
+                                                        style={{ color: 'red' }}
+                                                    />
+                                                ) : (
+                                                    <HeartOutlined />
+                                                )
+                                            }
+                                        />
+                                    </div>
+                                </div>
+
+                                <div style={{ marginLeft: 2 }}>
+                                    {/*Ten va so sao san pham*/}
+                                    <div>
+                                        {productDetail.display_name}
+                                        <HalfRatingRead
+                                            value={
+                                                productDetail.product_averagePoint
+                                            }
+                                        />
+                                    </div>
+                                    {/*Gia san pham*/}
+                                    <div>
+                                        {productDetail.discount != 0 ? (
+                                            <span
+                                                style={{
+                                                    color: 'red',
+                                                    marginRight: '5px',
+                                                }}
+                                            >
+                                                <NumericFormat
+                                                    value={
+                                                        productDetail.discount_price
+                                                    }
+                                                    displayType={'text'}
+                                                    thousandSeparator={true}
+                                                    suffix={'đ'}
+                                                />
+                                            </span>
+                                        ) : (
+                                            <span
+                                                style={{
+                                                    color: 'red',
+                                                    marginRight: '5px',
+                                                }}
+                                            >
+                                                <NumericFormat
+                                                    value={productDetail.price}
+                                                    displayType={'text'}
+                                                    thousandSeparator={true}
+                                                    suffix={'đ'}
+                                                />
+                                            </span>
+                                        )}
+
+                                        {productDetail.discount != 0 && (
+                                            <span
+                                                style={{
+                                                    textDecoration:
+                                                        'line-through',
+                                                }}
+                                            >
+                                                <NumericFormat
+                                                    value={productDetail.price}
+                                                    displayType={'text'}
+                                                    thousandSeparator={true}
+                                                    suffix={'đ'}
+                                                />
+                                            </span>
+                                        )}
+                                        {productDetail.discount != 0 && (
+                                            <span
+                                                style={{
+                                                    color: 'red',
+                                                    marginLeft: '5px',
+                                                }}
+                                            >
+                                                -{productDetail.discount}% off
+                                            </span>
+                                        )}
+                                    </div>
+                                    {/*Phần ram và dung lượng*/}
+                                    <Form name="validate_other">
+                                        <Form.Item
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message:
+                                                        'Please pick an item!',
+                                                },
+                                            ]}
                                         >
-                                            {storage.map((item) => (
-                                                <Radio.Button
-                                                    key={item.id}
-                                                    value={item.id}
+                                            <Radio.Group
+                                                onChange={handleStorageChange}
+                                                value={selectedStorage}
+                                            >
+                                                <Space
+                                                    wrap
+                                                    size={[5, 12]}
+                                                    style={{ width: '400px' }}
+                                                >
+                                                    {storage.map((item) => (
+                                                        <Radio.Button
+                                                            key={item.id}
+                                                            value={item.id}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    textAlign:
+                                                                        'center',
+                                                                }}
+                                                            >
+                                                                <div>
+                                                                    {
+                                                                        item.storage_name
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </Radio.Button>
+                                                    ))}
+                                                </Space>
+                                            </Radio.Group>
+                                            {/*Phần màu sản phẩm nếu có*/}
+                                        </Form.Item>
+                                    </Form>
+                                    <Form name="validate_other">
+                                        <Form.Item
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message:
+                                                        'Please pick an item!',
+                                                },
+                                            ]}
+                                        >
+                                            <Radio.Group
+                                                onChange={onChangeColor}
+                                                value={selectedColor}
+                                            >
+                                                <Space
+                                                    wrap
+                                                    size={[1, 1]}
+                                                    style={{ width: '400px' }}
                                                 >
                                                     <div
                                                         style={{
-                                                            textAlign: 'center',
+                                                            padding: '1px',
                                                         }}
                                                     >
-                                                        <div>
-                                                            {item.storage_name}
-                                                        </div>
+                                                        Chọn màu để xem giá
                                                     </div>
-                                                </Radio.Button>
-                                            ))}
-                                        </Space>
-                                    </Radio.Group>
-                                    {/*Phần màu sản phẩm nếu có*/}
-                                </Form.Item>
-                            </Form>
-                            <Form name="validate_other">
-                                <Form.Item
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Please pick an item!',
-                                        },
-                                    ]}
-                                >
-                                    <Radio.Group
-                                        onChange={onChangeColor}
-                                        value={selectedColor}
-                                    >
-                                        <Space
-                                            wrap
-                                            size={[1, 1]}
-                                            style={{ width: '400px' }}
-                                        >
-                                            <div style={{ padding: '1px' }}>
-                                                Chọn màu để xem giá
-                                            </div>
-                                            <Space
-                                                wrap
-                                                size={[5, 12]}
-                                                style={{ width: '400px' }}
-                                            >
-                                                {color.map((item) => (
-                                                    <Radio.Button
-                                                        key={item.id}
-                                                        value={item.id}
+                                                    <Space
+                                                        wrap
+                                                        size={[5, 12]}
+                                                        style={{
+                                                            width: '400px',
+                                                        }}
                                                     >
-                                                        <div
-                                                            style={{
-                                                                textAlign:
-                                                                    'center',
-                                                            }}
-                                                        >
-                                                            <div>
-                                                                {
-                                                                    item.color_name
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    </Radio.Button>
-                                                ))}
-                                            </Space>
-                                        </Space>
-                                    </Radio.Group>
-                                </Form.Item>
-                            </Form>
-                            {/* Counter cho so luong */}
+                                                        {color.map((item) => (
+                                                            <Radio.Button
+                                                                key={item.id}
+                                                                value={item.id}
+                                                            >
+                                                                <div
+                                                                    style={{
+                                                                        textAlign:
+                                                                            'center',
+                                                                    }}
+                                                                >
+                                                                    <div>
+                                                                        {
+                                                                            item.color_name
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </Radio.Button>
+                                                        ))}
+                                                    </Space>
+                                                </Space>
+                                            </Radio.Group>
+                                        </Form.Item>
+                                    </Form>
+                                    {/* Counter cho so luong */}
 
-                            <ProductDetailQuantityCounter
-                                cartQty={cartQty}
-                                cartQtyOnChangeHandler={cartQtyOnChangeHandler}
-                                // setCartbuttonDisabled={setCartbuttonDisabled}
-                            ></ProductDetailQuantityCounter>
+                                    <ProductDetailQuantityCounter
+                                        cartQty={cartQty}
+                                        cartQtyOnChangeHandler={
+                                            cartQtyOnChangeHandler
+                                        }
+                                        // setCartbuttonDisabled={setCartbuttonDisabled}
+                                    ></ProductDetailQuantityCounter>
 
-                            {/*Them vaoo gio*/}
-                            <div style={{ padding: '5px' }}>
-                                <CartNotification
-                                    key={cartAddedNotif}
-                                    isButtonDisabled={cartButtonDisabled}
-                                    title={cartAddedNotif.title}
-                                    type={cartAddedNotif.type}
-                                    message={cartAddedNotif.message}
-                                    handleClick={handleAddToCart}
-                                    isSuccess={cartAddedNotif.isSuccess}
-                                    setSuccessNull={setSuccessNull}
-                                ></CartNotification>
-                                {/* <CustomizedNotification
+                                    {/*Them vaoo gio*/}
+                                    <div style={{ padding: '5px' }}>
+                                        <CartNotification
+                                            key={cartAddedNotif}
+                                            isButtonDisabled={
+                                                cartButtonDisabled
+                                            }
+                                            title={cartAddedNotif.title}
+                                            type={cartAddedNotif.type}
+                                            message={cartAddedNotif.message}
+                                            handleClick={handleAddToCart}
+                                            isSuccess={cartAddedNotif.isSuccess}
+                                            setSuccessNull={setSuccessNull}
+                                        ></CartNotification>
+                                        {/* <CustomizedNotification
                                     buttonContent="Thêm vào giỏ"
                                     handleClick={handleAddToCart}
                                     type="success"
@@ -549,31 +632,32 @@ const ProductDetail = ({ isAuth }) => {
                                     message="Đã thêm vào giỏ"
                                     style={{ width: '90%' }}
                                 /> */}
+                                    </div>
+                                </div>
+                                {/*Thông số kỹ thuật*/}
+                                <div style={{ width: '100%' }}>
+                                    {specificationTable.current && (
+                                        <ListSpecification
+                                            data={specificationTable.current}
+                                        />
+                                    )}
+                                </div>
+                                {/*Đánh giá và mô tả*/}
                             </div>
-                        </div>
-                        {/*Thông số kỹ thuật*/}
-                        <div style={{ width: '100%' }}>
-                            {specificationTable.current && (
-                                <ListSpecification
-                                    data={specificationTable.current}
-                                />
-                            )}
-                        </div>
-                        {/*Đánh giá và mô tả*/}
-                    </div>
-                    <TabReviewAndDescription
-                        handleClick={rate}
-                        listReview={productDetail.rating}
-                        description={
-                            productDetail.product_description
-                                ? productDetail.product_description
-                                : 'chưa có mô tả'
-                        }
-                        loading={isLoading}
-                    />
-                </Col>
-            </Row>
-        </div>
+                            <TabReviewAndDescription
+                                listReview={productDetail.rating}
+                                description={
+                                    productDetail.product_description
+                                        ? productDetail.product_description
+                                        : 'chưa có mô tả'
+                                }
+                                loading={isLoading}
+                            />
+                        </Col>
+                    </Row>
+                </div>
+            )}
+        </>
     );
 };
 export default memo(ProductDetail);

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { HashLink as Link } from 'react-router-hash-link';
 import './Header.css';
 import CategoriesDropDown from './CategoriesDropDown';
 
 const Navbar = () => {
     // Toogle Menu
     const [MobileMenu, setMobileMenu] = useState(false);
+
     return (
         <React.Fragment>
             <header className="header">
@@ -26,10 +27,23 @@ const Navbar = () => {
                                 <Link to="/">Trang chủ</Link>
                             </li>
                             <li>
-                                <Link to="/product">Sản phẩm</Link>
+                                <Link
+                                    to="/product#section-product"
+                                    scroll={(element) =>
+                                        element.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'end',
+                                            inline: 'nearest',
+                                        })
+                                    }
+                                >
+                                    Sản phẩm
+                                </Link>
                             </li>
                             <li>
-                                <Link to="/product">Liên hệ</Link>
+                                <Link to="/product#section-product">
+                                    Liên hệ
+                                </Link>
                             </li>
                         </ul>
                     </div>

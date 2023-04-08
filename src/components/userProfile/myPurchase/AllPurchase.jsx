@@ -1,47 +1,125 @@
 import { React, memo, useState, useEffect, useRef, useCallback } from 'react';
-import { Card, Space, Button, Divider, List, Skeleton } from 'antd';
+import { Card, Space, Button, Divider, List, Skeleton, Empty } from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 import RatingForm from '../../../common/rating/RatingForm';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from '../../../services/axios';
 import './Purchase.css';
-import { BASE_USER, ORDER_TRACKING, ORDER } from '../../../constants/user';
+import {
+    BASE_USER,
+    ORDER_TRACKING,
+    ORDER,
+    RATING,
+    IS_RATING,
+} from '../../../constants/user';
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
 const AllPurchase = ({ status }) => {
     //Mở form đánh giá
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [productRating, setProductRating] = useState([]);
-
-    const handleFinish = () => {
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-    //fill form rating
-    const rate = (product) => {
-        setProductRating(product);
-        setIsModalOpen(true);
-    };
-    //đánh giá
-    const [valueRating, setValueRating] = useState([]);
-    const handleChangeRating = useCallback((value, index) => {
-        valueRating[index] = value;
-        setValueRating([...valueRating]);
-    });
-    //End
-    const [loading, setLoading] = useState(false);
+    const [isRated, setIsRated] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const pagination = useRef();
     const page = useRef(0);
     const size = useRef(1);
-    const loadMoreData = () => {
-        if (loading) {
-            return;
-        }
+    const [formValueRating, setformValueRating] = useState([
+        // {
+        //     value: [
+        //         // {
+        //         //     point: 0,
+        //         //     product_id: null,
+        //         //     orderDetail_id: null,
+        //         //     content: '',
+        //         // },
+        //     ],
+        //     orderId: null,
+        // },
+    ]);
+    let orderIndex = useRef(-1);
+    function fetchRatingProductOfUser(orderId) {
+        return axios({
+            method: 'get',
+            url: `${BASE_USER}${IS_RATING}`,
+            params: {
+                orderId: orderId,
+            },
+        });
+    }
+    //rating star value
+    const handleChangeRating = useCallback(
+        (value, index, productId, orderDetailId) => {
+            let newArr = [...formValueRating];
+            newArr[orderIndex.current].value[index] = {
+                ...newArr[orderIndex.current].value[index],
+                point: value,
+                product_id: productId,
+                orderDetail_id: orderDetailId,
+                content: '',
+            };
+            setformValueRating(newArr);
+        },
+    );
+    //handle content
+    const handleChangeContentRating = useCallback((e, index) => {
+        console.log(formValueRating);
+        let newArr = [...formValueRating];
+        newArr[orderIndex.current].value[index] = {
+            ...newArr[orderIndex.current].value[index],
+            content: e.target.value,
+        };
+        setformValueRating(newArr);
+    });
+    //save rating product to db
+    function rateProduct(formValueRating) {
         setLoading(true);
-        axios({
+        return axios({
+            method: 'post',
+            url: `${BASE_USER}${RATING}`,
+            data: formValueRating,
+        });
+    }
+    //finish rating
+    const handleFinishRating = useCallback(async () => {
+        let ratingForm = formValueRating[orderIndex.current].value.filter(
+            (f) => f.point > 0,
+        );
+
+        await rateProduct(ratingForm)
+            .then((res) => {
+                setLoading(false);
+            })
+            .catch((error) => {
+                setLoading(false);
+                console.log(error);
+            });
+        const promises = formValueRating.map((value) => {
+            return fetchRatingProductOfUser(value.orderId);
+        });
+        Promise.all(promises)
+            .then((responses) => {
+                const rated = responses.map((res) => {
+                    return res.data.length === 0;
+                });
+                console.log(rated);
+                setIsRated(rated);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+        setIsModalOpen(false);
+    });
+    const handleCancel = useCallback(() => {
+        setIsModalOpen(false);
+    }, [setIsModalOpen]);
+
+    //End
+
+    const loadMoreData = async () => {
+        let ordered;
+        await axios({
             method: 'get',
             url: `${BASE_USER}${ORDER_TRACKING}/${status}`,
             params: {
@@ -51,25 +129,73 @@ const AllPurchase = ({ status }) => {
         })
             .then((res) => {
                 let dt = res.data;
+                ordered = dt.data;
                 pagination.current = dt;
                 page.current += 1;
-                setData([...data, ...dt.data]);
+                setData([...data, ...ordered]);
                 setLoading(false);
             })
             .catch(() => {
                 setLoading(false);
             });
+        const newArr = [...formValueRating];
+        ordered.forEach((value) => {
+            newArr.push({ value: [], orderId: value.id });
+        });
+        setformValueRating(newArr);
+        const promises = newArr.map((value) => {
+            return fetchRatingProductOfUser(value.orderId);
+        });
+        Promise.all(promises)
+            .then((responses) => {
+                const rated = responses.map((res) => {
+                    return res.data.length === 0;
+                });
+                setIsRated(rated);
+            })
+            .catch((error) => {
+                // console.error(error);
+            });
     };
+    //handle rate
+    const handleRate = useCallback(async (orderId, index) => {
+        orderIndex.current = index;
+        try {
+            const res = await fetchRatingProductOfUser(orderId);
+            setProductRating(res.data);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error(error);
+        }
+    });
+
+    //Rating button
+    function RatingButton({ index, onClick, checkDisplay }) {
+        return (
+            <>
+                {!isRated[index] && (
+                    <Button
+                        style={{
+                            minWidth: '150px',
+                            minHeight: '40px',
+                            backgroundColor: '#ee4d2d',
+                            color: 'white',
+                        }}
+                        onClick={onClick}
+                    >
+                        Đánh giá
+                    </Button>
+                )}
+            </>
+        );
+    }
+
     useEffect(() => {
         loadMoreData();
         return;
     }, []);
     const reloadOrder = () => {
         page.current = 0;
-        if (loading) {
-            return;
-        }
-        setLoading(true);
         axios({
             method: 'get',
             url: `${BASE_USER}${ORDER_TRACKING}/${status}`,
@@ -81,10 +207,7 @@ const AllPurchase = ({ status }) => {
             .then((res) => {
                 let dt = res.data;
                 pagination.current = dt;
-                console.log(dt.data);
-                console.log(dt);
                 setData([...dt.data]);
-
                 setLoading(false);
             })
             .catch(() => {
@@ -96,7 +219,7 @@ const AllPurchase = ({ status }) => {
             method: 'put',
             url: `${BASE_USER}${ORDER}/${orderId}`,
         }).catch((error) => {
-            console.log(error.data);
+            // console.log(error.data);
         });
     }
     const handleReceived = useCallback((orderId) => {
@@ -105,16 +228,16 @@ const AllPurchase = ({ status }) => {
     });
     return (
         <>
-            {data.length != 0 && (
+            {data.length != 0 ? (
                 <InfiniteScroll
                     dataLength={data.length}
                     next={loadMoreData}
                     hasMore={data.length < pagination.current.totalElement}
-                    scrollableTarget="scrollableDiv"
                 >
                     <List
                         dataSource={data}
-                        renderItem={(item) => (
+                        loading={loading}
+                        renderItem={(item, index) => (
                             <Card
                                 key={item.id}
                                 style={{ marginBottom: '20px' }}
@@ -360,32 +483,28 @@ const AllPurchase = ({ status }) => {
                                             )}
                                             {item.status_name ==
                                                 'Hoàn thành' && (
-                                                    <Button
-                                                        style={{
-                                                            minWidth: '150px',
-                                                            minHeight: '40px',
-                                                            backgroundColor:
-                                                                '#ee4d2d',
-                                                            color: 'white',
-                                                        }}
-                                                        onClick={() => {
-                                                            rate(
-                                                                item.orderDetails,
-                                                            );
-                                                        }}
-                                                    >
-                                                        Đánh giá
-                                                    </Button>
-                                                ) && (
-                                                    <Button
-                                                        style={{
-                                                            minWidth: '150px',
-                                                            minHeight: '40px',
-                                                        }}
-                                                    >
-                                                        Mua lại
-                                                    </Button>
-                                                )}
+                                                <RatingButton
+                                                    index={index}
+                                                    checkDisplay={item.id}
+                                                    onClick={() => {
+                                                        handleRate(
+                                                            item.id,
+                                                            index,
+                                                        );
+                                                    }}
+                                                />
+                                            )}
+                                            {/* {item.status_name ==
+                                                'Hoàn thành' && (
+                                                <Button
+                                                    style={{
+                                                        minWidth: '150px',
+                                                        minHeight: '40px',
+                                                    }}
+                                                >
+                                                    Mua lại
+                                                </Button>
+                                            )} */}
                                             {item.status_name ==
                                                 'Đang giao' && (
                                                 <Button
@@ -419,16 +538,28 @@ const AllPurchase = ({ status }) => {
                                 <RatingForm
                                     isModalOpen={isModalOpen}
                                     handleCancel={handleCancel}
-                                    handleFinish={handleFinish}
-                                    isLoading={false}
+                                    handleFinish={handleFinishRating}
+                                    isLoading={loading}
                                     data={productRating}
-                                    valueRating={valueRating}
+                                    valueRating={
+                                        orderIndex.current >= 0 &&
+                                        formValueRating[orderIndex.current]
+                                            .value
+                                    }
                                     handleChangeRating={handleChangeRating}
+                                    handleChangeContentRating={
+                                        handleChangeContentRating
+                                    }
                                 />
                             </Card>
                         )}
                     />
                 </InfiniteScroll>
+            ) : (
+                <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={<span>Chưa có đơn hàng nào</span>}
+                />
             )}
         </>
     );
