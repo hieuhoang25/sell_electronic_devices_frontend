@@ -58,7 +58,8 @@ export const CartSlice =  createSlice({
                 let id = generateAutoIncrId(state.items);
                 let cart_item = { ...action.payload, id: id };
                 console.log('cart_item: ', cart_item);
-                state.items.push(cart_item);
+                // state.items.push(cart_item);
+                state.items.unshift(cart_item);
             },
         },
         newCart: (state, action) => {
@@ -176,6 +177,13 @@ export const CartSlice =  createSlice({
             state.isAnonymous = action.payload;
             console.log('state: ', state);
         },
+        clearAfterCheckOut: (state, action) => {
+           state.baseAmount = 0.0;
+           state.discount = 0.0;
+           state.items = [];
+           state.total = 0.0;
+           state.totalCount = 0;            
+        }
     }
 
 });
@@ -197,6 +205,7 @@ export const {
     newCart,
     getTotal,
     getDiscountAmount,
+    clearAfterCheckOut
 } = CartSlice.actions;
 
 export default CartSlice.reducer;
