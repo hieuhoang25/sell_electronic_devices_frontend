@@ -6,7 +6,7 @@ import { NumericFormat } from 'react-number-format';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 const Cart = () => {
-    const [productArrival, setProductArrival] = useState();
+    const [productArrival, setProductArrival] = useState([]);
     const [loading, setLoading] = useState(true);
     const size = useRef(10);
     const page = useRef(0);
@@ -32,7 +32,7 @@ const Cart = () => {
                 setLoading(false);
             })
             .catch((err) => {
-                // console.log(err);
+                console.log(err.message);
                 setLoading(false);
             });
     }, []);
@@ -40,6 +40,7 @@ const Cart = () => {
         <>
             <Slider {...settings}>
                 {!loading &&
+                    productArrival.length !== 0 &&
                     productArrival.map((value, index) => {
                         return (
                             <Link

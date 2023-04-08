@@ -30,7 +30,7 @@ import {
     QTY_MIN,
     getCartDetailRequest,
     CartRequestTYPE,
-} from '../../common/Cart/Cart';
+} from '../../common/Cart/CartUtil';
 
 import {
     FETCH_PRODUCTS_PENDING,
@@ -103,8 +103,10 @@ const ProductDetail = ({ isAuth }) => {
         })
             .then((res) => {
                 productBody.current.storageId = res.data[0].id;
+                console.log('storeage: ', res.data);
                 setSelectedStorage(res.data[0].id);
                 setStorage(res.data);
+                console.log('storeage: ', res.data);
             })
             .catch((error) => error);
     }
@@ -119,6 +121,7 @@ const ProductDetail = ({ isAuth }) => {
             .then((res) => {
                 console.log('product-detail: ', res.data);
                 setProductDetail(res.data);
+                console.log('p detail: ', productDetail);
                 specificationTable.current = res.data.product_productAttributes;
                 setCartQty(1);
                 setIsLoading(false);
@@ -318,7 +321,8 @@ const ProductDetail = ({ isAuth }) => {
     };
     //fetch detail product
     async function fetchProductDetailByColor(color) {
-        // await fetchStorage(productId, color);
+        await fetchStorage(productId, color);
+
         await fetchProductDetail();
     }
     const onChangeColor = useCallback(({ target: { value } }) => {
@@ -327,8 +331,10 @@ const ProductDetail = ({ isAuth }) => {
             return value;
         });
         productBody.current.colorId = value;
+        console.log('prodcut body: ', productBody.current);
         console.log('selectedColor id: ', selectedColor);
-        // fetchProductDetailByColor(value);
+
+        fetchProductDetailByColor(value);
     });
 
     useEffect(() => {

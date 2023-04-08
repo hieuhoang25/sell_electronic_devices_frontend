@@ -4,7 +4,7 @@ import ShopProduct from './ShopProduct';
 import axios from '../../services/axios';
 import { PRODUCT_TOP_SALES, BASE } from '../../constants';
 const TopSales = ({ isAuth }) => {
-    const [topSales, setTopSales] = useState();
+    const [topSales, setTopSales] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const size = useRef(10);
     const page = useRef(0);

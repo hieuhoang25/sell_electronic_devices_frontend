@@ -1,31 +1,41 @@
-import React, { useEffect} from 'react';
+import React, { useEffect } from 'react';
 import './style.css';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Button, Modal, Space } from 'antd';
+import {Button as MUIButton}  from '@mui/material';
 import { Link } from 'react-router-dom';
-import {
-    addToCart,
-    removeFromCart,
-    meregeCart,
-    clearCart,
-    getCartItems,
-    getItemsCount,
-    getBaseAmount,
-    increment,
-    decrement,
-} from '../../redux/slices/CartSlice';
+import { HeartOutlined, HeartFilled, FrownOutlined } from '@ant-design/icons';
+import LoginPromptNotification from '../../common/notification/LoginPromptNotification';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import AlarmIcon from '@mui/icons-material/Alarm';
 import {
     removeItemFromCart,
     incrementItemQuantity,
     decrementItemQuantity,
     updateCart,
-    mergeAnnonCart
+    mergeAnnonCart,
 } from '../../services/cartService.js';
-import { CURRENCY_SUFFIX } from '../../constants/index';
-import { NumericFormat } from 'react-number-format';
 import { getImage } from '../../common/img';
+import {
+    getVariantDetail,
+    getColorOfCartItem,
+    getProductName,
+    getPromotion,
+    getPromotionValue,
+    getStorageOfCartItem,
+    CURRENCY_SUFFIX,
+    CartRequestTYPE,
+    getCartDetailRequest,
+    getCurrencyFormatComp,
+    getDiscountAmountOfItem,
+} from './CartUtil';
 export const QTY_MAX = 5;
 export const QTY_MIN = 1;
 
@@ -34,47 +44,13 @@ const Cart = () => {
     const Cart = useSelector((state) => state.cart);
     const { items, total, baseAmount, totalCount, discount } = Cart;
 
-    const getProductVariantDetail = (cartItem) => {
-        const { productVariant } = cartItem;
-        return productVariant;
-    };
-    const getProductName = (cartItem) => {
-        const variant = getProductVariantDetail(cartItem);
-        return variant.product_name;
-    };
-
-    const getColorOfCartItem = (cartItem) => {
-        return getProductVariantDetail(cartItem).color_name;
-    };
-
-    const getStorageOfCartItem = (cartItem) => {
-        return getProductVariantDetail(cartItem).storage_name;
-    };
-
-    const getPromotion = (cartItem) => {
-        return getProductVariantDetail(cartItem).product_promotion == null
-            ? false
-            : true;
-    };
-    const getPromotionValue = (cartItem) => {
-        const { product_promotion: promotion } =
-            getProductVariantDetail(cartItem);
-        const { activate, is_percent, discount_amount } = promotion;
-        console.log(promotion);
-        return activate
-            ? is_percent
-                ? `-${discount_amount}%`
-                : `${discount_amount}`
-            : '';
-    };
     const { confirm } = Modal;
 
     const showPromiseConfirm = (message, id) => {
         confirm({
             title: message,
             icon: <ExclamationCircleFilled />,
-            content:
-                'When clicked the OK button, this dialog will be closed after 1 second',
+            content: '',
             okText: 'Xoá',
             cancelText: 'Đóng',
             async onOk() {
@@ -89,7 +65,7 @@ const Cart = () => {
                         // request.id = id;
                         console.log('call delete ', request);
                         dispatch(removeItemFromCart(request));
-                        dispatch(updateCart())
+                        dispatch(updateCart());
                     });
                 } catch {
                     return console.log('Oops errors!');
@@ -103,14 +79,22 @@ const Cart = () => {
 
     let history = useNavigate();
 
-    const onCheckoutHandler = () => {
-        history('/checkout');
-    };
+    function onCheckoutHandler() {
+        if (Cart.isAnonymous) {
+        } else {
+            history('/checkout');
+        }
+    }
     const incrementQty = (item) => {
-        let newQty = item.quantity + 1
-        console.log('item s id: ', item.id);;
+        let newQty = item.quantity + 1;
+        console.log('item s id: ', item.id);
         const request = getCartDetailRequest(
-            { cart_id: Cart.id, id: item.id, quantity: newQty,  product_variant_id: item.productVariant.id },
+            {
+                cart_id: Cart.id,
+                id: item.id,
+                quantity: newQty,
+                product_variant_id: item.productVariant.id,
+            },
             CartRequestTYPE.UPDATE,
         );
 
@@ -120,8 +104,12 @@ const Cart = () => {
     const decrementQty = (item) => {
         let newQty = item.quantity - 1;
         const request = getCartDetailRequest(
-            { cart_id: Cart.id, id: item.id, quantity: newQty,
-                product_variant_id: item.productVariant.id },
+            {
+                cart_id: Cart.id,
+                id: item.id,
+                quantity: newQty,
+                product_variant_id: item.productVariant.id,
+            },
             CartRequestTYPE.DECR,
         );
         console.log('decrement request:', request);
@@ -129,7 +117,7 @@ const Cart = () => {
     };
     useEffect(() => {
         console.log('dispatch change');
-        if(Cart.isAnonymous) {
+        if (Cart.isAnonymous) {
             console.log('updateCart()');
             dispatch(updateCart(Cart));
         }
@@ -137,7 +125,7 @@ const Cart = () => {
 
     const cartAfterLoginHandler = () => {
         dispatch(mergeAnnonCart());
-    }
+    };
     // prodcut qty total
     return (
         <>
@@ -145,11 +133,19 @@ const Cart = () => {
                 <div className="container d_flex">
                     {/* if hamro cart ma kunai pani item xaina bhane no diplay */}
 
-                    <div className="cart-details">
+                    <div className={`cart-details ${items.length===0? 'w-100-im':'' } `}>
                         {items.length === 0 && (
-                            <h1 className="no-items product">
-                                No Items are add in Cart
-                            </h1>
+                            <div className="no-items product d_flex_jus_center">
+                                <div>
+                                    Giỏ hàng trống   
+                                   {`   `} <FrownOutlined />
+                                </div>
+
+                                <Link to={'/product/1'} className="shop-btn">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                {`   `}   Tiếp tục mua sắm
+                                </Link>
+                            </div>
                         )}
 
                         {/* yasma hami le cart item lai display garaaxa */}
@@ -157,240 +153,243 @@ const Cart = () => {
                             const productQty = item.price * item.qty;
 
                             return (
-                                <div
-                                    className="cart-list product d_flex"
-                                    key={item.id}
-                                >
+                                <div className="cart-list product d_flex" key={item.id}>
                                     <div className="img">
-                                        <img
-                                            src={getImage(
-                                                getProductVariantDetail(item)
-                                                    .image,
-                                            )}
-                                            alt=""
-                                        />
+                                        <img src={getImage(getVariantDetail(item).image)} alt="" />
                                     </div>
                                     <div className="cart-details">
                                         <div className="cart-details-item-title">
                                             <h3 className="cart-details-item-name">
-                                            <Link to></Link>
-                                                {getProductName(item)}
+                                                <Link
+                                                    to={`/product-detail/${
+                                                        getVariantDetail(item).id
+                                                    }`}>
+                                                    {getProductName(item)}
+                                                </Link>
                                             </h3>
 
-                                            <h4 className="cart-details-item-price">
+                                            {/* <h4 className="cart-details-item-price">
                                                 {getCurrencyFormatComp(
-                                                    getProductVariantDetail(
-                                                        item,
-                                                    ).price,
+                                                    getVariantDetail(item).price,
                                                 )}
-                                                {/* <NumericFormat
-                                                    value={
-                                                        getProductVariantDetail(
-                                                            item,
-                                                        ).price
-                                                    }
-                                                    displayType={'text'}
-                                                  thousandSeparator={true}
-                                                    suffix={'đ'}
-                                                /> */}
-                                            </h4>
+                                            </h4> */}
                                         </div>
-                                        <div className="d_flex">
-                                            <h4 className="mt-0 ">
-                                                Số lượng: {item.quantity}
-                                            </h4>
-                                        </div>
-
                                         <ul className="cart-product-atrs">
                                             <li>
                                                 Màu:
-                                                <span>
-                                                    {' ' +
-                                                        getColorOfCartItem(
-                                                            item,
-                                                        )}
-                                                </span>
+                                                <span>{' ' + getColorOfCartItem(item)}</span>
                                             </li>
                                             <li>
                                                 RAM:
-                                                <span>
-                                                    {getStorageOfCartItem(item)}
-                                                </span>
+                                                <span>{getStorageOfCartItem(item)}</span>
+                                            </li>
+                                            <li className='single-price'>
+                                            Đơn giá:{' '}
+                                                {getCurrencyFormatComp(
+                                                    getVariantDetail(item).price, false,'atr-price'
+                                                )}
+
                                             </li>
                                             {getPromotion(item) && (
                                                 <li>
                                                     Giảm giá:
-                                                    <span>
-                                                        {getPromotionValue(
-                                                            item,
-                                                        )}
-                                                    </span>
+                                                    <span>{getPromotionValue(item)}</span>
                                                 </li>
+
                                             )}
                                         </ul>
-
+                                        <div className="cart-detail-action-cotainer">
+                                            <Stack
+                                                className="action-buttons"
+                                                direction="row"
+                                                spacing={2}>
+                                                <MUIButton startIcon={<FavoriteIcon />}>
+                                                    Yêu thích
+                                                </MUIButton>
+                                                <MUIButton
+                                                    className="remove-cart-btn"
+                                                    startIcon= {<DeleteIcon />}
+                                                    onClick={() =>
+                                                        showPromiseConfirm(
+                                                            `Bạn có muốn xoá ${getProductName(
+                                                                item,
+                                                            )} khỏi giỏ hàng?`,
+                                                            item.id,
+                                                        )
+                                                    }>
+                                                    Xoá
+                                                    
+                                                  
+                                                </MUIButton>
+                                            </Stack>
+                                        </div>
                                         <h3 className="cart-details-total">
                                             {/* ${item.price}.00 * {item.qty} */}
                                             <span
                                                 className={`org-price ${
-                                                    getPromotion(item)
-                                                        ? 'discounted'
-                                                        : ''
-                                                }`}
-                                            >
-                                                {getCurrencyFormatComp(
-                                                    item.price_detail,
-                                                    true,
-                                                )}
+                                                    getPromotion(item) ? 'discounted' : ''
+                                                }`}>
+                                                {getCurrencyFormatComp(item.price_detail, true)}
                                             </span>
                                             {getPromotion(item) && (
                                                 <span
                                                     style={{
                                                         display: 'inline-block',
                                                         marginLeft: '1rem',
-                                                    }}
-                                                >
+                                                    }}>
                                                     {getCurrencyFormatComp(
-                                                        item.price_detail -
-                                                            item.discount_amount *
-                                                                item.quantity,
+                                                        getDiscountAmountOfItem(item),
+
                                                         true,
                                                     )}
                                                 </span>
                                             )}
                                         </h3>
                                     </div>
-                                    <div className="cart-items-function">
-                                        <div className="removeCart">
-                                            <button
-                                                className="removeCart"
-                                                onClick={() =>
-                                                    showPromiseConfirm(
-                                                        `Bạn có muốn xoá ${getProductName(
-                                                            item,
-                                                        )} khỏi giỏ hàng?`,
-                                                        item.id,
-                                                    )
-                                                }
-                                            >
-                                                <i className="fa-solid fa-xmark"></i>
-                                            </button>
+                                    <div className="cart-list-right d_flex_col">
+                                        <div className="cart-item-price">
+                                            <h3 className="cart-details-total">
+                                                {/* ${item.price}.00 * {item.qty} */}
+                                                <span
+                                                    className={`org-price ${
+                                                        getPromotion(item) ? 'discounted' : ''
+                                                    }`}>
+                                                    {getCurrencyFormatComp(item.price_detail, true)}
+                                                </span>
+                                                {getPromotion(item) && (
+                                                    <span
+                                                        style={{
+                                                            display: 'inline-block',
+                                                            marginLeft: '1rem',
+                                                        }}>
+                                                        {getCurrencyFormatComp(
+                                                            getDiscountAmountOfItem(item),
+
+                                                            true,
+                                                        )}
+                                                    </span>
+                                                )}
+                                            </h3>
                                         </div>
-                                        {/* stpe: 5 
-                    product ko qty lai inc ra des garne
-                    */}
-                                        <div className="cartControl d_flex">
-                                            <button
-                                                disabled={
-                                                    item.quantity >= QTY_MAX
-                                                }
-                                                className="incCart"
-                                                onClick={() =>
-                                                    incrementQty(item)
-                                                }
-                                            >
-                                                <i className="fa-solid fa-plus"></i>
-                                            </button>
-                                            <button
-                                                disabled={
-                                                    item.quantity <= QTY_MIN
-                                                }
-                                                className="desCart"
-                                                onClick={() =>
-                                                    decrementQty(item)
-                                                }
-                                            >
-                                                <i className="fa-solid fa-minus"></i>
-                                            </button>
+                                        <div className="cart-items-function">
+                                           {/* ! old remove button   */}
+                                            {/* <div className="removeCart">
+                                                <button
+                                                    className="removeCart"
+                                                    onClick={() =>
+                                                        showPromiseConfirm(
+                                                            `Bạn có muốn xoá ${getProductName(
+                                                                item,
+                                                            )} khỏi giỏ hàng?`,
+                                                            item.id,
+                                                        )
+                                                    }>
+                                                    <i className="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </div> */}
+                                            {/* stpe: 5 
+                        product ko qty lai inc ra des garne
+                        */}
+                                            <div className="cartControl d_flex">
+                                                <button
+                                                    disabled={item.quantity >= QTY_MAX}
+                                                    className="incCart"
+                                                    onClick={() => incrementQty(item)}>
+                                                    <i className="fa-solid fa-plus"></i>
+                                                </button>
+
+                                                <div className="quantity">{item.quantity}</div>
+
+                                                <button
+                                                    disabled={item.quantity <= QTY_MIN}
+                                                    className="desCart"
+                                                    onClick={() => decrementQty(item)}>
+                                                    <i className="fa-solid fa-minus"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div className="cart-item-price"></div>
                                 </div>
                             );
                         })}
                     </div>
-
-                    <div className="cart-total fix product">
+{items.length !== 0 && ( <div className="cart-total fix product">
                         <h2>Thông tin đơn hàng</h2>
                         <div className=" d_flex">
-                            <h4>
-                                Tổng tiền : {getCurrencyFormatComp(baseAmount)}
-                            </h4>
+                            <h4>Tổng tiền : {getCurrencyFormatComp(baseAmount)}</h4>
                         </div>
                         <div className=" d_flex">
-                            <h4>
-                                Giảm giá :{' '}
-                                {getCurrencyFormatComp(Cart.discount)}
-                            </h4>
+                            <h4>Giảm giá : {getCurrencyFormatComp(Cart.discount)}</h4>
                             {/* <h3>${getBaseAmount}.00</h3> */}
                         </div>
                         <h3>
-                            <span className="cart-total-title">
-                                Thành tiền:
-                            </span>
+                            <span className="cart-total-title">Thành tiền:</span>
                             {getCurrencyFormatComp(Cart.total)}
                         </h3>
-                        <button
-                            onClick={onCheckoutHandler}
-                            className="btn-primary w-100"
-                        >
-                            Thanh toán
-                        </button>
-                    </div>
+                        {Cart.isAnonymous ? (
+                            <LoginPromptNotification> </LoginPromptNotification>
+                        ) : (
+                            <button onClick={onCheckoutHandler} className="btn-primary w-100">
+                                Thanh toán
+                            </button>
+                        )}
+                    </div>) }
+                   
                 </div>
             </section>
         </>
     );
 };
 
-export const CartRequestTYPE = {
-    UPDATE: Symbol('update'),
-    ADD: Symbol('add'),
-    DELETE: Symbol('delete'),
-    DECR: Symbol('decrement'),
-};
-export const getCartDetailRequest = (action, CartRequestTYPEz) => {
-    const init = {
-        cart_id: action.cart_id,
-        product_variant_id: action.product_variant_id,
-        quantity: action.quantity,
-    };
-    const { UPDATE, ADD, DELETE, DECR } = CartRequestTYPE;
+// export const CartRequestTYPE = {
+//     UPDATE: Symbol('update'),
+//     ADD: Symbol('add'),
+//     DELETE: Symbol('delete'),
+//     DECR: Symbol('decrement'),
+// };
+// export const getCartDetailRequest = (action, CartRequestTYPEz) => {
+//     const init = {
+//         cart_id: action.cart_id,
+//         product_variant_id: action.product_variant_id,
+//         quantity: action.quantity,
+//     };
+//     const { UPDATE, ADD, DELETE, DECR } = CartRequestTYPE;
 
-    const update = { ...init, id: action.id, quantity: 1 };
-    switch (CartRequestTYPEz) {
-        case CartRequestTYPE.UPDATE:
-            return { ...init, id: action.id };
-        case CartRequestTYPE.DELETE:
-            return {
-                id: action.id,
-                cart_id: action.cart_id,
-                quantity: action.quantity,
-            };
-        case CartRequestTYPE.DECR:
-            return { ...init, id: action.id };
-        default:
-            return { ...init };
-    }
-};
+//     const update = { ...init, id: action.id, quantity: 1 };
+//     switch (CartRequestTYPEz) {
+//         case CartRequestTYPE.UPDATE:
+//             return { ...init, id: action.id };
+//         case CartRequestTYPE.DELETE:
+//             return {
+//                 id: action.id,
+//                 cart_id: action.cart_id,
+//                 quantity: action.quantity,
+//             };
+//         case CartRequestTYPE.DECR:
+//             return { ...init, id: action.id };
+//         default:
+//             return { ...init };
+//     }
+// };
 
-export const getCurrencyFormatComp = (value, haveSuffix = false) => {
-    return haveSuffix ? (
-        <NumericFormat
-            value={value}
-            displayType={'text'}
-            thousandSeparator={true}
-            suffix={' ' + CURRENCY_SUFFIX}
-        />
-    ) : (
-        <NumericFormat
-            value={value}
-            displayType={'text'}
-            thousandSeparator={true}
-        />
-    );
-};
+// export const getCurrencyFormatComp = (value, haveSuffix = false,className= '') => {
+//     return haveSuffix ? (
+//         <NumericFormat
+//             value={value}
+//             displayType={'text'}
+//             thousandSeparator={true}
+//             suffix={' ' + CURRENCY_SUFFIX}
+//             class={className}
+//         />
+//     ) : (
+//         <NumericFormat
+//             value={value}
+//             displayType={'text'}
+//             thousandSeparator={true}
+//             class={className}
+//         />
+//     );
+// };
 export const formatFixedFloat = (num, toFixed) => {
     return parseFloat(num).toFixed(toFixed);
 };

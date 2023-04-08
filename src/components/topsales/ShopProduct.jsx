@@ -12,7 +12,7 @@ const { Meta } = Card;
 const ShopProduct = ({ shopItems, isLoading }) => {
     return (
         <>
-            {!isLoading ? (
+            {shopItems.length !== 0 && !isLoading ? (
                 shopItems.map((shopItems, index) => {
                     return (
                         <div key={shopItems.id} className="box">
