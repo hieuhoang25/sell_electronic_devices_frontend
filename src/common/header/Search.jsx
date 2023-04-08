@@ -1,10 +1,13 @@
-import React, { memo } from 'react';
+import React, { memo,useContext } from 'react';
 import logo from '../../components/assets/images/logo.svg';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { reset } from '../../redux/slices/CartSlice';
+import CartPopover from '../../common/header/CartPopover'
+import HoverCartPopover from '../../common/header/HoverCartPopover'
+
 
 const Search = () => {
     // fixed Header
@@ -25,21 +28,20 @@ const Search = () => {
             .catch((error) => console.log(error));
        
             dispatch(reset());
-        // window.localStorage.removeItem('cart');
+        window.localStorage.removeItem('cart');
         // dispatch(resetToGuestCart());
-        // setInterval(() =>{
             window.location.reload('/');
-        // },3000)
        
     };
     console.log('-------');
     console.log('inside Search called "Cart": ', Cart);
     return (
         <>
-            <section className="search">
+            <section className="search search-bar">
                 <div className="container c_flex">
-                    <div className="logo width ">
-                        <img src={logo} alt="" />
+                    <div className="logo width left">
+                   <Link  to="/"> <img src={logo} alt="" /> </Link>
+                        {/* <img src={logo} alt="" /> */}
                     </div>
 
                     <div className="search-box f_flex">
@@ -51,8 +53,11 @@ const Search = () => {
                         <span>All Category</span>
                     </div>
 
-                    <div className="icon f_flex width">
-                        <div className="cart popup-link" data-popup="Giỏ hàng">
+
+                    {/* <CartPopover></CartPopover> */}
+
+                    <div className="icon f_flex width right">
+                        {/* <div className="cart popup-link" data-popup="Giỏ hàng">
                             <Link
                                 // className="popup-link"
                                 data-popup="Giỏ hàng"
@@ -65,7 +70,8 @@ const Search = () => {
                                         : Cart.totalCount}
                                 </span>
                             </Link>
-                        </div>
+                        </div> */}
+                        <HoverCartPopover Cart={Cart}></HoverCartPopover>
                         {auth.isAuthenticated ? (
                             <>
                                 {' '}
@@ -95,7 +101,11 @@ const Search = () => {
                                 </Link>
                             </>
                         )}
+                     
                     </div>
+
+              
+
                 </div>
             </section>
         </>
