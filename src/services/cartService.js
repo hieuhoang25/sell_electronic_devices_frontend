@@ -1,22 +1,11 @@
 // import { createSlice } from '@reduxjs/toolkit';
 import axios from './axios';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-    CART,
-    CART_ITEM,
-    NEW_GUEST_CART,
-    GUEST_CART_DETAIL,
-    MERGE_CART,
-} from '../constants/user';
+import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL, MERGE_CART } from '../constants/user';
 import {
     addToCart,
     removeFromCart,
-    meregeCart,
-    clearCart,
-    getCartItems,
     getItemsCount,
     getBaseAmount,
-    getCart,
     getCartFromSever,
     increment,
     decrement,
@@ -65,45 +54,44 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
 
 export const resetToGuestCart = () => async (dispatch, getState) => {
     console.log('get fresh guest cart...');
-                const cart_new = await getFreshCartForGuest();
-                dispatch(newCart(cart_new));
-                // dispatch(updateCart());
-}
+    const cart_new = await getFreshCartForGuest();
+    dispatch(newCart(cart_new));
+    // dispatch(updateCart());
+};
 // {
 //     "cart_id": 0,
 //     "product_variant_id": 0,
 //     "quantity": 5
 //   }
-export const removeItemFromCart =
-    (requestItem) => async (dispatch, getState) => {
-        const { isAnonymous } = getState().cart;
-        if (!isAnonymous) {
-            console.log('send remove request...');
-            const { id: cart_id } = getState().cart;
-            console.log(getState());
-            console.log('cartId: ', cart_id);
-            console.log('requestItem: ', requestItem);
-            await axios
-                .delete(`${ENV_URL}${CART}${cart_id}${CART_ITEM}`, {
-                    data: { ...requestItem },
-                })
-                .then((res) => {
-                    console.log('removed !');
-                    //
-                    dispatch(fetchCartFromSever());
-                })
-                .catch((error) => {
-                    console.log('erorr: ', error.message);
-                    return 0;
-                });
-        } else {
-            console.log('remove item in localstroge...');
-            console.log('remove_request: ', requestItem);
+export const removeItemFromCart = (requestItem) => async (dispatch, getState) => {
+    const { isAnonymous } = getState().cart;
+    if (!isAnonymous) {
+        console.log('send remove request...');
+        const { id: cart_id } = getState().cart;
+        console.log(getState());
+        console.log('cartId: ', cart_id);
+        console.log('requestItem: ', requestItem);
+        await axios
+            .delete(`${ENV_URL}${CART}${cart_id}${CART_ITEM}`, {
+                data: { ...requestItem },
+            })
+            .then((res) => {
+                console.log('removed !');
+                //
+                dispatch(fetchCartFromSever());
+            })
+            .catch((error) => {
+                console.log('erorr: ', error.message);
+                return 0;
+            });
+    } else {
+        console.log('remove item in localstroge...');
+        console.log('remove_request: ', requestItem);
 
-            dispatch(removeFromCart(requestItem));
-            // dispatch(updateCart());
-        }
-    };
+        dispatch(removeFromCart(requestItem));
+        // dispatch(updateCart());
+    }
+};
 export const addItemToCart = (request) => async (dispatch, getState) => {
     const { id: cart_id, isAnonymous, items } = getState().cart;
     if (!isAnonymous) {
@@ -116,7 +104,6 @@ export const addItemToCart = (request) => async (dispatch, getState) => {
             });
         console.log('send add request...');
     } else {
-        // dispatch(addToCart());
         console.log('update state in localStorge...');
 
         let requestIndex = checkItemInGuestCart(items, request);
@@ -140,74 +127,68 @@ export const addItemToCart = (request) => async (dispatch, getState) => {
     }
 };
 
-export const guestCarIncrementItemQuantity =
-    (request) => async (dispatch, getState) => {
-        const { items } = getState().cart;
-        console.log('request: ', request);
-        let { quantity: reQty, index } = request;
-        // let itemIndex = items.findIndex(i => i.id === id)
-        let item = items[index];
+export const guestCarIncrementItemQuantity = (request) => async (dispatch, getState) => {
+    const { items } = getState().cart;
+    console.log('request: ', request);
+    let { quantity: reQty, index } = request;
+    // let itemIndex = items.findIndex(i => i.id === id)
+    let item = items[index];
 
-        console.log('item: ', item);
-        let id = item.id;
-        let oldQty = item.quantity;
-        console.log('reQty: ', reQty);
-        let newQty = oldQty + reQty;
+    console.log('item: ', item);
+    let id = item.id;
+    let oldQty = item.quantity;
+    console.log('reQty: ', reQty);
+    let newQty = oldQty + reQty;
 
-        request = { ...request, quantity: newQty };
-        console.log('increase state in localStorge..');
-        console.log('increase: ', request);
+    request = { ...request, quantity: newQty };
+    console.log('increase state in localStorge..');
+    console.log('increase: ', request);
+    let req = await getGuestRequestCartDetail(request);
+    dispatch(increment({ ...req, index: index, id: id }));
+    // dispatch(updateCart());
+};
+
+export const incrementItemQuantity = (request) => async (dispatch, getState) => {
+    const { id: cart_id, isAnonymous } = getState().cart;
+    if (!isAnonymous) {
+        await axios
+            .put(`${ENV_URL}${CART}${cart_id}${CART_ITEM}`, {
+                ...request,
+            })
+            .then((res) => {
+                dispatch(fetchCartFromSever());
+            });
+        console.log('send add request...');
+    } else {
+        let { id } = request;
+        console.log('request_increase: ', request);
         let req = await getGuestRequestCartDetail(request);
-        dispatch(increment({ ...req, index: index, id: id }));
+
+        dispatch(increment({ ...req, id: id }));
         // dispatch(updateCart());
-    };
-
-export const incrementItemQuantity =
-    (request) => async (dispatch, getState) => {
-        const { id: cart_id, isAnonymous } = getState().cart;
-        if (!isAnonymous) {
-            await axios
-                .put(`${ENV_URL}${CART}${cart_id}${CART_ITEM}`, {
-                    ...request,
-                })
-                .then((res) => {
-                    dispatch(fetchCartFromSever());
-                });
-            console.log('send add request...');
-        } else {
-            const { items } = getState().cart;
-
-            let { id } = request;
-            console.log('request_increase: ', request);
-            let req = await getGuestRequestCartDetail(request);
-
-            dispatch(increment({ ...req, id: id }));
-            // dispatch(updateCart());
-        }
-    };
-export const decrementItemQuantity =
-    (request) => async (dispatch, getState) => {
-        const { id: cart_id, isAnonymous } = getState().cart;
-        if (!isAnonymous) {
-            await axios
-                .put(`${ENV_URL}${CART}${cart_id}${CART_ITEM}`, {
-                    ...request,
-                })
-                .then((res) => {
-                    dispatch(fetchCartFromSever());
-                });
-            console.log('send add request...');
-        } else {
-            const { items } = getState().cart;
-            console.log('decrease state in localStorge..');
-            console.log('request: ', request);
-            let req = await getGuestRequestCartDetail(request);
-            // let index = checkItemInGuestCart(items,request)
-            // console.log('index: ',index);
-            dispatch(decrement({ ...req, id: request.id }));
-            // updateCart();
-        }
-    };
+    }
+};
+export const decrementItemQuantity = (request) => async (dispatch, getState) => {
+    const { id: cart_id, isAnonymous } = getState().cart;
+    if (!isAnonymous) {
+        await axios
+            .put(`${ENV_URL}${CART}${cart_id}${CART_ITEM}`, {
+                ...request,
+            })
+            .then((res) => {
+                dispatch(fetchCartFromSever());
+            });
+        console.log('send add request...');
+    } else {
+        console.log('decrease state in localStorge..');
+        console.log('request: ', request);
+        let req = await getGuestRequestCartDetail(request);
+        // let index = checkItemInGuestCart(items,request)
+        // console.log('index: ',index);
+        dispatch(decrement({ ...req, id: request.id }));
+        // updateCart();
+    }
+};
 
 const covertMergeCartRequest = (items, cart_id) => {
     return items.map((i) => {
@@ -223,7 +204,6 @@ export const mergeAnnonCart = () => async (dispatch, getState) => {
 
     let { items } = getState().cart;
     let cart_id = await (await (await axios.get(`${ENV_URL}${CART}`)).data).id;
-    const em = {};
     let request = covertMergeCartRequest(items, cart_id);
     console.log('list request: ', request);
     if (request)
@@ -238,12 +218,6 @@ export const mergeAnnonCart = () => async (dispatch, getState) => {
             });
     dispatch(authenticateCart(false));
     dispatch(fetchCartFromSever());
-};
-
-const getCartId = async () => {
-    return await (
-        await axios.get(`${ENV_URL}${CART}`)
-    ).data;
 };
 
 export const getFreshCartForGuest = async () => {
@@ -285,25 +259,18 @@ const getGuestRequestCartDetail = async (request) => {
 const checkItemInGuestCart = (items, request) => {
     const { product_variant_id } = request;
     console.log('request pv id: ', product_variant_id);
-    return items.findIndex(
-        (item) => item.productVariant.id === request.product_variant_id,
-    );
+    return items.findIndex((item) => item.productVariant.id === request.product_variant_id);
 };
 
-
-
-export const updateCart = () => async (dispatch,getState) => {
-    console.log('%cupdate cart: ',"font: 20px, color: red", getState().cart);
-    
-    // dispatch(getItemsCount(getState().cart));
-    // dispatch(getBaseAmount(getState().cart))
-    // dispatch(getDiscountAmount(getState().cart));
-    // dispatch(getTotal(getState().cart));
-
-    // 
-
+export const updateCart = () => async (dispatch, getState) => {
+    console.log('%cupdate cart: ', 'font: 20px, color: red', getState().cart);
     dispatch(getItemsCount());
-    dispatch(getBaseAmount())
+    dispatch(getBaseAmount());
     dispatch(getDiscountAmount());
     dispatch(getTotal());
-}
+};
+
+export const clearAfterCheckOut = () => async (dispatch, getState) => {
+    alert('fetch ...');
+    dispatch(fetchCartFromSever());
+};
