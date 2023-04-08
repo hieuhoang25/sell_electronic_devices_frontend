@@ -1,3 +1,41 @@
 .ant-tabs-tabpane{
     padding-left: 0!important;
 }
+.wishlist-container {
+    padding: 2rem 3.5rem;
+}
+.wishlist-container .wishlist-card {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 1rem;
+    width: auto;
+    height: auto
+
+}
+.wishlist-card .wishlist-card-image {
+    max-width: 300px;
+}
+.wishlist-card .cat-info {
+    font-size: 11px;
+    color:darkgrey;
+}
+.wishlist-card .product-name {
+    font-size: 1.5rem;
+    color:#4183c4;
+}
+.wishlist-card .ant-card-body {
+    flex: 1;
+    display: flex;
+}
+.wishlist-card .wishlist-card-body-info {
+    flex: 1;
+}
+
+.wishlist-card .product-name {
+    margin: 0rem 0 1rem 0;
+}
+.wishlist-card .wishlist-card-body-btn {
+    border-radius: 50%;
+}
+

@@ -30,7 +30,7 @@ import {
     QTY_MIN,
     getCartDetailRequest,
     CartRequestTYPE,
-} from '../../common/Cart/Cart';
+} from '../../common/Cart/CartUtil'
 
 import {
     FETCH_PRODUCTS_PENDING,
