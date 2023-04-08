@@ -1,11 +1,20 @@
 import React from 'react';
 import { Button } from 'antd';
+import { Col, Row ,Space, Input} from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { CURRENCY_SUFFIX } from '../../constants/index';
 import { NumericFormat } from 'react-number-format';
-import { getCurrencyFormatComp } from '../../common/Cart/Cart';
+import {
+    getCurrencyFormatComp,
+    CURRENCY_SUFFIX,
+    getPromotion,
+    getPromotionValue,
+    getVariantDetail,
+    getColorOfCartItem,
+    getDiscountAmountOfItem,
+    getPriceDetail,
+} from '../../common/Cart/CartUtil';
 import { getImage } from '../../common/img';
-const OrderList = () => {
+const OrderList = ({ onClickOrder }) => {
     // console.log(CartItem);
 
     const Cart = useSelector((state) => {
@@ -15,21 +24,45 @@ const OrderList = () => {
     const list = items.map((item) => {
         return <OrderListItem product={item}></OrderListItem>;
     });
-    const onOrderHandler = () => {};
+    const onOrderHandler = () => {
+        onClickOrder();
+    };
     return (
         <section className="order-list">
-            <h4>Đơn hàng</h4>
-            <ul>{list}</ul>
+            <h4>
+                Đơn hàng{`  `} (<span>{Cart.totalCount}</span>)
+            </h4>
+            <ul className="order-list-container">{list}</ul>
+            <div className='coupon-container'>
+            <h4 className='coupon-container-title'>  Mã giảm giá</h4>
+          
+                            <Space
+                                style={{ marginLeft: '0.5rem', width: '80%' }}
+                                direction="horizontal">
+                                <Input style={{ width: '100%' }} placeholder="Nhập mã giảm giá" />
+                                <Button style={{ width: 80 }}>Áp dụng</Button>
+                            </Space>
+            </div>
             <div className="order-total">
-                <div className="box">
+                <div className="box box-quantity">
                     <h3>Số lượng</h3>
-                    <div className="total">{Cart.totalCount}</div>
+                    <div className="quantity">{Cart.totalCount}</div>
                 </div>
-                <div className="box">
+                <div className="box base">
+                    <h3>Tạm tính: </h3>
+                    <div className="base">{getCurrencyFormatComp(Cart.baseAmount, true)}</div>
+                </div>
+                <div className="box dis">
+                    <h3>Giảm giá: </h3>
+                    <div className="dis">{getCurrencyFormatComp(Cart.discount, true)}</div>
+                </div>
+                <div className="box dis">
+                    <h3>Áp dụng mã giảm: </h3>
+                    <div className="dis">{getCurrencyFormatComp(Cart.discount, true)}</div>
+                </div>
+                <div className="box total">
                     <h3>Tổng tiền</h3>
-                    <div className="total">
-                        {getCurrencyFormatComp(Cart.total, true)}
-                    </div>
+                    <div className="total">{getCurrencyFormatComp(Cart.total, true)}</div>
                 </div>
             </div>
             <div className="order-btn">
@@ -41,35 +74,112 @@ const OrderList = () => {
 
 const OrderListItem = ({ product }) => {
     console.log('orderItem:', product);
-    const {
-        productVariant: detail,
-        price_detail,
-        discount_amount,
-        quantity,
-    } = product;
+    const variant_detail = getVariantDetail(product);
 
-    const { display_name: name, image } = detail;
+    const { productVariant: detail, price_detail, discount_amount, quantity } = product;
+
+    const { display_name: name, image } = variant_detail;
 
     return (
         <li key={product.id}>
             <div className="order-list-card">
                 <div className="product-detail">
-                    <div className="image">
-                        <img src={getImage(image)} alt="" />
-                    </div>
-                    <div>
-                        <h3>{name}</h3>
-                        <h5>Số lượng: {quantity}</h5>
-                    </div>
+                    <Row>
+                        <Col  style={{display:"flex"}} span={10}>
+                            <div className="image">
+                                <img src={getImage(image)} alt="" />
+                            </div>
+                        </Col>
+                        <Col span={14}>
+                            <div className="product-detail-info">
+                                <div className="product-detail-top">
+                                <div className='discount-tag'>
+                                            {getPromotion(product) && (
+                                                <span className='discount-container'> Giảm: {getPromotionValue(product)}</span>
+                                            )}
+                                        </div>
+                                    <h3 style={{fontSize: "16px",marginTop:"0.5rem"}}>{name}</h3>
+                                </div>
+                                <div className="product-detail-bottom">
+                                    <div className="gen">
+                                        <div className='quantity-container' >Số lượng: <span className='quantity'> {quantity}</span></div>
+                                        <div className='price-container'>
+                                            Giá:{' '}
+                                            {getCurrencyFormatComp(
+                                                getPriceDetail(product),
+                                                false,
+                                                'price-per-product',
+                                            )}{' '}
+                                        </div>
+                                        {/* <div>
+                                            {getPromotion(product) && (
+                                                <span className='discount-container'> Giảm: {getPromotionValue(product)}</span>
+                                            )}
+                                        </div> */}
+                                    </div>
+
+                                    <div className="price">
+                                        {getCurrencyFormatComp(
+                                            getPriceDetail(product),
+                                            false,
+                                            'origin-price',
+                                        )}
+                                        {getCurrencyFormatComp(
+                                            getDiscountAmountOfItem(product),
+                                            false,
+                                            'total',
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
-                <div className="price">
-                    {getCurrencyFormatComp(
-                        price_detail - discount_amount * quantity,
-                    )}
-                </div>
-                {/* <div className="function">x</div> */}
             </div>
         </li>
     );
 };
 export default OrderList;
+
+{
+    /* <li key={product.id}>
+<div className="order-list-card">
+<div className="product-detail">
+
+        <div className="image">
+            <img src={getImage(image)} alt="" />
+        </div>
+       
+        <div className='product-detail-info'>
+        <div className='product-detail-top'> 
+           
+        <h3>{name}</h3>
+       </div>
+        <div className='product-detail-bottom'> 
+           <div className='gen' >
+           <div >Số lượng: {quantity}</div>
+           <div>Giá: </div>
+           <div>
+           <span> Giảm: </span>
+          
+            
+           </div>
+          
+           </div>
+
+           <div className="price">
+           {getCurrencyFormatComp(
+            price_detail - discount_amount * quantity, false,"origin-price"
+        )}
+        {getCurrencyFormatComp(
+            price_detail - discount_amount * quantity,
+        )}
+        </div>
+          
+      
+    </div>
+    </div>
+    </div>
+</div>
+</li> */
+}
