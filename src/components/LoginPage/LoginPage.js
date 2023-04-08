@@ -14,17 +14,16 @@ import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useDispatch, useSelector } from 'react-redux';
 import { INIT, LOGIN } from '../../redux/actions/AuthAction';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import axios from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { mergeAnnonCart } from '../../services/cartService';
-
 const LoginPage = () => {
     const theme = createTheme();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const auth = useSelector((state) => state.auth);
-    const cart = useSelector((state) => state.cart);
+    
 
     const [formLogin, setFormLogin] = useState({
         userName: '',
