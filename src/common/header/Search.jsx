@@ -117,7 +117,11 @@ const Search = () => {
                                 </span>
                             </Link>
                         </div>
-                        <div
+                      
+                        {auth.isAuthenticated ? (
+                            <>
+                                {' '}
+                                <div
                             className=" popup-link notification "
                             style={{color:'#4183c4'}}
                             onClick={handleNotification}
@@ -135,9 +139,6 @@ const Search = () => {
                                 </span>
                             </Link>
                         </div>
-                        {auth.isAuthenticated ? (
-                            <>
-                                {' '}
                                 <Link
                                     to="/profile"
                                     className="popup-link"
@@ -152,6 +153,7 @@ const Search = () => {
                                 >
                                     <i className="fa fa-sign-out icon-circle"></i>
                                 </Link>
+                                
                             </>
                         ) : (
                             <>
@@ -162,8 +164,19 @@ const Search = () => {
                                 >
                                     <i className="fa fa-sign-in icon-circle"></i>
                                 </Link>
+                                <Link
+                                    className="popup-link"
+                                    data-popup="Đăng kí"
+                                    to="/signUp"
+                                >
+                                    
+                                    <i className="fa fa-key icon-circle"></i>
+                                </Link>
                             </>
                         )}
+                        
+                       
+                        
                     </div>
                 </div>
                 {modalBell ? (

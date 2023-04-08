@@ -16,6 +16,7 @@
     "antd": "^5.1.4",
     "axios": "^1.2.2",
     "cros": "^1.0.1",
+    "formik": "^2.2.9",
     "http-proxy-middleware": "^2.0.6",
     "immer": "^9.0.19",
     "jwt-decode": "^3.1.2",
@@ -35,7 +36,9 @@
     "semantic-ui-react": "^2.1.4",
     "slick-carousel": "^1.8.1",
     "styled-components": "^5.3.3",
-    "web-vitals": "^2.1.4"
+    "sweetalert2": "^11.7.3",
+    "web-vitals": "^2.1.4",
+    "yup": "^1.0.2"
   },
   "scripts": {
     "start": "react-scripts start",

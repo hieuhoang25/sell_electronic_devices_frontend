@@ -10,10 +10,14 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GoogleIcon from '@mui/icons-material/Google';
-
+import {useFormik} from 'formik'
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useDispatch } from 'react-redux';
+import { signUp } from './thunk';
+import { useNavigate } from 'react-router-dom';
+import { signUpSchema } from './signUpSchema';
 
 function Copyright(props) {
   return (
@@ -31,14 +35,30 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  const navigate = useNavigate();
+  const  dispatch = useDispatch();
+  const formik = useFormik({
+    initialValues:{
+      email: '',
+      username:'' ,
+      password: '',
+      phone: '',
+      full_name:'',
+      confirmPassword:''
+    },
+    validationSchema: signUpSchema ,
+     onSubmit: async (values)=>{
+     await dispatch(signUp(values,navigate));
+     }
+  })
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   const data = new FormData(event.currentTarget);
+  //   console.log({
+  //     email: data.get('email'),
+  //     password: data.get('password'),
+  //   });
+  // };
 
   return (
     <ThemeProvider theme={theme}>
@@ -52,33 +72,40 @@ export default function SignUp() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign up
+          <Typography component="h1" variant="h5" style={{
+            fontSize:25,
+            fontWeight:600,
+            color:'#137bc7'
+
+          }}>
+            SIGN UP
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} >
                 <TextField
                   autoComplete="given-name"
-                  name="firstName"
+                  name="full_name"
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
+                  id="full_name"
+                  label="Full Name"
                   autoFocus
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.errors.full_name && formik.touched.full_name && <span style={{color:'red'}}>{formik.errors.full_name}</span>}
               </Grid>
-              <Grid item xs={12} sm={6}>
+            
+              <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
+                  id="Username"
+                  label="User Name"
+                  name="username"
+                  autoComplete="Username"
+                  onChange={formik.handleChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -89,9 +116,22 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  onChange={formik.handleChange}
                 />
               </Grid>
               <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="phone"
+                  label="Phone Number"
+                  type="number"
+                  id="phoneNumber"
+                  autoComplete="new-password"
+                  onChange={formik.handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   required
                   fullWidth
@@ -100,8 +140,22 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={formik.handleChange}
                 />
               </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirmPassword"
+                  autoComplete="confirmPassword"
+                  onChange={formik.handleChange}
+                />
+              </Grid>
+            
               <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}

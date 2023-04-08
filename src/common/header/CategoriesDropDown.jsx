@@ -46,9 +46,9 @@ useEffect( () => {
         setCategories((prev) => res.data)
      }); 
 },[])
-console.log("CATEG: ", categories);
+// console.log("CATEG: ", categories);
 const MenuItems = categories.map((value, index) => {return {key: ''+ index,  label: ( <a href={`/${value.title}`}></a>)};})
-  console.log("MENUITEM: ", MenuItems);
+  // console.log("MENUITEM: ", MenuItems);
 
   const menuI = categories.map((value, index) => {
       return (
@@ -57,8 +57,6 @@ const MenuItems = categories.map((value, index) => {return {key: ''+ index,  lab
               <Link to={`/product/${value.key}`} key={value.key}>
                             <div  key={index}>
                                 <a
-                                    // className="f_flex"
-                                    // style={{ width: '100%' }}
                                     href="/category"
                                 >
                                     <span>{value.title}</span>
