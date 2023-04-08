@@ -1,4 +1,4 @@
-import React, { memo, useState,  useReducer, useContext } from 'react';
+import React, { memo, useState, useReducer, useContext } from 'react';
 import { Col, Row } from 'antd';
 import CheckoutForm from './CheckoutForm';
 import OrderList from './OrderList';
@@ -8,7 +8,7 @@ import { ADDRESS_FIELD } from './CheckoutForm';
 import axios from '../../services/axios';
 import { CHECKOUT } from '../../constants/user';
 import { ENV_URL } from '../../constants/index';
-import {clearAfterCheckOut} from '../../services/cartService';
+import { clearAfterCheckOut } from '../../services/cartService';
 import { useDispatch, useSelector } from 'react-redux';
 // const style = {
 //     background: '#0092ff',
@@ -44,7 +44,15 @@ const initialState = {
 
 const checkoutReducer = (state = initialState, action) => {
     const { ADDRESS, PROMO, CHECKOUT, PAYMENT } = CHECKOUT_TYPE;
-    const { DISTR, METHOD, POSTID, PROMO: PROMO_REQ, PROVINCE, LINE, WARDS } = REQUEST;
+    const {
+        DISTR,
+        METHOD,
+        POSTID,
+        PROMO: PROMO_REQ,
+        PROVINCE,
+        LINE,
+        WARDS,
+    } = REQUEST;
     const {
         PROVINCE: PAY_PROVINCE,
         POSTID: PAY_POSTID,
@@ -87,9 +95,12 @@ const checkoutReducer = (state = initialState, action) => {
 };
 export const CheckoutContext = React.createContext(null);
 const Checkout = () => {
-    const [CheckoutReducer, dispatch] = useReducer(checkoutReducer, initialState);
+    const [CheckoutReducer, dispatch] = useReducer(
+        checkoutReducer,
+        initialState,
+    );
     const serviceDispatch = useDispatch();
-const navigate = useNavigate();
+    const navigate = useNavigate();
     const onClickOrder = () => {
         console.log('Order ');
         console.log('Order State: ', CheckoutReducer);
@@ -97,11 +108,18 @@ const navigate = useNavigate();
             .post(`${ENV_URL}${CHECKOUT}`, CheckoutReducer)
             .then((res) => {
                 console.log(res.data);
-                alert('Thang toán thành công')
+                alert('Thang toán thành công');
                 setTimeout(() => {
-                  serviceDispatch(clearAfterCheckOut());
-                  navigate('/profile')
-                },2000)
+                    serviceDispatch(clearAfterCheckOut());
+                    //   navigate('/profile/')
+                    // window.location('/profilpe/');
+
+                    navigate('/profile', {
+                        state: {
+                            profileId: '3',
+                        },
+                    });
+                }, 2000);
             })
             .catch((e) => {
                 console.log(e.message);

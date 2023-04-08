@@ -6,12 +6,21 @@ import MyPurchase from './myPurchase/MyPurchase';
 import ChangePassword from './personal/ChangePassword';
 import FavoriteProduct from './personal/FavoriteProduct';
 import Address from './personal/Address';
+
+import { useLocation } from 'react-router-dom';
 import './Profile.css';
 const Profile = () => {
     // const dispatch = useDispatch();
     // useEffect(()=>{
     //   dispatch(fetchInfoUer)
     // },[dispatch])
+    const location = useLocation();
+    let profileId = '2';
+    if (location.state) {
+        profileId = location.state.profileId;
+    }
+
+    // alert(profileId);
     const items = [
         {
             key: '1',
@@ -54,7 +63,11 @@ const Profile = () => {
     ];
     return (
         <>
-            <Tabs defaultActiveKey="2" tabPosition="left" items={items} />
+            <Tabs
+                defaultActiveKey={!profileId ? '2' : profileId}
+                tabPosition="left"
+                items={items}
+            />
         </>
     );
 };
