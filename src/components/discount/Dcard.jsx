@@ -17,7 +17,7 @@ const Dcard = () => {
         slidesToScroll: 1,
         autoplay: true,
     };
-    const [productDiscount, setProductDiscount] = useState();
+    const [productDiscount, setProductDiscount] = useState([]);
     const [loading, setLoading] = useState(true);
     const size = useRef(10);
     const page = useRef(0);
@@ -43,6 +43,7 @@ const Dcard = () => {
         <>
             <Slider {...settings}>
                 {!loading &&
+                    productDiscount.length !== 0 &&
                     productDiscount.map((value, index) => {
                         return (
                             <Link

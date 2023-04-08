@@ -29,7 +29,7 @@ const CatCard = ({categories}) => {
         dots: false,
         infinite: true,
         speed: 500,
-        slidesToShow: 5,
+        slidesToShow: categories.length<5?  categories.length :  5,
         slidesToScroll: 1,
         // autoplay: true,
         autoplaySpeed: 2000,

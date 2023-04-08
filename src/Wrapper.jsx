@@ -1,12 +1,9 @@
 import Header from './common/header/Header';
 import Footer from './common/footer/Footer';
-import { useLocation } from "react-router-dom";
-import {useLayoutEffect} from 'react'
 const Wrapper = ({ children, Cart }) => {
-    // alert("Wrapper")
     return (
         <>
-            <Header  />
+            <Header />
             {children}
             <Footer />
         </>
