@@ -22,3 +22,10 @@
 .slick-track {
   width: 100%;
 }
+.NewArrivals .box:hover{
+  box-shadow: rgb(43 52 69 / 10%) 0px 4px 16px;
+  transform: translateY(-10px);
+}
+.NewArrivals .box{
+  transition: all .5s;
+}
