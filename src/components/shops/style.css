@@ -37,7 +37,12 @@
   font-size: 17px;
   font-weight: 500;
 }
-
+.shop .myShop_Style{
+  transition: all .5s;
+}
+.shop .myShop_Style:hover{
+  transform: translateY(-10px);
+}
 .shop .contentWidth {
   margin-left: 30px;
 }

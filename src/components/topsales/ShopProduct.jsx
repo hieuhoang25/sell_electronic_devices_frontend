@@ -16,8 +16,8 @@ const ShopProduct = ({ shopItems, isLoading }) => {
                 shopItems.map((shopItems, index) => {
                     return (
                         <div key={shopItems.id} className="box">
-                            <div className="product mtop">
-                                <div className="img">
+                            <div className="product top">
+                                <div className="img" style={{height:180, objectFit:'contain'}} >
                                     {shopItems.discount != 0 && (
                                         <span className="discount">
                                             {shopItems.discount}% Off
@@ -36,7 +36,7 @@ const ShopProduct = ({ shopItems, isLoading }) => {
                                     <Link
                                         to={`/product-detail/${shopItems.id}`}
                                     >
-                                        <h3 style={{ color: 'black' }}>
+                                        <h3 style={{ color: 'black', height:40, marginTop:26, marginBottom:14 }}>
                                             {shopItems.product_name}
                                         </h3>
                                     </Link>

@@ -10,12 +10,34 @@ import { getImage } from '../../common/img';
 import { NumericFormat } from 'react-number-format';
 import { Link } from 'react-router-dom';
 const Dcard = () => {
+    const SampleNextArrow = (props) => {
+        const { onClick } = props
+        return (
+          <div className='control-btn' onClick={onClick}>
+            <button className='next'>
+              <i className='fa fa-long-arrow-alt-right'></i>
+            </button>
+          </div>
+        )
+      }
+      const SamplePrevArrow = (props) => {
+        const { onClick } = props
+        return (
+          <div className='control-btn' onClick={onClick}>
+            <button className='prev'>
+              <i className='fa fa-long-arrow-alt-left'></i>
+            </button>
+          </div>
+        )
+      }
     const settings = {
         dots: false,
         infinite: true,
         slidesToShow: 6,
         slidesToScroll: 1,
         autoplay: true,
+        nextArrow: <SampleNextArrow />,
+        prevArrow: <SamplePrevArrow />,
     };
     const [productDiscount, setProductDiscount] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -50,8 +72,8 @@ const Dcard = () => {
                                 key={index}
                                 to={'/product-detail/' + value.id}
                             >
-                                <div className="box product" key={index}>
-                                    <div className="img">
+                                <div className="box product" key={index} >
+                                    <div className="img" style={{height:180}}>
                                         <img
                                             src={getImage(value.image)}
                                             alt=""
@@ -66,7 +88,7 @@ const Dcard = () => {
                                             </span>
                                         )}
                                     </div>
-                                    <h4>{value.product_name}</h4>
+                                    <h4 style={{height:40}}>{value.product_name}</h4>
                                     {value.discount != 0 ? (
                                         <span>
                                             <NumericFormat

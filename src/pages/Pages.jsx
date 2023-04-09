@@ -95,11 +95,11 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
         <>
             <Home CartItem={CartItem} />
             <FlashDeals productItems={productItems} addToCart={addToCart} />
-            <TopCate />
+            {/* <TopCate /> */}
             <NewArrivals />
             <Discount />
             <TopSales isAuth={isAuth} />
-            <CategorySlider />
+            {/* <CategorySlider /> */}
             {smartphones && smartphones.length != 0 && (
                 <ShopHome
                     isAuth={isAuth}
