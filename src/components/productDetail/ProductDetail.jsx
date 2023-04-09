@@ -25,6 +25,7 @@ import CartNotification from '../../common/notification/CartNotification';
 import CartNotification_TYPE from '../../common/notification/CartNotification';
 import { addItemToCart, updateCart } from '../../services/cartService.js';
 import scrollIntoView from 'scroll-into-view-if-needed';
+import  './style.css'
 import {
     QTY_MAX,
     QTY_MIN,
@@ -384,9 +385,10 @@ const ProductDetail = ({ isAuth }) => {
                         scrollMarginBotom: '8vh',
                     }}
                 >
-                    <Row>
-                        <Col span={15} offset={6}>
+                    <div className='productDetail'>
+                        <div  >
                             <div
+                               
                                 style={{
                                     display: 'flex',
                                     p: 1,
@@ -397,10 +399,24 @@ const ProductDetail = ({ isAuth }) => {
                                     },
                                 }}
                             >
+                                <div  
+                                 className='product_style'
+                                style={{
+                                    display: 'flex',
+                                    p: 1,
+                                   
+                                    flexDirection: {
+                                        xs: 'column', // mobile
+                                        sm: 'row', // tablet and up
+                                    },
+                                    width: "70%"
+                                    
+                                }}>
                                 <div
                                     style={{
                                         position: 'relative',
                                         display: 'inline-block',
+                                        marginLeft:20
                                     }}
                                 >
                                     <img
@@ -437,7 +453,7 @@ const ProductDetail = ({ isAuth }) => {
 
                                 <div style={{ marginLeft: 2 }}>
                                     {/*Ten va so sao san pham*/}
-                                    <div>
+                                    <div >
                                         {productDetail.display_name}
                                         <HalfRatingRead
                                             value={
@@ -640,8 +656,10 @@ const ProductDetail = ({ isAuth }) => {
                                 /> */}
                                     </div>
                                 </div>
+                                </div>
+                              
                                 {/*Thông số kỹ thuật*/}
-                                <div style={{ width: '100%' }}>
+                                <div className='product_tskt' style={{ width: '30%', }}>
                                     {specificationTable.current && (
                                         <ListSpecification
                                             data={specificationTable.current}
@@ -659,8 +677,8 @@ const ProductDetail = ({ isAuth }) => {
                                 }
                                 loading={isLoading}
                             />
-                        </Col>
-                    </Row>
+                        </div>
+                    </div>
                 </div>
             )}
         </>

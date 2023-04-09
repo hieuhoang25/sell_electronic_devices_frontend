@@ -11,15 +11,17 @@ const Cart = () => {
     const size = useRef(10);
     const page = useRef(0);
     const settings = {
-        dots: false,
+        dots: true,
         infinite: true,
         slidesToShow: 6,
         slidesToScroll: 1,
         autoplay: true,
+        speed: 300,
+        // variableWidth: true
     };
     useEffect(() => {
         axios
-            .get(`${BASE}${PRODUCT_NEW_ARRIVAL}`, {
+        .get(`${BASE}${PRODUCT_NEW_ARRIVAL}`, {
                 params: {
                     page: page.current,
                     size: size.current,
@@ -35,6 +37,7 @@ const Cart = () => {
                 console.log(err.message);
                 setLoading(false);
             });
+            console.log(productArrival);
     }, []);
     return (
         <>
@@ -47,14 +50,15 @@ const Cart = () => {
                                 key={index}
                                 to={'/product-detail/' + value.id}
                             >
-                                <div className="box product" key={index}>
-                                    <div className="img">
+                                <div className="box product" key={index} >
+                                    <div className="img" style={{height:180}}>
                                         <img
                                             src={getImage(value.image)}
-                                            alt=""
+                                            alt="#"
                                             width="100%"
+                                            
                                         />
-                                        {value.discount != 0 && (
+                                        {value.discount !== 0 && (
                                             <span
                                                 style={{ color: 'white' }}
                                                 className="discount"
@@ -64,7 +68,7 @@ const Cart = () => {
                                         )}
                                     </div>
                                     <h4>{value.product_name}</h4>
-                                    {value.discount != 0 ? (
+                                    {value.discount !== 0 ? (
                                         <span>
                                             <NumericFormat
                                                 value={value.discount_price}

@@ -12,22 +12,23 @@ const ListSpecification = ({data}) => {
   //   }
   // };
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Thông số kỹ thuật</th>
-          <th>Chi tiết</th>
-        </tr>
-      </thead>
-      <tbody>
+    <div className='technical_content'>
+      <h3 >Thông số kỹ thuật</h3>
+      
+      <ul>
         {data.map(({ id,attribute_name, attribute_value }) => (
-          <tr key={id}>
-            <td>{attribute_name}</td>
-            <td>{attribute_value}</td>
-          </tr>
+          <li className='items' key={id}>
+            <p style={{margin:0}}>{attribute_name}</p>
+            <div>{attribute_value}</div>
+          </li>
         ))}
-      </tbody>
-    </table>
+        </ul>
+      
+        
+       
+     
+    </div>
+    
   );
 };
 export default memo(ListSpecification);
