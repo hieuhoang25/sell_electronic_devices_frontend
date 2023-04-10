@@ -66,6 +66,7 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
     const dispatch = useDispatch();
     const access_token = searchParams.get('access_token');
     const refresh_token = searchParams.get('refresh_token');
+    const emailAlreadyExistsInAccount = searchParams.get('error');
     useEffect(() => {
         if (access_token && refresh_token) {
             axios
@@ -89,6 +90,10 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
                 });
             TokenService.setCookieAccessToken(access_token);
             navigate('/');
+        }
+        if (emailAlreadyExistsInAccount) {
+            const error = decodeURIComponent(emailAlreadyExistsInAccount);
+            navigate('/login', { state: { error: error } });
         }
     });
     return (

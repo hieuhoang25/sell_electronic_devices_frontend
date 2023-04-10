@@ -39,6 +39,7 @@ const Catg = ({
     onClickResult,
     selectedKeys,
     loading,
+    categoryLoading,
 }) => {
     const MyCheckBox = styled(Checkbox)`
         &.ant-checkbox-wrapper {
@@ -63,7 +64,7 @@ const Catg = ({
 
     return (
         <>
-            {!loading ? (
+            {!categoryLoading ? (
                 <div className="filter">
                     <div className="">
                         <h3>Danh mục</h3>
