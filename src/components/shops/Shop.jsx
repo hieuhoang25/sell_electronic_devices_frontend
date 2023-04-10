@@ -23,6 +23,7 @@ const Shop = ({
     sortValue,
     selectedKeys,
     isLoading,
+    categoryLoading,
 }) => {
     const SortingCombox = ({ handleSortingChange, sortValue }) => {
         return (
@@ -39,7 +40,7 @@ const Shop = ({
                             label: 'Tất cả',
                         },
                         {
-                            value: 'Bán chạy desc',
+                            value: 'quantity_sold desc',
                             label: 'Bán chạy',
                         },
                         {
@@ -79,7 +80,7 @@ const Shop = ({
                         onClickResult={onClickResult}
                         key={categories.key}
                         selectedKeys={selectedKeys}
-                        loading={isLoading}
+                        categoryLoading={categoryLoading}
                     />
                     <div className="contentWidth">
                         <div className="heading d_flex">

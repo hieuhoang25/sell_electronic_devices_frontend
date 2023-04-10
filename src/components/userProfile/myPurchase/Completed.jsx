@@ -62,19 +62,15 @@ const AllPurchase = ({ status }) => {
                 point: value,
                 product_id: productId,
                 orderDetail_id: orderDetailId,
-                content: '',
             };
+            // console.log(newArr);
             setformValueRating(newArr);
         },
     );
     //handle content
-    const handleChangeContentRating = useCallback((e, index) => {
-        console.log(formValueRating);
+    const handleChangeContentRating = useCallback(async (e, index) => {
         let newArr = [...formValueRating];
-        newArr[orderIndex.current].value[index] = {
-            ...newArr[orderIndex.current].value[index],
-            content: e.target.value,
-        };
+        newArr[orderIndex.current].value[index].content = e.target.value;
         setformValueRating(newArr);
     });
     function rateProduct(formValueRating) {
@@ -122,11 +118,20 @@ const AllPurchase = ({ status }) => {
         setIsModalOpen(false);
     }, [setIsModalOpen]);
 
-    const handleRate = useCallback(async (orderId, index) => {
+    const handleRate = useCallback(async (orderId, index, orderDetail) => {
         orderIndex.current = index;
+        let newArr = [...formValueRating];
+        newArr[index].value = [];
+        orderDetail.forEach(() => {
+            newArr[index].value.push({
+                content: '',
+                point: 0,
+            });
+        });
         try {
             const res = await fetchRatingProductOfUser(orderId);
             setProductRating(res.data);
+            setformValueRating(newArr);
             setIsModalOpen(true);
         } catch (error) {
             // console.error(error);
@@ -178,7 +183,17 @@ const AllPurchase = ({ status }) => {
             });
         const newArr = [...formValueRating];
         ordered.forEach((value) => {
-            newArr.push({ value: [], orderId: value.id });
+            newArr.push({
+                value: [
+                    {
+                        point: 0,
+                        product_id: null,
+                        orderDetail_id: null,
+                        content: '',
+                    },
+                ],
+                orderId: value.id,
+            });
         });
         setformValueRating(newArr);
         const promises = newArr.map((value) => {
@@ -416,7 +431,7 @@ const AllPurchase = ({ status }) => {
                                             }}
                                         >
                                             <NumericFormat
-                                                value={126000}
+                                                value={item.total}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
                                                 suffix={'đ'}
@@ -443,7 +458,11 @@ const AllPurchase = ({ status }) => {
                                                 index={index}
                                                 checkDisplay={item.id}
                                                 onClick={() => {
-                                                    handleRate(item.id, index);
+                                                    handleRate(
+                                                        item.id,
+                                                        index,
+                                                        item.orderDetails,
+                                                    );
                                                 }}
                                             />
                                             {/* <Button

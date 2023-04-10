@@ -70,6 +70,7 @@ function Product({ isAuth }) {
     const currentPage = useRef(0);
     const sortValue = useRef('All');
     const [selectKeys, setSelectKeys] = useState();
+    const [categoryLoading, setCategoryLoading] = useState(true);
     useEffect(() => {
         if (typeof categoryId !== 'undefined') {
             setSelectKeys([parseInt(categoryId)]);
@@ -114,6 +115,7 @@ function Product({ isAuth }) {
         })
             .then((res) => {
                 setCategory(() => res.data);
+                setCategoryLoading(false);
                 return res.data;
             })
             .catch((error) => error);
@@ -259,6 +261,7 @@ function Product({ isAuth }) {
                 sortValue={sortValue.current}
                 selectedKeys={selectKeys}
                 isLoading={productsFilter.pending}
+                categoryLoading={categoryLoading}
             />
         </>
     );

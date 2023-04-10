@@ -221,11 +221,7 @@ function App() {
                             </Protected>
                         }
                     ></Route>
-                    <Route
-                        path="/signUp"
-                        element={<SignUp/>
-                        }
-                    ></Route>
+                    <Route path="/signUp" element={<SignUp />}></Route>
                 </Routes>
             </Wrapper>
         </>

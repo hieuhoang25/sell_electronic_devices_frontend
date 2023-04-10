@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { INIT, LOGIN } from '../../redux/actions/AuthAction';
 import { useState, useContext } from 'react';
 import axios from '../../services/axios';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { mergeAnnonCart } from '../../services/cartService';
 import { GOOGLE_AUTH_URL } from '../../constants/index';
 const LoginPage = () => {
@@ -25,7 +25,7 @@ const LoginPage = () => {
     const [searchParams, setSearchParam] = useSearchParams();
     const dispatch = useDispatch();
     const auth = useSelector((state) => state.auth);
-
+    const error = useLocation();
     const [formLogin, setFormLogin] = useState({
         userName: '',
         password: '',
@@ -34,11 +34,14 @@ const LoginPage = () => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
     };
-
+    const [formError, setFormError] = useState('');
     const handleLogin = async () => {
         const response_login = await axios
             .post(process.env.REACT_APP_URL + 'un/login', formLogin)
-            .catch((error) => console.log(error));
+            .catch((error) => {
+                const err = error.response;
+                setFormError(err.data.error);
+            });
         const { error, access_token } = response_login.data;
 
         if (response_login.data && error) {
@@ -139,6 +142,7 @@ const LoginPage = () => {
                                 name="email"
                                 autoComplete="email"
                                 autoFocus
+                                helperText={formError}
                                 onChange={(e, v) => {
                                     handleChangeUsername(e);
                                 }}
@@ -152,12 +156,13 @@ const LoginPage = () => {
                                 label="Password"
                                 type="password"
                                 id="password"
+                                helperText={formError}
                                 autoComplete="current-password"
                                 onChange={(e, v) => {
                                     handleChangePassword(e);
                                 }}
                             />
-                            <FormControlLabel
+                            {/* <FormControlLabel
                                 control={
                                     <Checkbox
                                         value="remember"
@@ -165,7 +170,7 @@ const LoginPage = () => {
                                     />
                                 }
                                 label="Remember me"
-                            />
+                            /> */}
                             <Button
                                 // type="submit"
                                 fullWidth

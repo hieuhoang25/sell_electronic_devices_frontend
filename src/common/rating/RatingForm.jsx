@@ -15,43 +15,25 @@ const RatingForm = ({
     handleChangeRating,
     handleChangeContentRating,
 }) => {
-    if (valueRating) valueRating = valueRating.filter((f) => f.point > 0);
     return (
         <>
             <Modal
                 title="Đánh Giá Sản Phẩm"
                 open={isModalOpen}
                 onCancel={handleCancel}
-                footer={
-                    valueRating || valueRating.length != 0
-                        ? [
-                              <Button key="back" onClick={handleCancel}>
-                                  Trờ lại
-                              </Button>,
-                              <Button
-                                  loading={isLoading}
-                                  key="submit"
-                                  type="primary"
-                                  onClick={handleFinish}
-                              >
-                                  Hoàn thành
-                              </Button>,
-                          ]
-                        : [
-                              <Button key="back" onClick={handleCancel}>
-                                  Trờ lại
-                              </Button>,
-                              <Button
-                                  loading={isLoading}
-                                  key="submit"
-                                  type="primary"
-                                  onClick={handleFinish}
-                                  disabled
-                              >
-                                  Hoàn thành
-                              </Button>,
-                          ]
-                }
+                footer={[
+                    <Button key="back" onClick={handleCancel}>
+                        Trờ lại
+                    </Button>,
+                    <Button
+                        loading={isLoading}
+                        key="submit"
+                        type="primary"
+                        onClick={handleFinish}
+                    >
+                        Hoàn thành
+                    </Button>,
+                ]}
             >
                 {data.length != 0 &&
                     data.map((item, index) => {
@@ -164,11 +146,7 @@ const RatingForm = ({
                                                     item.id,
                                                 );
                                             }}
-                                            value={
-                                                typeof valueRating[index] !==
-                                                    'undefined' &&
-                                                valueRating[index].point
-                                            }
+                                            value={valueRating[index].point}
                                         />
                                     </span>
                                 </div>
@@ -177,15 +155,11 @@ const RatingForm = ({
                                     rows={4}
                                     placeholder="Tối đa 150 từ"
                                     maxLength={150}
-                                    value={
-                                        typeof valueRating[index] !==
-                                        'undefined'
-                                            ? valueRating[index].content
-                                            : ''
+                                    showCount
+                                    value={valueRating[index].content}
+                                    onChange={(e) =>
+                                        handleChangeContentRating(e, index)
                                     }
-                                    onChange={(e) => {
-                                        handleChangeContentRating(e, index);
-                                    }}
                                 />
                             </div>
                         );

@@ -56,19 +56,14 @@ const AllPurchase = ({ status }) => {
                 point: value,
                 product_id: productId,
                 orderDetail_id: orderDetailId,
-                content: '',
             };
             setformValueRating(newArr);
         },
     );
     //handle content
     const handleChangeContentRating = useCallback((e, index) => {
-        console.log(formValueRating);
         let newArr = [...formValueRating];
-        newArr[orderIndex.current].value[index] = {
-            ...newArr[orderIndex.current].value[index],
-            content: e.target.value,
-        };
+        newArr[orderIndex.current].value[index].content = e.target.value;
         setformValueRating(newArr);
     });
     //save rating product to db
@@ -140,7 +135,17 @@ const AllPurchase = ({ status }) => {
             });
         const newArr = [...formValueRating];
         ordered.forEach((value) => {
-            newArr.push({ value: [], orderId: value.id });
+            newArr.push({
+                value: [
+                    {
+                        point: 0,
+                        product_id: null,
+                        orderDetail_id: null,
+                        content: '',
+                    },
+                ],
+                orderId: value.id,
+            });
         });
         setformValueRating(newArr);
         const promises = newArr.map((value) => {
@@ -158,14 +163,23 @@ const AllPurchase = ({ status }) => {
             });
     };
     //handle rate
-    const handleRate = useCallback(async (orderId, index) => {
+    const handleRate = useCallback(async (orderId, index, orderDetail) => {
         orderIndex.current = index;
+        let newArr = [...formValueRating];
+        newArr[index].value = [];
+        orderDetail.forEach(() => {
+            newArr[index].value.push({
+                content: '',
+                point: 0,
+            });
+        });
         try {
             const res = await fetchRatingProductOfUser(orderId);
             setProductRating(res.data);
+            setformValueRating(newArr);
             setIsModalOpen(true);
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     });
 
@@ -444,7 +458,7 @@ const AllPurchase = ({ status }) => {
                                             }}
                                         >
                                             <NumericFormat
-                                                value={126000}
+                                                value={item.total}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
                                                 suffix={'đ'}
@@ -535,24 +549,21 @@ const AllPurchase = ({ status }) => {
                                         </Space>
                                     </div>
                                 </div>
-                                <RatingForm
-                                    isModalOpen={isModalOpen}
-                                    handleCancel={handleCancel}
-                                    handleFinish={handleFinishRating}
-                                    isLoading={loading}
-                                    data={productRating}
-                                    valueRating={
-                                        orderIndex.current >= 0 &&
-                                        formValueRating[orderIndex.current]
-                                            .value
-                                    }
-                                    handleChangeRating={handleChangeRating}
-                                    handleChangeContentRating={
-                                        handleChangeContentRating
-                                    }
-                                />
                             </Card>
                         )}
+                    />
+                    <RatingForm
+                        isModalOpen={isModalOpen}
+                        handleCancel={handleCancel}
+                        handleFinish={handleFinishRating}
+                        isLoading={loading}
+                        data={productRating}
+                        valueRating={
+                            orderIndex.current >= 0 &&
+                            formValueRating[orderIndex.current].value
+                        }
+                        handleChangeRating={handleChangeRating}
+                        handleChangeContentRating={handleChangeContentRating}
                     />
                 </InfiniteScroll>
             ) : (

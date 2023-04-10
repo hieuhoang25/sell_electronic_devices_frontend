@@ -256,7 +256,7 @@ const ToPay = ({ status }) => {
                                             }}
                                         >
                                             <NumericFormat
-                                                value={126000}
+                                                value={item.total}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
                                                 suffix={'đ'}
