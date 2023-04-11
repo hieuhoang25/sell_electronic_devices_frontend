@@ -40,3 +40,4 @@ export const CURRENCY_SUFFIX = 'VNĐ';
 export const PRODUCT_TOP_SALES = '/product-top-sales';
 export const PRODUCT_BIG_DISCOUNT = '/product-big-discount';
 export const PRODUCT_NEW_ARRIVAL = '/product-arrival';
+export const FLASH_DEAL = '/deal/current';

@@ -118,7 +118,9 @@ function Product({ isAuth }) {
                 setCategoryLoading(false);
                 return res.data;
             })
-            .catch((error) => error);
+            .catch((error) => {
+                setCategoryLoading(false);
+            });
     }
     //fetch category
     useEffect(() => {
