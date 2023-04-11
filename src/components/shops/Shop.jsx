@@ -40,7 +40,7 @@ const Shop = ({
                             label: 'Tất cả',
                         },
                         {
-                            value: 'quantity_sold desc',
+                            value: 'quantitySold desc',
                             label: 'Bán chạy',
                         },
                         {

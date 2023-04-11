@@ -19,6 +19,7 @@ export const RATING = '/rating';
 export const IS_RATING = '/is-rating';
 
 export const USER_INFOS = `${USER}/info`;
+
 export const ADDRESS = `/address`;
 
 // api/user/addresss/list

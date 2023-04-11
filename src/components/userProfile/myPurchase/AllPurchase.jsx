@@ -504,6 +504,7 @@ const AllPurchase = ({ status }) => {
                                                         handleRate(
                                                             item.id,
                                                             index,
+                                                            item.orderDetails,
                                                         );
                                                     }}
                                                 />
