@@ -97,7 +97,12 @@ export default function HoverCartPopover({ Cart }) {
                             )}
                             {Cart.totalCount !== 0 &&
                                 items.map((value, index) => {
-                                    return <MediaCard Item={value}></MediaCard>;
+                                    return (
+                                        <MediaCard
+                                            key={index}
+                                            Item={value}
+                                        ></MediaCard>
+                                    );
                                 })}
                         </Typography>
                         <Box

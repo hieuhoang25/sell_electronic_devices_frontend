@@ -1,5 +1,5 @@
 import React, { memo, useState, useReducer, useContext } from 'react';
-import { Col, Row } from 'antd';
+import { Col, Row, Form } from 'antd';
 import CheckoutForm from './CheckoutForm';
 import OrderList from './OrderList';
 import { useNavigate } from 'react-router-dom';
@@ -10,10 +10,6 @@ import { CHECKOUT } from '../../constants/user';
 import { ENV_URL } from '../../constants/index';
 import { clearAfterCheckOut } from '../../services/cartService';
 import { useDispatch, useSelector } from 'react-redux';
-// const style = {
-//     background: '#0092ff',
-//     padding: '8px 0',
-//   };
 
 const paymentData = [{ p_id: 1, name: 'VISA/MASTER Card' }];
 
@@ -22,6 +18,7 @@ export const CHECKOUT_TYPE = {
     ADDRESS: Symbol('address'),
     PROMO: Symbol('promo'),
     CHECKOUT: Symbol('checkout'),
+    OTHER_ADDRESS: Symbol('other_address'),
 };
 
 export const REQUEST = {
@@ -43,7 +40,7 @@ const initialState = {
 };
 
 const checkoutReducer = (state = initialState, action) => {
-    const { ADDRESS, PROMO, CHECKOUT, PAYMENT } = CHECKOUT_TYPE;
+    const { ADDRESS, PROMO, CHECKOUT, PAYMENT, OTHER_ADDRESS } = CHECKOUT_TYPE;
     const {
         DISTR,
         METHOD,
@@ -67,9 +64,27 @@ const checkoutReducer = (state = initialState, action) => {
         case PAYMENT: {
             // if(action.payload === undefined) return {...state}
             console.log('my method: ', action.payload);
-            return { ...state, [METHOD.description]: action.payload.id };
+            return { ...state, [METHOD.description]: action.payload };
         }
-
+        case OTHER_ADDRESS: {
+            console.log('call dispatch other address...');
+            let addressFull = action.payload;
+            const {
+                district: dis,
+                address_line: line,
+                province: prov,
+                wards: wards,
+                postal_id: postId,
+            } = action.payload;
+            console.log('address full', addressFull);
+            return {
+                ...state,
+                district: dis,
+                addressLine: `${line}, ${wards}`,
+                province: prov,
+                postalId: `${Math.floor(100000 + Math.random() * 900000)}`,
+            };
+        }
         case ADDRESS: {
             console.log('call dispatch address...');
             let addressFull = action.payload;
@@ -95,6 +110,7 @@ const checkoutReducer = (state = initialState, action) => {
 };
 export const CheckoutContext = React.createContext(null);
 const Checkout = () => {
+    const [form] = Form.useForm();
     const [CheckoutReducer, dispatch] = useReducer(
         checkoutReducer,
         initialState,
@@ -104,26 +120,42 @@ const Checkout = () => {
     const onClickOrder = () => {
         console.log('Order ');
         console.log('Order State: ', CheckoutReducer);
-        axios
-            .post(`${ENV_URL}${CHECKOUT}`, CheckoutReducer)
+
+        form.validateFields()
             .then((res) => {
                 console.log(res.data);
-                alert('Thang toán thành công');
-                setTimeout(() => {
-                    serviceDispatch(clearAfterCheckOut());
-                    //   navigate('/profile/')
-                    // window.location('/profilpe/');
+                console.log(CheckoutReducer);
 
-                    navigate('/profile', {
-                        state: {
-                            profileId: '3',
-                        },
+                axios
+                    .post(`${ENV_URL}${CHECKOUT}`, CheckoutReducer)
+                    .then((res) => {
+                        console.log(res.data);
+                        alert('Thang toán thành công');
+                        setTimeout(() => {
+                            serviceDispatch(clearAfterCheckOut());
+                            //   navigate('/profile/')
+                            // window.location('/profilpe/');
+
+                            navigate('/profile', {
+                                state: {
+                                    profileId: '3',
+                                },
+                            });
+                        }, 2000);
+                    })
+                    .catch((e) => {
+                        console.log(e.message);
                     });
-                }, 2000);
             })
             .catch((e) => {
-                console.log(e.message);
+                console.log('%c Validate form fail: ', 'color: red');
+                console.log(e.errorFields);
             });
+        // console.log(form.validateFields());
+        // form/;
+        // ! test mode
+
+        // !end test mod
     };
 
     return (
@@ -131,7 +163,10 @@ const Checkout = () => {
             <section className="main-section">
                 <Row justify="center" gutter={16}>
                     <Col className="gutter-row" span={12}>
-                        <CheckoutForm></CheckoutForm>
+                        <CheckoutForm
+                            onFinish={onClickOrder}
+                            form={form}
+                        ></CheckoutForm>
                     </Col>
                     <Col className="gutter-row" span={8}>
                         <OrderList onClickOrder={onClickOrder}></OrderList>

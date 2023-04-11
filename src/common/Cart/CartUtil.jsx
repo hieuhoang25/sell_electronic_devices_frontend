@@ -91,14 +91,14 @@ export function getCurrencyFormatComp(
             displayType={'text'}
             thousandSeparator={true}
             suffix={' ' + CURRENCY_SUFFIX}
-            class={className}
+            className={className}
         />
     ) : (
         <NumericFormat
             value={value}
             displayType={'text'}
             thousandSeparator={true}
-            class={className}
+            className={className}
         />
     );
 }
