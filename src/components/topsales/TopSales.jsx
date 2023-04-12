@@ -40,7 +40,7 @@ const TopSales = ({ isAuth }) => {
                             <i className="fa-solid fa-caret-right"></i>
                         </div>
                     </div>
-                    <section className="shop background">
+                    <section className="shop">
                         <div className="container">
                             <div className="contentWidthHome">
                                 <div className="product-content  grid1">
