@@ -62,3 +62,6 @@
 .shop .product:hover {
   box-shadow: rgb(43 52 69 / 10%) 0px 4px 16px;
 }
+.product_style_v1 .grid1{
+  grid-template-columns: repeat(4, 1fr);
+}

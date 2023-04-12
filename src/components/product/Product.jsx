@@ -247,7 +247,8 @@ function Product({ isAuth }) {
     });
     return (
         <>
-            <Shop
+        <div className='product_style_v1'>
+        <Shop   
                 shopItems={productsFilter.products}
                 categories={category}
                 onChangePagination={onChangePagination}
@@ -265,6 +266,8 @@ function Product({ isAuth }) {
                 isLoading={productsFilter.pending}
                 categoryLoading={categoryLoading}
             />
+        </div>
+            
         </>
     );
 }

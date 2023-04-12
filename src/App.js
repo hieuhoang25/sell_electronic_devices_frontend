@@ -27,6 +27,7 @@ import { INIT } from './redux/actions/AuthAction';
 import { authenticateCart } from './redux/slices/CartSlice';
 import { fetchCartFromSever, resetToGuestCart } from './services/cartService';
 import Loadable from './components/Suspense/Loadable';
+import BackToTop from './common/backToTop/BackToTop';
 const LoginPage = Loadable(
     lazy(() => import('./components/LoginPage/LoginPage')),
 );
@@ -224,6 +225,7 @@ function App() {
                     <Route path="/signUp" element={<SignUp />}></Route>
                 </Routes>
             </Wrapper>
+            <BackToTop/>
         </>
     );
 }
