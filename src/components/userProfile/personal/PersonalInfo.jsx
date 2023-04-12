@@ -10,7 +10,7 @@ import axios from '../../../services/axios';
 const ChangeEmailForm = () => {
     // const { TextArea } = Input();
     const onFinish = (values) => {
-        console.log('Received values of form: ', values);
+        // console.log('Received values of form: ', values);
     };
     return (
         <Form
@@ -129,8 +129,6 @@ const UserForm = () => {
         setInfoUser(reponse_info.data);
         // infoUser = reponse_info.data;
     }, []);
-
-    console.log(infoUser);
     const [open, setOpen] = useState(false);
     const showModal = () => {
         setOpen(true);
@@ -204,9 +202,9 @@ const UserForm = () => {
             }}
             onValuesChange={onFormLayoutChange}
         >
-            <Form.Item label="Tên đăng nhập">
+            {/* <Form.Item label="Tên đăng nhập">
                 <div>NhatPhu00</div>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="Tên">
                 <Input value={infoUser?.full_name} />
             </Form.Item>
@@ -232,15 +230,15 @@ const UserForm = () => {
                 />
                 <Button type="text">Thay đổi</Button>
             </Form.Item>
-            <Form.Item label="Giới tính">
+            {/* <Form.Item label="Giới tính">
                 <Radio.Group>
                     <Radio value={1}>Nam</Radio>
                     <Radio value={2}>Nữ</Radio>
                 </Radio.Group>
-            </Form.Item>
-            <Form.Item label="Ngày sinh">
+            </Form.Item> */}
+            {/* <Form.Item label="Ngày sinh">
                 <DatePickerCalendar />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item {...buttonItemLayout}>
                 <Button loading={true} icon={<SaveOutlined />} type="primary">
                     Lưu
