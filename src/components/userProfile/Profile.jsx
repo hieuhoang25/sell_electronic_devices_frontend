@@ -55,11 +55,11 @@ const Profile = () => {
             label: 'Yêu thích',
             children: <FavoriteProduct />,
         },
-        {
-            key: '6',
-            label: 'Đổi mật khẩu',
-            children: <ChangePassword />,
-        },
+        // {
+        //     key: '6',
+        //     label: 'Đổi mật khẩu',
+        //     children: <ChangePassword />,
+        // },
     ];
     return (
         <>
