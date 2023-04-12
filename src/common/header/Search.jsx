@@ -108,7 +108,7 @@ const Search = () => {
 
                     {/* <CartPopover></CartPopover> */}
 
-                    <div className="icon f_flex width right">
+                    <div className="icon my_icon f_flex width right">
                         {/* <div className="cart popup-link" data-popup="Giỏ hàng">
                             <Link
                                 // className="popup-link"
