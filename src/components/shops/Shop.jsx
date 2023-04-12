@@ -66,7 +66,7 @@ const Shop = ({
 
     return (
         <>
-            <Home CartItem={sliderItem} />
+            {/* <Home CartItem={sliderItem} /> */}
             <section className="shop background">
                 <div id="section-product" className="container d_flex">
                     <Catg

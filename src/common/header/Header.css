@@ -155,7 +155,7 @@ header ul li a:hover {
 }
 
 .search.active {
-  height: 15vh;
+  height: 12.5vh;
   position: fixed;
   top: 0;
   z-index: 1000;
@@ -163,6 +163,7 @@ header ul li a:hover {
   background-color: #fff;
   box-shadow: -1px 11px 24px -11px rgba(0, 0, 0, 0.2);
   transition: 0.5s;
+  border-radius: 0 0 10px 10px;
 }
 
 @media (max-width: 768px) {
