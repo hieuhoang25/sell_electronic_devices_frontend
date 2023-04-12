@@ -17,6 +17,8 @@ const Review = ({ listReview, handleClick, loading }) => {
                                           {item.user_fullName}
                                       </Comment.Author>
                                       <Comment.Metadata>
+                                          <div>{item.variant_name}</div>
+                                          <div>{item.variant_color}</div>
                                           <div>{item.created_date}</div>
                                       </Comment.Metadata>
                                       <Comment.Text>
