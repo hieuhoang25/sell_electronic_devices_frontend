@@ -9,18 +9,16 @@ import { Link } from 'react-router-dom';
 import { HeartOutlined, HeartFilled, FrownOutlined } from '@ant-design/icons';
 import LoginPromptNotification from '../../common/notification/LoginPromptNotification';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import AlarmIcon from '@mui/icons-material/Alarm';
 import {
     removeItemFromCart,
     incrementItemQuantity,
     decrementItemQuantity,
     updateCart,
     mergeAnnonCart,
+    updateGuestCartState
 } from '../../services/cartService.js';
 import { getImage } from '../../common/img';
 import {
@@ -30,7 +28,6 @@ import {
     getPromotion,
     getPromotionValue,
     getStorageOfCartItem,
-    CURRENCY_SUFFIX,
     CartRequestTYPE,
     getCartDetailRequest,
     getCurrencyFormatComp,
@@ -84,6 +81,11 @@ const Cart = () => {
         } else {
             history('/checkout');
         }
+    }
+    function onUpdateGuestHandler() {
+        alert("update");
+        dispatch(updateGuestCartState());
+         
     }
     const incrementQty = (item) => {
         let newQty = item.quantity + 1;
@@ -157,7 +159,7 @@ const Cart = () => {
                                     <div className="img">
                                         <img src={getImage(getVariantDetail(item).image)} alt="" />
                                     </div>
-                                    <div className="cart-details">
+                                    <div className="card-cart-details">
                                         <div className="cart-details-item-title">
                                             <h3 className="cart-details-item-name">
                                                 <Link
@@ -193,7 +195,10 @@ const Cart = () => {
                                             {getPromotion(item) && (
                                                 <li>
                                                     Giảm giá:
-                                                    <span>{getPromotionValue(item)}</span>
+                                                    {getCurrencyFormatComp(
+                                                         getPromotionValue(item))
+                                                   } 
+                                                   {` x `} { item.quantity}
                                                 </li>
 
                                             )}
@@ -223,28 +228,7 @@ const Cart = () => {
                                                 </MUIButton>
                                             </Stack>
                                         </div>
-                                        <h3 className="cart-details-total">
-                                            {/* ${item.price}.00 * {item.qty} */}
-                                            <span
-                                                className={`org-price ${
-                                                    getPromotion(item) ? 'discounted' : ''
-                                                }`}>
-                                                {getCurrencyFormatComp(item.price_detail, true)}
-                                            </span>
-                                            {getPromotion(item) && (
-                                                <span
-                                                    style={{
-                                                        display: 'inline-block',
-                                                        marginLeft: '1rem',
-                                                    }}>
-                                                    {getCurrencyFormatComp(
-                                                        getDiscountAmountOfItem(item),
-
-                                                        true,
-                                                    )}
-                                                </span>
-                                            )}
-                                        </h3>
+                                       
                                     </div>
                                     <div className="cart-list-right d_flex_col">
                                         <div className="cart-item-price">
@@ -316,18 +300,25 @@ const Cart = () => {
 {items.length !== 0 && ( <div className="cart-total fix product">
                         <h2>Thông tin đơn hàng</h2>
                         <div className=" d_flex">
-                            <h4>Tổng tiền : {getCurrencyFormatComp(baseAmount)}</h4>
+                            <h4>Tạm tính :</h4>
+                            {getCurrencyFormatComp(baseAmount)}
                         </div>
                         <div className=" d_flex">
-                            <h4>Giảm giá : {getCurrencyFormatComp(Cart.discount)}</h4>
+                            <h4>Giảm giá : </h4>
+                            {getCurrencyFormatComp(Cart.discount)}
                             {/* <h3>${getBaseAmount}.00</h3> */}
                         </div>
-                        <h3>
-                            <span className="cart-total-title">Thành tiền:</span>
+                        <h3 className='d_flex cart-total-last'>
+                            <span className="cart-total-title">Tổng tiền:</span>
                             {getCurrencyFormatComp(Cart.total)}
                         </h3>
                         {Cart.isAnonymous ? (
+                            <>
                             <LoginPromptNotification> </LoginPromptNotification>
+                            {/* <button onClick={onUpdateGuestHandler} className="btn-primary w-100">
+                               Update Guest Cart
+                            </button> */}
+                            </>
                         ) : (
                             <button onClick={onCheckoutHandler} className="btn-primary w-100">
                                 Thanh toán
@@ -340,56 +331,6 @@ const Cart = () => {
         </>
     );
 };
-
-// export const CartRequestTYPE = {
-//     UPDATE: Symbol('update'),
-//     ADD: Symbol('add'),
-//     DELETE: Symbol('delete'),
-//     DECR: Symbol('decrement'),
-// };
-// export const getCartDetailRequest = (action, CartRequestTYPEz) => {
-//     const init = {
-//         cart_id: action.cart_id,
-//         product_variant_id: action.product_variant_id,
-//         quantity: action.quantity,
-//     };
-//     const { UPDATE, ADD, DELETE, DECR } = CartRequestTYPE;
-
-//     const update = { ...init, id: action.id, quantity: 1 };
-//     switch (CartRequestTYPEz) {
-//         case CartRequestTYPE.UPDATE:
-//             return { ...init, id: action.id };
-//         case CartRequestTYPE.DELETE:
-//             return {
-//                 id: action.id,
-//                 cart_id: action.cart_id,
-//                 quantity: action.quantity,
-//             };
-//         case CartRequestTYPE.DECR:
-//             return { ...init, id: action.id };
-//         default:
-//             return { ...init };
-//     }
-// };
-
-// export const getCurrencyFormatComp = (value, haveSuffix = false,className= '') => {
-//     return haveSuffix ? (
-//         <NumericFormat
-//             value={value}
-//             displayType={'text'}
-//             thousandSeparator={true}
-//             suffix={' ' + CURRENCY_SUFFIX}
-//             class={className}
-//         />
-//     ) : (
-//         <NumericFormat
-//             value={value}
-//             displayType={'text'}
-//             thousandSeparator={true}
-//             class={className}
-//         />
-//     );
-// };
 export const formatFixedFloat = (num, toFixed) => {
     return parseFloat(num).toFixed(toFixed);
 };

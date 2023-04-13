@@ -1,6 +1,6 @@
 // import { createSlice } from '@reduxjs/toolkit';
 import axios from './axios';
-import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL, MERGE_CART } from '../constants/user';
+import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL, MERGE_CART,UPDATE_GUEST_CART } from '../constants/user';
 import {
     addToCart,
     removeFromCart,
@@ -199,6 +199,17 @@ const covertMergeCartRequest = (items, cart_id) => {
         };
     });
 };
+const convertUpdateCartRequest = (items, cart_id) => {
+    return items.map((i) => {
+        let rndId = i.id === null || i.id === undefined|| i.id ===0?  Math.floor(Math.random() * 2000) + 1 : i.id;
+        return {
+            id: rndId,
+            cart_id: cart_id,
+            product_variant_id: i.productVariant.id,
+            quantity: i.quantity,
+        };
+    });
+}
 export const mergeAnnonCart = () => async (dispatch, getState) => {
     console.log('inside merge');
 
@@ -209,8 +220,9 @@ export const mergeAnnonCart = () => async (dispatch, getState) => {
     if (request)
         await axios
             .post(`${ENV_URL}${MERGE_CART}`, request)
-            .then((data) => {
+            .then((res) => {
                 console.log('cart: ');
+                console.log(res.data);
                 return;
             })
             .catch((e) => {
@@ -268,6 +280,33 @@ export const updateCart = () => async (dispatch, getState) => {
     dispatch(getBaseAmount());
     dispatch(getDiscountAmount());
     dispatch(getTotal());
+};
+
+export const updateGuestCartState = () => async(dispatch, getState) => {
+    let { items, id: cart_id } = getState().cart;
+    // let cart_id = await (await (await axios.get(`${ENV_URL}${CART}`)).data).id;
+    let request = convertUpdateCartRequest(items, cart_id);
+    console.log(request);
+    if (request)
+    await axios
+        .post(`${ENV_URL}${UPDATE_GUEST_CART}`, request)
+        .then((res) => {
+            console.log('cart: ');
+            console.log(res.data);
+            return;
+        })
+        .catch((e) => {
+            console.log(e.message);
+        });
+   
+}
+
+const generateAutoIncrId = (arr) => {
+    console.log('generate id');
+    if (!arr || arr.length === 0) return 1;
+    else {
+        return Math.max(...arr.map((e) => e.id)) + 1;
+    }
 };
 
 export const clearAfterCheckOut = () => async (dispatch, getState) => {

@@ -1,18 +1,8 @@
-import React, {
-    useState,
-    useEffect,
-    useCallback,
-    memo,
-    useContext,
-} from 'react';
+import React, { useState, useEffect, useCallback, memo, useContext } from 'react';
 import { Col, Row, Space } from 'antd';
 import { Button, Checkbox, Form, Input, Radio, Select } from 'antd';
 import { PAYMETHOD, ENV_URL } from '../../constants/index';
-import {
-    USER_INFOS,
-    USER_ADDRESS_LIST,
-    USER_ADDRESS_DEFAULT,
-} from '../../constants/user';
+import { USER_INFOS, USER_ADDRESS_LIST, USER_ADDRESS_DEFAULT } from '../../constants/user';
 import axios from '../../services/axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { Collapse } from 'antd';
@@ -73,13 +63,7 @@ const CheckoutForm = ({ form, onFinish }) => {
     const { dispatch, CheckoutReducer } = useContext(CheckoutContext);
     const { PROVINCE, WARDS, LINE, DISTR } = ADDRESS_FIELD;
     const { METHOD } = REQUEST;
-    const {
-        PAYMENT: ACTION_PAY,
-        ADDRESS: ACTION_ADDR,
-        OTHER_ADDRESS: ACTION_OTHER_ADDR,
-        PROMO,
-        CHECKOUT,
-    } = CHECKOUT_TYPE;
+    const { PAYMENT: ACTION_PAY, ADDRESS: ACTION_ADDR, OTHER_ADDRESS: ACTION_OTHER_ADDR, PROMO, CHECKOUT } = CHECKOUT_TYPE;
     const initalInputAddress = {
         address_line: '',
         district: '',
@@ -157,9 +141,7 @@ const CheckoutForm = ({ form, onFinish }) => {
     }, [userInfo]);
     useEffect(() => {
         setLoading(true);
-        let index = userAddresses.findIndex(
-            (a) => a.id === getDefaultAddress().id,
-        );
+        let index = userAddresses.findIndex((a) => a.id === getDefaultAddress().id);
         console.log('index: ', index);
         // getInfo();
         // getAddresses();
@@ -172,46 +154,59 @@ const CheckoutForm = ({ form, onFinish }) => {
 
     useEffect(() => {
         setLoading(true);
-        // getInfo();
         // getAddresses();
         getSelectedAddress();
         setLoading(false);
-
-        dispatch({ type: ACTION_ADDR, payload: getSelectedAddress() });
+        const timeOutId = setTimeout(() => {
+            dispatch({ type: ACTION_ADDR, payload: getSelectedAddress() });
+        }, 200);
+        return () => clearTimeout(timeOutId);
     }, [selectedAddress]);
 
     useEffect(() => {
-        setInputAddress((prev) => {
-            return { ...prev, address_line: inputAddressLine };
-        });
+        const timeOutId = setTimeout(
+            () =>
+                setInputAddress((prev) => {
+                    return { ...prev, address_line: inputAddressLine };
+                }),
+            200,
+        );
+        return () => clearTimeout(timeOutId);
     }, [inputAddressLine]);
     useEffect(() => {
-        setInputAddress((prev) => {
-            return { ...prev, district: inputDistrict };
-        });
+        const timeOutId = setTimeout(() => {
+            setInputAddress((prev) => {
+                return { ...prev, district: inputDistrict };
+            });
+        }, 200);
+        return () => clearTimeout(timeOutId);
     }, [inputDistrict]);
     useEffect(() => {
-        setInputAddress((prev) => {
-            return { ...prev, province: inputProvince };
-        });
+        const timeOutId = setTimeout(() => {
+            setInputAddress((prev) => {
+                return { ...prev, province: inputProvince };
+            });
+        }, 200);
+        return () => clearTimeout(timeOutId);
     }, [inputProvince]);
     useEffect(() => {
-        setInputAddress((prev) => {
-            return { ...prev, wards: inputWard };
-        });
+        const timeOutId = setTimeout(() => {
+            setInputAddress((prev) => {
+                return { ...prev, wards: inputWard };
+            });
+        }, 200);
+        return () => clearTimeout(timeOutId);
     }, [inputWard]);
 
     useEffect(() => {
-        dispatch({ type: ACTION_OTHER_ADDR, payload: inputAddress });
+        const timeOutId = setTimeout(() => {
+            dispatch({ type: ACTION_OTHER_ADDR, payload: inputAddress });
+        }, 300);
+        return () => clearTimeout(timeOutId);
     }, [inputAddress]);
 
     const getSelectedAddress = (ADDRESS_FIELD) => {
-        if (
-            !userAddresses ||
-            userAddresses === undefined ||
-            selectedAddress === undefined
-        )
-            return undefined;
+        if (!userAddresses || userAddresses === undefined || selectedAddress === undefined) return undefined;
         if (!ADDRESS_FIELD) return { ...userAddresses[selectedAddress] };
 
         // console.log('getUserAddress: ', userAddresses[selectedAddress]);
@@ -332,7 +327,10 @@ const CheckoutForm = ({ form, onFinish }) => {
 
     useEffect(() => {
         console.log('call dispatch');
-        dispatch({ type: ACTION_PAY, payload: selectedMethod });
+        const timeOutId = setTimeout(() => {
+            dispatch({ type: ACTION_PAY, payload: selectedMethod });
+        }, 200);
+          return () => clearTimeout(timeOutId);
     }, [selectedMethod]);
 
     const onChangeUsingAddressHandler = () => {
@@ -370,13 +368,14 @@ const CheckoutForm = ({ form, onFinish }) => {
             {isLoading && <div>Loadding</div>}
             {!isLoading && (
                 <section className="checkout-form">
-                    <Row
-                        justify="center"
-                        className="form_row"
-                        gutter={[22, 22]}
-                    >
+                    <Row justify="center" className="form_row" gutter={[22, 22]}>
                         <Col span={22} className="form_col p-1">
                             <Form
+                                scrollToFirstError={{
+                                    behavior: 'smooth',
+                                    block: 'center',
+                                    inline: 'center',
+                                }}
                                 className="checkout-form-f"
                                 layout="vertical"
                                 name="basic"
@@ -393,39 +392,17 @@ const CheckoutForm = ({ form, onFinish }) => {
                                     rules={[
                                         {
                                             required: true,
-                                            message:
-                                                'Vui lòng chọn phương thức thanh toán',
+                                            message: 'Vui lòng chọn phương thức thanh toán',
                                         },
                                     ]}
                                 >
-                                    {form.getFieldError('payment') !==
-                                    undefined ? (
-                                        <span>
-                                            {' '}
-                                            {
-                                                form.getFieldError('payment')
-                                                    .errors
-                                            }{' '}
-                                        </span>
-                                    ) : (
-                                        ''
-                                    )}
+                                    {form.getFieldError('payment') !== undefined ? <span>k {form.getFieldError('payment')[0]} </span> : ''}
 
                                     <Radio.Group>
-                                        <Space
-                                            wrap
-                                            size={[5, 12]}
-                                            style={{ width: '400px' }}
-                                        >
+                                        <Space wrap size={[5, 12]} style={{ width: '400px' }}>
                                             {payMethods.map((item, index) => {
                                                 return (
-                                                    <Radio
-                                                        key={
-                                                            index +
-                                                            Math.random() * 100
-                                                        }
-                                                        value={item.id}
-                                                    >
+                                                    <Radio key={index + Math.random() * 100} value={item.id}>
                                                         {item.method}
                                                     </Radio>
                                                 );
@@ -436,28 +413,19 @@ const CheckoutForm = ({ form, onFinish }) => {
 
                                 {/* <div> */}
                                 <Row className="form_row contact-info">
-                                    <Col
-                                        span={24}
-                                        className="form_col checkout-form-user-info"
-                                    >
+                                    <Col span={24} className="form_col checkout-form-user-info">
                                         <h4>Thông tin khách hàng</h4>
                                         <div className="info-container">
                                             <div className="info-row">
                                                 {/* <div> */}
                                                 <div>Họ tên: </div>
-                                                <div className="content">
-                                                    {' '}
-                                                    {getInfo().name}{' '}
-                                                </div>
+                                                <div className="content"> {getInfo().name} </div>
                                                 {/* </div> */}
                                             </div>
                                             <div className="info-row">
                                                 {/* <div> */}
                                                 <div>Email: </div>
-                                                <div className="content">
-                                                    {' '}
-                                                    {getInfo().email}{' '}
-                                                </div>
+                                                <div className="content"> {getInfo().email} </div>
                                                 {/* </div> */}
                                             </div>
                                         </div>
@@ -466,57 +434,32 @@ const CheckoutForm = ({ form, onFinish }) => {
                                             <div className="info-row">
                                                 {/* <div> */}
                                                 <div>Số điện thoại: </div>
-                                                <div className="content">
-                                                    {' '}
-                                                    {getInfo().phone}{' '}
-                                                </div>
+                                                <div className="content"> {getInfo().phone} </div>
                                                 {/* </div> */}
                                             </div>
                                         </div>
-                                        {userAddresses !== undefined &&
-                                        userAddresses.length === 0 ? (
+                                        {userAddresses !== undefined && userAddresses.length === 0 ? (
                                             <div className="info-container address">
-                                                <div className="info-row">
-                                                    Không tìm thấy dịa chỉ mặc
-                                                    định
-                                                </div>
+                                                <div className="info-row">Không tìm thấy dịa chỉ mặc định</div>
                                             </div>
                                         ) : (
                                             <div className="info-container address">
                                                 <div className="info-row">
-                                                    {getDefaultAddress().id ===
-                                                        -1 && (
-                                                        <div>Địa chỉ khác</div>
-                                                    )}
+                                                    {getDefaultAddress().id === -1 && <div>Địa chỉ khác</div>}
 
-                                                    {getDefaultAddress().id >=
-                                                        0 && (
-                                                        <Row
-                                                            className="default-area"
-                                                            align="middle"
-                                                            justify="space-around"
-                                                        >
-                                                            <Button
-                                                                className="default-btn"
-                                                                disabled={
-                                                                    !otherAddress
-                                                                }
-                                                                onClick={
-                                                                    onChangeUsingAddressHandler
-                                                                }
-                                                            >
-                                                                Sử dụng địa chỉ
-                                                                mặc định
+                                                    {getDefaultAddress().id >= 0 && (
+                                                        <Row className="default-area" align="middle" justify="space-around">
+                                                            <Button className="default-btn" disabled={!otherAddress} onClick={onChangeUsingAddressHandler}>
+                                                                Sử dụng địa chỉ mặc định
                                                             </Button>
                                                             <Form.Item
                                                                 {...{
                                                                     labelCol: {
                                                                         span: 6,
                                                                     },
-                                                                    wrapperCol:
-                                                                        {
-                                                                            span: 24,
-                                                                        },
+                                                                    wrapperCol: {
+                                                                        span: 24,
+                                                                    },
                                                                 }}
                                                                 className="address-selected"
                                                                 // label={`Địa chỉ giao hàng: ${
@@ -524,48 +467,19 @@ const CheckoutForm = ({ form, onFinish }) => {
                                                                 // }`}
                                                             >
                                                                 <Radio.Group
-                                                                    disabled={
-                                                                        otherAddress
-                                                                    }
+                                                                    disabled={otherAddress}
                                                                     className="address-selected-radio-group"
-                                                                    value={
-                                                                        selectedAddress
-                                                                    }
-                                                                    onChange={(
-                                                                        e,
-                                                                    ) =>
-                                                                        setSelectedAddress(
-                                                                            (
-                                                                                prev,
-                                                                            ) => {
-                                                                                console.log(
-                                                                                    'choose user address',
-                                                                                );
-                                                                                return e
-                                                                                    .target
-                                                                                    .value;
-                                                                            },
-                                                                        )
+                                                                    value={selectedAddress}
+                                                                    onChange={(e) =>
+                                                                        setSelectedAddress((prev) => {
+                                                                            console.log('choose user address');
+                                                                            return e.target.value;
+                                                                        })
                                                                     }
                                                                 >
-                                                                    {userAddresses.map(
-                                                                        (
-                                                                            value,
-                                                                            index,
-                                                                        ) => (
-                                                                            <Radio.Button
-                                                                                value={
-                                                                                    index
-                                                                                }
-                                                                            >
-                                                                                {`${
-                                                                                    value.is_default
-                                                                                        ? 'Mặc định'
-                                                                                        : `Địa chỉ ${index}`
-                                                                                }`}
-                                                                            </Radio.Button>
-                                                                        ),
-                                                                    )}
+                                                                    {userAddresses.map((value, index) => (
+                                                                        <Radio.Button value={index}>{`${value.is_default ? 'Mặc định' : `Địa chỉ ${index}`}`}</Radio.Button>
+                                                                    ))}
                                                                 </Radio.Group>
                                                             </Form.Item>
                                                         </Row>
@@ -577,105 +491,63 @@ const CheckoutForm = ({ form, onFinish }) => {
                                 </Row>
                                 <Row>
                                     <Col span={24} className="user-address">
-                                        <h4>
-                                            {getDefaultAddress().id === -1 && (
-                                                <div>Địa chỉ khác</div>
-                                            )}
-                                        </h4>
+                                        <h4>{getDefaultAddress().id === -1 && <div>Địa chỉ khác</div>}</h4>
                                         <div>
-                                            {!isLoading &&
-                                                userAddresses !== undefined && (
-                                                    <>
-                                                        <Row>
-                                                            <h4
-                                                                style={{
-                                                                    paddingBottom:
-                                                                        '.5rem',
-                                                                }}
-                                                            >
-                                                                Địa chỉ giao
-                                                                hàng{' '}
-                                                            </h4>
-                                                        </Row>
-                                                        <Row
-                                                            className="address-row"
-                                                            span={24}
+                                            {!isLoading && userAddresses !== undefined && (
+                                                <>
+                                                    <Row>
+                                                        <h4
+                                                            style={{
+                                                                paddingBottom: '.5rem',
+                                                            }}
                                                         >
-                                                            <Col
-                                                                className="icon"
-                                                                span={4}
-                                                            >
-                                                                <AimOutlined
-                                                                    style={{
-                                                                        fontSize:
-                                                                            '20px',
-                                                                    }}
-                                                                ></AimOutlined>
+                                                            Địa chỉ giao hàng{' '}
+                                                        </h4>
+                                                    </Row>
+                                                    <Row className="address-row" span={24}>
+                                                        <Col className="icon" span={4}>
+                                                            <AimOutlined
+                                                                style={{
+                                                                    fontSize: '20px',
+                                                                }}
+                                                            ></AimOutlined>
+                                                        </Col>
+                                                        {!otherAddress && (
+                                                            <Col className="user-add-def-container" span={20}>
+                                                                <Row>
+                                                                    <Col className="address-field" span={12}>
+                                                                        <span className="title">
+                                                                            Tỉnh/Thành:
+                                                                            {`  `}
+                                                                        </span>
+
+                                                                        <span>{getSelectedAddress(PROVINCE)}</span>
+                                                                    </Col>
+                                                                    <Col className="address-field">
+                                                                        <span className="title">Quận/Huyện: </span>
+
+                                                                        <span>{getSelectedAddress(DISTR)}</span>
+                                                                    </Col>
+
+                                                                    <Col className="address-field">
+                                                                        <span className="title">Địa chỉ: </span>
+                                                                        <span>
+                                                                            {getSelectedAddress(LINE)}, {getSelectedAddress(WARDS)}
+                                                                        </span>
+                                                                    </Col>
+                                                                </Row>
                                                             </Col>
-                                                            {!otherAddress && (
-                                                                <Col
-                                                                    className="user-add-def-container"
-                                                                    span={20}
-                                                                >
-                                                                    <Row>
-                                                                        <Col
-                                                                            className="address-field"
-                                                                            span={
-                                                                                12
-                                                                            }
-                                                                        >
-                                                                            <span className="title">
-                                                                                Tỉnh/Thành:
-                                                                                {`  `}
-                                                                            </span>
-
-                                                                            <span>
-                                                                                {getSelectedAddress(
-                                                                                    PROVINCE,
-                                                                                )}
-                                                                            </span>
-                                                                        </Col>
-                                                                        <Col className="address-field">
-                                                                            <span className="title">
-                                                                                Quận/Huyện:{' '}
-                                                                            </span>
-
-                                                                            <span>
-                                                                                {getSelectedAddress(
-                                                                                    DISTR,
-                                                                                )}
-                                                                            </span>
-                                                                        </Col>
-
-                                                                        <Col className="address-field">
-                                                                            <span className="title">
-                                                                                Địa
-                                                                                chỉ:{' '}
-                                                                            </span>
-                                                                            <span>
-                                                                                {getSelectedAddress(
-                                                                                    LINE,
-                                                                                )}
-
-                                                                                ,{' '}
-                                                                                {getSelectedAddress(
-                                                                                    WARDS,
-                                                                                )}
-                                                                            </span>
-                                                                        </Col>
-                                                                    </Row>
-                                                                </Col>
-                                                            )}
-                                                            {otherAddress && (
-                                                                <Col
-                                                                    className="user-add-def-container"
-                                                                    span={20}
-                                                                    // style={{
-                                                                    //     backgroundColor:
-                                                                    //         'gold',
-                                                                    // }}
-                                                                >
-                                                                    {/* <Row>
+                                                        )}
+                                                        {otherAddress && (
+                                                            <Col
+                                                                className="user-add-def-container"
+                                                                span={20}
+                                                                // style={{
+                                                                //     backgroundColor:
+                                                                //         'gold',
+                                                                // }}
+                                                            >
+                                                                {/* <Row>
                                                                         <Col
                                                                             span={
                                                                                 12
@@ -715,78 +587,41 @@ const CheckoutForm = ({ form, onFinish }) => {
                                                                         </Col>
                                                                     </Row> */}
 
-                                                                    <Row>
-                                                                        <Col
-                                                                            className="address-field"
-                                                                            span={
-                                                                                12
-                                                                            }
-                                                                        >
-                                                                            <span className="title">
-                                                                                Tỉnh/Thành:
-                                                                                {`  `}
-                                                                            </span>
+                                                                <Row>
+                                                                    <Col className="address-field" span={12}>
+                                                                        <span className="title">
+                                                                            Tỉnh/Thành:
+                                                                            {`  `}
+                                                                        </span>
 
-                                                                            <span>
-                                                                                {
-                                                                                    inputProvince
-                                                                                }
-                                                                            </span>
-                                                                        </Col>
-                                                                        <Col className="address-field">
-                                                                            <span className="title">
-                                                                                Quận/Huyện:{' '}
-                                                                            </span>
+                                                                        <span>{inputProvince}</span>
+                                                                    </Col>
+                                                                    <Col className="address-field">
+                                                                        <span className="title">Quận/Huyện: </span>
 
-                                                                            <span>
-                                                                                {
-                                                                                    inputDistrict
-                                                                                }
-                                                                            </span>
-                                                                        </Col>
+                                                                        <span>{inputDistrict}</span>
+                                                                    </Col>
 
-                                                                        <Col className="address-field">
-                                                                            <span className="title">
-                                                                                Địa
-                                                                                chỉ:{' '}
-                                                                            </span>
-                                                                            <span>
-                                                                                {inputAddressLine !==
-                                                                                    undefined &&
-                                                                                inputAddressLine.length >
-                                                                                    0
-                                                                                    ? inputAddressLine +
-                                                                                      ' '
-                                                                                    : ''}
-                                                                                {inputWard !==
-                                                                                    undefined &&
-                                                                                    `${inputWard}`}
-                                                                            </span>
-                                                                        </Col>
-                                                                    </Row>
-                                                                </Col>
-                                                            )}
-                                                        </Row>
-                                                    </>
-                                                )}
+                                                                    <Col className="address-field">
+                                                                        <span className="title">Địa chỉ: </span>
+                                                                        <span>
+                                                                            {inputAddressLine !== undefined && inputAddressLine.length > 0 ? inputAddressLine + ' ' : ''}
+                                                                            {inputWard !== undefined && `${inputWard}`}
+                                                                        </span>
+                                                                    </Col>
+                                                                </Row>
+                                                            </Col>
+                                                        )}
+                                                    </Row>
+                                                </>
+                                            )}
                                         </div>
                                     </Col>
                                 </Row>
 
                                 <></>
-                                <Collapse
-                                    collapsible={
-                                        otherAddress ? 'disabled' : 'header'
-                                    }
-                                    className="other-address-collapse"
-                                    onChange={onChangeUsingOtherAddressHandler}
-                                    activeKey={activeKey}
-                                >
-                                    <Panel
-                                        showArrow={true}
-                                        header={`Sử dụng địa chỉ khác`}
-                                        key="1"
-                                    >
+                                <Collapse collapsible={otherAddress ? 'disabled' : 'header'} className="other-address-collapse" onChange={onChangeUsingOtherAddressHandler} activeKey={activeKey}>
+                                    <Panel showArrow={true} header={`Sử dụng địa chỉ khác`} key="1">
                                         <AddressForm form={form}></AddressForm>
                                     </Panel>
                                 </Collapse>
@@ -797,14 +632,8 @@ const CheckoutForm = ({ form, onFinish }) => {
 
                         <Col className="discount-section" span={22}>
                             Mã giảm giá
-                            <Space
-                                style={{ marginLeft: '0.5rem', width: '80%' }}
-                                direction="horizontal"
-                            >
-                                <Input
-                                    style={{ width: '100%' }}
-                                    placeholder="Nhập mã giảm giá"
-                                />
+                            <Space style={{ marginLeft: '0.5rem', width: '80%' }} direction="horizontal">
+                                <Input style={{ width: '100%' }} placeholder="Nhập mã giảm giá" />
                                 <Button style={{ width: 80 }}>Áp dụng</Button>
                             </Space>
                         </Col>
