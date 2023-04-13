@@ -109,6 +109,10 @@
 
 .order-list .order-total .box h3 {
   margin-bottom: 0;
+  font-size: 15px;
+}
+.order-list .order-total .box div {
+  font-size: 16px;
 }
 
 .order-list .order-total .box {
@@ -134,7 +138,6 @@
 .order-list .order-total .box-quantity .quantity {
   flex: 2;
   text-align: center;
-  font-weight: bold;
 }
 
 .order-list .order-total .total {
@@ -148,6 +151,11 @@
   font-size: 16px;
 
 }
+.order-list .order-total .dis h3 {
+  align-items: center;
+  display: flex;
+}
+
 
 .order-list .order-total .total span,
 .order-list .order-total .box.total {
@@ -521,4 +529,50 @@ span {
   background-color: #f2f5f9;
   color: #ffffff;
   color: #4282c4;
+}
+.order-list .coupon-container  {
+  align-items: stretch;
+}
+
+.order-list .coupon-container #coupon {
+  justify-content: center;
+}
+.order-list .coupon-container .selected-coupon .coupon-code {
+  margin: 0 0;
+  font-weight: 500;
+  letter-spacing: .1rem;
+}
+.order-list .coupon-container .selected-coupon {
+  padding: 0 1rem;
+  font-size: 15px;
+  justify-content: space-around;
+  align-items: center;
+}
+.order-list .coupon-container #coupon  .remove-promo:hover {
+color: red;
+
+}
+.order-list .coupon-container #coupon  .remove-promo {
+  font-size: 13px;
+  padding: 0 0;
+}
+.order-list .order-total .dis h3 .help-button {
+  padding: 0 0;
+  margin-left: 5px;
+}
+.order-list .coupon-container  .help-button:hover {
+  background-color: transparent;
+}
+#mui-1 .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop  {
+  inset : auto auto -15px 0px;
+
+  margin-bottom: 0;
+}
+
+#promo-pop-tooltip span {
+  margin-bottom: 0 !important;
+}
+#coupon_promo_code {
+  font-size: 13px;
+  background-color:#7c7c7c;
 }

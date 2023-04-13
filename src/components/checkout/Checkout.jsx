@@ -41,22 +41,9 @@ const initialState = {
 
 const checkoutReducer = (state = initialState, action) => {
     const { ADDRESS, PROMO, CHECKOUT, PAYMENT, OTHER_ADDRESS } = CHECKOUT_TYPE;
-    const {
-        DISTR,
-        METHOD,
-        POSTID,
-        PROMO: PROMO_REQ,
-        PROVINCE,
-        LINE,
-        WARDS,
-    } = REQUEST;
-    const {
-        PROVINCE: PAY_PROVINCE,
-        POSTID: PAY_POSTID,
-        WARDS: PAY_WARDS,
-        LINE: PAY_LINE,
-        DISTR: PAY_DISTR,
-    } = ADDRESS_FIELD;
+    const { DISTR, METHOD, POSTID, PROMO: PROMO_REQ, PROVINCE, LINE, WARDS } = REQUEST;
+
+    const { PROVINCE: PAY_PROVINCE, POSTID: PAY_POSTID, WARDS: PAY_WARDS, LINE: PAY_LINE, DISTR: PAY_DISTR } = ADDRESS_FIELD;
     console.log('inside reducer');
     switch (action.type) {
         case 'checkout':
@@ -69,13 +56,7 @@ const checkoutReducer = (state = initialState, action) => {
         case OTHER_ADDRESS: {
             console.log('call dispatch other address...');
             let addressFull = action.payload;
-            const {
-                district: dis,
-                address_line: line,
-                province: prov,
-                wards: wards,
-                postal_id: postId,
-            } = action.payload;
+            const { district: dis, address_line: line, province: prov, wards: wards, postal_id: postId } = action.payload;
             console.log('address full', addressFull);
             return {
                 ...state,
@@ -88,13 +69,7 @@ const checkoutReducer = (state = initialState, action) => {
         case ADDRESS: {
             console.log('call dispatch address...');
             let addressFull = action.payload;
-            const {
-                district: dis,
-                address_line: line,
-                province: prov,
-                wards: wards,
-                postal_id: postId,
-            } = action.payload;
+            const { district: dis, address_line: line, province: prov, wards: wards, postal_id: postId } = action.payload;
             console.log('address full', addressFull);
             return {
                 ...state,
@@ -104,19 +79,25 @@ const checkoutReducer = (state = initialState, action) => {
                 postalId: postId,
             };
         }
+        case PROMO: {
+            let promo_id = action.payload;
+            console.log('promo_id: ' + promo_id);
+            return {...state, promotionUser_id: promo_id}
+        }
         default:
             return state;
     }
 };
 export const CheckoutContext = React.createContext(null);
 const Checkout = () => {
+    const {PROMO} = CHECKOUT_TYPE;
     const [form] = Form.useForm();
-    const [CheckoutReducer, dispatch] = useReducer(
-        checkoutReducer,
-        initialState,
-    );
+    const [CheckoutReducer, dispatch] = useReducer(checkoutReducer, initialState);
     const serviceDispatch = useDispatch();
     const navigate = useNavigate();
+    const onAddPromotion = (promo_id) => {
+        dispatch({ type: PROMO , payload: promo_id});
+    }
     const onClickOrder = () => {
         console.log('Order ');
         console.log('Order State: ', CheckoutReducer);
@@ -163,13 +144,10 @@ const Checkout = () => {
             <section className="main-section">
                 <Row justify="center" gutter={16}>
                     <Col className="gutter-row" span={12}>
-                        <CheckoutForm
-                            onFinish={onClickOrder}
-                            form={form}
-                        ></CheckoutForm>
+                        <CheckoutForm onFinish={onClickOrder} form={form}></CheckoutForm>
                     </Col>
                     <Col className="gutter-row" span={8}>
-                        <OrderList onClickOrder={onClickOrder}></OrderList>
+                        <OrderList onAddPromotion={onAddPromotion} onClickOrder={onClickOrder}></OrderList>
                     </Col>
                 </Row>
             </section>

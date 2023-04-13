@@ -1,11 +1,7 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import PopupState, {
-    bindTrigger,
-    bindPopover,
-    bindHover,
-} from 'material-ui-popup-state';
+import PopupState, { bindTrigger, bindPopover, bindHover } from 'material-ui-popup-state';
 import HoverPopover from 'material-ui-popup-state/HoverPopover';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
@@ -35,17 +31,10 @@ export default function HoverCartPopover({ Cart }) {
         <PopupState variant="popover" popupId="demo-popup-popover">
             {(popupState) => (
                 <>
-                    <div
-                        variant="contained"
-                        {...bindHover(popupState)}
-                        aria-owns={id}
-                        className="cart"
-                    >
+                    <div variant="contained" {...bindHover(popupState)} aria-owns={id} className="cart">
                         <Link to="/cart">
                             <i className="fa fa-shopping-bag icon-circle"></i>
-                            <span>
-                                {Cart.totalCount === 0 ? 0 : Cart.totalCount}
-                            </span>
+                            <span>{Cart.totalCount === 0 ? 0 : Cart.totalCount}</span>
                         </Link>
                     </div>
                     <HoverPopover
@@ -70,9 +59,7 @@ export default function HoverCartPopover({ Cart }) {
                         >
                             <Box className="popover-title">
                                 {' '}
-                                <h4>
-                                    Giỏ hàng của bạn ({Cart.totalCount}){' '}
-                                </h4>{' '}
+                                <h4>Giỏ hàng của bạn ({Cart.totalCount}) </h4>{' '}
                             </Box>
 
                             {Cart.totalCount === 0 && (
@@ -86,10 +73,7 @@ export default function HoverCartPopover({ Cart }) {
                                     }}
                                 >
                                     <div style={{ paddingLeft: '.3rem' }}>
-                                        <Typography
-                                            sx={{ fontWeight: 'bold' }}
-                                            color="text.primary"
-                                        >
+                                        <Typography sx={{ fontWeight: 'bold' }} color="text.primary">
                                             Giỏ hàng trống
                                         </Typography>
                                     </div>
@@ -97,12 +81,7 @@ export default function HoverCartPopover({ Cart }) {
                             )}
                             {Cart.totalCount !== 0 &&
                                 items.map((value, index) => {
-                                    return (
-                                        <MediaCard
-                                            key={index}
-                                            Item={value}
-                                        ></MediaCard>
-                                    );
+                                    return <MediaCard key={index} Item={value}></MediaCard>;
                                 })}
                         </Typography>
                         <Box
@@ -120,23 +99,11 @@ export default function HoverCartPopover({ Cart }) {
                                         borderTop: '2px solid #cccccc8c',
                                     }}
                                 >
-                                    <Typography
-                                        className="total-section"
-                                        component="div"
-                                    >
+                                    <Typography className="total-section" component="div">
                                         <span> Tổng tiền </span>
-                                        {getCurrencyFormatComp(
-                                            Cart.total,
-                                            false,
-                                            'popover-total',
-                                        )}
+                                        {getCurrencyFormatComp(Cart.total, false, 'popover-total')}
                                     </Typography>
-                                    <Button
-                                        variant="outlined"
-                                        className="popover-footer-button"
-                                        fullWidth
-                                        href="/cart"
-                                    >
+                                    <Button variant="outlined" className="popover-footer-button" fullWidth href="/cart">
                                         Xem toàn bộ giỏ hàng
                                     </Button>
                                 </div>
@@ -177,10 +144,7 @@ function MediaCard({ Item }) {
                         title="green iguana"
                     />
 
-                    <div
-                        className="card-content"
-                        style={{ paddingLeft: '1rem', flex: '2' }}
-                    >
+                    <div className="card-content" style={{ paddingLeft: '1rem', flex: '2' }}>
                         {cartItem.promotion ? (
                             <Badge
                                 className="promo-badge"
@@ -193,67 +157,38 @@ function MediaCard({ Item }) {
                                 badgeContent={cartItem.promotionValue}
                                 showZero
                             >
-                                <Typography
-                                    className="product-name"
-                                    gutterBottom
-                                    variant="subtitle2"
-                                    component="h6"
-                                >
+                                <Typography className="product-name" gutterBottom variant="subtitle2" component="h6">
                                     {cartItem.displayName}
                                 </Typography>
                             </Badge>
                         ) : (
-                            <Typography
-                                className="product-name"
-                                gutterBottom
-                                variant="subtitle2"
-                                component="h6"
-                            >
+                            <Typography className="product-name" gutterBottom variant="subtitle2" component="h6">
                                 {cartItem.displayName}
                             </Typography>
                         )}
 
-                        <Box
-                            className="info"
-                            sx={{ display: 'flex', flexDirection: 'column' }}
-                        >
+                        <Box className="info" sx={{ display: 'flex', flexDirection: 'column' }}>
                             <div className="info-row">
                                 <span className="varaint-attr color">
-                                    <span className="title">Màu</span>{' '}
-                                    {cartItem.colorOfCartItem}
+                                    <span className="title">Màu</span> {cartItem.colorOfCartItem}
                                 </span>
                                 <span className="varaint-attr storage">
-                                    <span className="title"></span>{' '}
-                                    {cartItem.storageOfCartItem}
+                                    <span className="title"></span> {cartItem.storageOfCartItem}
                                 </span>
                             </div>
                             <div className="info-row">
-                                <span className="quantity">
-                                    {cartItem.quantity}{' '}
-                                </span>
+                                <span className="quantity">{cartItem.quantity} </span>
                                 <span> x </span>
 
                                 {cartItem.promotion ? (
                                     <>
-                                        {getCurrencyFormatComp(
-                                            cartItem.priceDiscountForPerItem,
-                                            false,
-                                            ' price dicount-price',
-                                        )}
+                                        {getCurrencyFormatComp(cartItem.priceDiscountForPerItem, false, ' price dicount-price')}
                                         {` (`}
-                                        {getCurrencyFormatComp(
-                                            cartItem.variantPrice,
-                                            false,
-                                            ' price origin-price old',
-                                        )}
+                                        {getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price old')}
                                         {`)`}
                                     </>
                                 ) : (
-                                    getCurrencyFormatComp(
-                                        cartItem.variantPrice,
-                                        false,
-                                        ' price origin-price',
-                                    )
+                                    getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price')
                                 )}
                             </div>
                         </Box>
