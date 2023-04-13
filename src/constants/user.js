@@ -15,6 +15,7 @@ export const CHECKOUT = `${USER}/checkout`;
 export const NEW_GUEST_CART = `${API_UNAUTH_BASE}/cart`;
 export const GUEST_CART_DETAIL = `${API_UNAUTH_BASE}/cart/items`;
 export const MERGE_CART = `${CART}add`;
+export const UPDATE_GUEST_CART = `${NEW_GUEST_CART}/update`;
 export const RATING = '/rating';
 export const IS_RATING = '/is-rating';
 
@@ -34,3 +35,4 @@ export const USER_PROMO_LIST = `${USER}${PROMO}/list`;
 export const USER_PROMO_VALID = `${USER}${PROMO}/valid`;
 export const USER_PROMO_ORDER = `${USER}${PROMO}/order`;
 export const USER_PROMO_COUPON = `${USER}${PROMO}/coupon`;
+
