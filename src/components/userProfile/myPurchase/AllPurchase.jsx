@@ -395,7 +395,7 @@ const AllPurchase = ({ status }) => {
                                                                     {
                                                                         <NumericFormat
                                                                             value={
-                                                                                product.price_sum
+                                                                                product.discount_amount
                                                                             }
                                                                             displayType={
                                                                                 'text'
