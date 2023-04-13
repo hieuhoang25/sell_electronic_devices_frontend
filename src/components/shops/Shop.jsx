@@ -39,10 +39,10 @@ const Shop = ({
                             value: 'All',
                             label: 'Tất cả',
                         },
-                        {
-                            value: 'quantitySold desc',
-                            label: 'Bán chạy',
-                        },
+                        // {
+                        //     value: 'quantitySold desc',
+                        //     label: 'Bán chạy',
+                        // },
                         {
                             value: 'price desc',
                             label: 'Giá cao đến thấp',
@@ -55,10 +55,10 @@ const Shop = ({
                             value: 'discount desc',
                             label: 'Giảm giá',
                         },
-                        {
-                            value: 'averagePoint desc',
-                            label: 'Đánh giá',
-                        },
+                        // {
+                        //     value: 'averagePoint desc',
+                        //     label: 'Đánh giá',
+                        // },
                     ]}
                 />
             </Space>

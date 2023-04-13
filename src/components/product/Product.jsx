@@ -26,7 +26,7 @@ import {
     BRAND,
     STORAGE,
 } from '../../constants/index';
-
+import { useLocation } from 'react-router-dom';
 const initialState = {
     pending: false,
     products: [],
@@ -60,7 +60,7 @@ const reducer = (state, action) => {
     }
 };
 function Product({ isAuth }) {
-    const size = 10;
+    const size = 8;
     const { categoryId } = useParams();
     const [category, setCategory] = useState([]);
     const [productsFilter, dispatch] = useReducer(reducer, initialState);
@@ -71,6 +71,8 @@ function Product({ isAuth }) {
     const sortValue = useRef('All');
     const [selectKeys, setSelectKeys] = useState();
     const [categoryLoading, setCategoryLoading] = useState(true);
+    const location = useLocation();
+    //fetch by dropdown category
     useEffect(() => {
         if (typeof categoryId !== 'undefined') {
             setSelectKeys([parseInt(categoryId)]);
@@ -82,8 +84,22 @@ function Product({ isAuth }) {
                 },
             ];
             fetchProductsByFilter(0, search);
+        } else if (location.state) {
+            const search = [
+                {
+                    key: 'productName',
+                    value: location.state.keySearch,
+                    operation: 'LIKE',
+                },
+            ];
+            setSelectKeys(null);
+            fetchProductsByFilter(0, search);
+            // location.state = null;
         } else fetchProductsByFilter();
-    }, []);
+        return () => {
+            location.state = null;
+        };
+    }, [location, categoryId]);
     function fetchProductsByFilter(
         page = 0,
         search = [],
@@ -96,7 +112,7 @@ function Product({ isAuth }) {
             url: `${BASE}${PRODUCT}${FILTER}`,
             data: search,
             params: {
-                size: 10,
+                size: size,
                 page: page,
                 sortField: sortField,
                 sortType: sortType,
@@ -108,6 +124,7 @@ function Product({ isAuth }) {
             })
             .catch((error) => dispatch(fetchProductsError(error)));
     }
+
     function fetchCategory() {
         axios({
             method: 'get',
@@ -247,27 +264,26 @@ function Product({ isAuth }) {
     });
     return (
         <>
-        <div className='product_style_v1'>
-        <Shop   
-                shopItems={productsFilter.products}
-                categories={category}
-                onChangePagination={onChangePagination}
-                totalPage={productsFilter.totalPage}
-                onSelectCategory={onSelectCategory}
-                listBrand={brand}
-                listStorage={storage}
-                onChangeBrand={onChangeBrand}
-                onChangeStorage={onChangeStorage}
-                onClickResult={onClickResult}
-                isAuth={isAuth}
-                handleSortingChange={handleSortingChange}
-                sortValue={sortValue.current}
-                selectedKeys={selectKeys}
-                isLoading={productsFilter.pending}
-                categoryLoading={categoryLoading}
-            />
-        </div>
-            
+            <div className="product_style_v1">
+                <Shop
+                    shopItems={productsFilter.products}
+                    categories={category}
+                    onChangePagination={onChangePagination}
+                    totalPage={productsFilter.totalPage}
+                    onSelectCategory={onSelectCategory}
+                    listBrand={brand}
+                    listStorage={storage}
+                    onChangeBrand={onChangeBrand}
+                    onChangeStorage={onChangeStorage}
+                    onClickResult={onClickResult}
+                    isAuth={isAuth}
+                    handleSortingChange={handleSortingChange}
+                    sortValue={sortValue.current}
+                    selectedKeys={selectKeys}
+                    isLoading={productsFilter.pending}
+                    categoryLoading={categoryLoading}
+                />
+            </div>
         </>
     );
 }

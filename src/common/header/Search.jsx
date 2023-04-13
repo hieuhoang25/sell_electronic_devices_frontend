@@ -1,4 +1,4 @@
-import React, { memo, useState, useContext } from 'react';
+import React, { memo, useState, useContext, useRef } from 'react';
 import logo from '../../components/assets/images/logo.svg';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -83,8 +83,10 @@ const Search = () => {
                 'Vui lòng kiểm tra tất cả các sản phẩm trong đơn hàng trước khi xác nhận "Đã nhận được hàng".',
         },
     ];
-    console.log('-------');
-    console.log('inside Search called "Cart": ', Cart);
+    const [keyWord, setKeyWord] = useState('');
+    const handleSearch = (e) => {
+        setKeyWord(e.target.value);
+    };
     return (
         <>
             <section className="search search-bar">
@@ -101,7 +103,17 @@ const Search = () => {
                         <i className="fa fa-search"></i>
                         <input
                             type="text"
-                            placeholder="Search and hit enter..."
+                            placeholder="Nhấn enter đề tìm kiếm..."
+                            onChange={handleSearch}
+                            value={keyWord}
+                            onKeyPress={(event) => {
+                                if (event.key === 'Enter') {
+                                    navigate('/product#section-product', {
+                                        state: { keySearch: keyWord },
+                                    });
+                                    setKeyWord('');
+                                }
+                            }}
                         />
                         <span>All Category</span>
                     </div>
