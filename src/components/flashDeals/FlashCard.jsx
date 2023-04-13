@@ -32,7 +32,7 @@ const SamplePrevArrow = (props) => {
         </div>
     );
 };
-const FlashCard = ({ productItems, addToCart }) => {
+const FlashCard = () => {
     const [loading, setLoading] = useState(true);
     const [flashDeal, setFlashDeal] = useState([]);
     useEffect(() => {

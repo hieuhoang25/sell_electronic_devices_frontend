@@ -158,18 +158,14 @@ export const CartSlice =  createSlice({
             state.items = action.payload.cartDetails;
             state.baseAmount = action.payload.price_sum;
             let cartCount = state.items.reduce((total, item) => {
-                console.log(item);
+                // console.log(item);
                 return item.quantity + total;
             }, 0);
             state.totalCount = cartCount;
-            // state.totalCount =
-            // state.items.length == null ? 0 : state.items.length;
-
-            // console.log('cartDta: ', state.items);
             const discountAmount = state.items.reduce((d, i) => {
                 return i.discount_amount * i.quantity + d;
             }, 0);
-            console.log('discountAmount: ', discountAmount);
+            // console.log('discountAmount: ', discountAmount);
             state.discount = discountAmount;
             state.total = state.baseAmount - state.discount;
         },

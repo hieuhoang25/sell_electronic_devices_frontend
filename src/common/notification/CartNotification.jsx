@@ -8,17 +8,7 @@ export const CartNotification_TYPE = {
     ERROR: Symbol('ERROR'),
 };
 
-const CartNotification = ({
-    type,
-    title,
-    message,
-    placement,
-
-    handleClick,
-    isButtonDisabled,
-    isSuccess,
-    setSuccessNull,
-}) => {
+const CartNotification = ({ type, title, message, placement, handleClick, isButtonDisabled, isSuccess, setSuccessNull }) => {
     console.log('inside notif');
     const [api, contextHolder] = notification.useNotification();
 
@@ -79,16 +69,16 @@ const CartNotification = ({
     return (
         <>
             {contextHolder}
-
-            <button
-                // ${
-                //         isButtonDisabled ? 'disabled' : ''
-                //     }
-                class={`add-cart-btn hvr-sweep-to-right`}
-                onClick={openNotification}
-            >
-                {buttonContent}
-            </button>
+            {isButtonDisabled && <></>}
+            {!isButtonDisabled && (
+                <button
+                    disabled={isButtonDisabled}
+                    class={`add-cart-btn hvr-sweep-to-right`}
+                    onClick={openNotification}
+                >
+                    {buttonContent}
+                </button>
+            )}
         </>
     );
 };

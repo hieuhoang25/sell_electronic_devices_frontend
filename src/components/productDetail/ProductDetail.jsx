@@ -48,6 +48,7 @@ import {
     PRODUCT_COLOR,
     PRODUCT_DETAIL,
     PRODUCT_STORAGE,
+    PRODUCT_INVENTORY
 } from '../../constants/index';
 import { getImage } from '../../common/img';
 import { NumericFormat } from 'react-number-format';
@@ -67,6 +68,7 @@ const ProductDetail = ({ isAuth }) => {
     const [selectedColor, setSelectedColor] = useState();
     const [cartQty, setCartQty] = useState(1);
     const [cartButtonDisabled, setCartbuttonDisabled] = useState(false);
+    const [inventory, setInventory] = useState({});
     const myRef = useRef(null);
 
     const [cartAddedNotif, setCartAddedNotif] = useState({
@@ -133,17 +135,52 @@ const ProductDetail = ({ isAuth }) => {
             });
     }
 
+    async function fetchInventory() {
+        const reQty =  cartQty;
+        const variantId = productDetail.id;
+        console.log('variant id: ', variantId);
+        const request = {
+            product_variant_id: variantId,
+            request_quantity: cartQty
+        }
+       axios.post(`${BASE}${PRODUCT_INVENTORY}`, request).then(res => {
+        console.log(res.data);
+        setInventory(res.data);
+       }).catch(e =>  {
+        console.log("fetch invetory error");
+        console.log(e.message)
+    });
+        // cartQty
+    }
+
     async function getProductDetail() {
         await fetchColor(productId);
         await fetchStorage(productId, productBody.current.colorId);
         await fetchProductDetail();
+     
     }
 
     useEffect(() => {
         getProductDetail();
         executeScroll();
+    
     }, []);
 
+    useEffect(async () => {
+        setIsLoading(true);
+        await fetchInventory();
+        setIsLoading(false);
+    },[productDetail])
+    useEffect(() => {
+        console.log('out of stock: ' , inventory.outOfStock);
+        if(inventory.outOfStock)  {
+            setCartbuttonDisabled(true);
+           
+        }else {
+            setCartbuttonDisabled(false);
+           
+        }
+    },[inventory])
     const executeScroll = () => {
         scrollIntoView(myRef.current, { behavior: 'smooth' });
     };
@@ -183,7 +220,6 @@ const ProductDetail = ({ isAuth }) => {
         // console.log('san pham trong gio? ', cartIndex);
         // sản phẩm có trong giỏ
         if (cartIndex >= 0) {
-            // console.log(' items[cartIndex]: ', items[cartIndex]);
             const { quantity: c_qty } = items[cartIndex];
             console.log('current quty; ', c_qty);
             if (c_qty >= QTY_MAX) {
@@ -200,12 +236,6 @@ const ProductDetail = ({ isAuth }) => {
                 const currentItem = items.find;
                 let fixedQty =
                     c_qty + cartQty > QTY_MAX ? QTY_MAX - c_qty : cartQty;
-                // const request = {
-                //     cart_id: Cart.id,
-                //     id: item_id,
-                //     quantity: fixedQty,
-                // };
-
                 const requestItem = getCartDetailRequest(
                     { ...request, quantity: fixedQty },
                     CartRequestTYPE.ADD,
@@ -251,21 +281,6 @@ const ProductDetail = ({ isAuth }) => {
             };
         });
     };
-
-    // useEffect(() => {
-    //     return () => {
-    //         console.log('clean up');
-    //         if (cartAddedNotif.isSuccess != null) {
-    //             console.log('clean up - set null');
-    //             setCartAddedNotif((prev) => {
-    //                 return {
-    //                     ...prev,
-    //                     isSuccess: null,
-    //                 };
-    //             });
-    //         }
-    //     };
-    // }, [cartAddedNotif]);
 
     function fetchIsWishlist(productId) {
         axios({
@@ -350,6 +365,7 @@ const ProductDetail = ({ isAuth }) => {
 
     // cartQtyHandler
     const cartQtyOnChangeHandler = (value) => {
+        fetchInventory();
         console.log('change quantity to: ', value);
         setCartQty((prev) => {
             return value;
@@ -629,6 +645,8 @@ const ProductDetail = ({ isAuth }) => {
                                         cartQtyOnChangeHandler={
                                             cartQtyOnChangeHandler
                                         }
+                                        inventory={inventory}
+                                        isButtonDisabled={cartButtonDisabled}
                                         // setCartbuttonDisabled={setCartbuttonDisabled}
                                     ></ProductDetailQuantityCounter>
 

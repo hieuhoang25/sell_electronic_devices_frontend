@@ -19,8 +19,6 @@ const ENV_URL = process.env.REACT_APP_URL;
 export const fetchCartFromSever = () => async (dispatch, getState) => {
     console.log('fetchCartFromSErver,,,,');
     try {
-        // const cartz = useSelector((state) => state.cart);
-
         const { isAnonymous } = getState().cart;
         console.log('isAnnon', isAnonymous);
         const promt_path = !isAnonymous ? CART : null;
