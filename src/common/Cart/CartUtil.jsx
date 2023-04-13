@@ -35,7 +35,7 @@ export function getPromotion(cartItem) {
 export function getPromotionValue(cartItem) {
     const { product_promotion: promotion } = getProductVariantDetail(cartItem);
     const { activate, is_percent, discount_amount } = promotion;
-    console.log(promotion);
+    // console.log(promotion);
     return activate
         ? is_percent
             ? `-${discount_amount}%`
@@ -46,7 +46,10 @@ export function getPriceDetail(cartItem) {
     return cartItem.price_detail;
 }
 export function getDiscountAmountOfItem(item) {
-    return item.price_detail - item.discount_amount * item.quantity;
+    console.log('price detail : ', item.price_detail );
+    console.log('item.discount_amount : ', item.discount_amount );
+    console.log('item.quantity : ', item.quantity );
+    return item.price_detail - ( item.discount_amount * item.quantity );
 }
 
 export const CartRequestTYPE = {
