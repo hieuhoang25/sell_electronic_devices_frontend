@@ -29,6 +29,7 @@ import { fetchCartFromSever, resetToGuestCart } from './services/cartService';
 import Loadable from './components/Suspense/Loadable';
 import BackToTop from './common/backToTop/BackToTop';
 import ButtonDarkMode from './common/drakMode/ButtonDarkMode';
+import Verification from './components/SignUpPage/Verification';
 const LoginPage = Loadable(
     lazy(() => import('./components/LoginPage/LoginPage')),
 );
@@ -224,6 +225,7 @@ function App() {
                         }
                     ></Route>
                     <Route path="/signUp" element={<SignUp />}></Route>
+                    <Route path='/signUp/Verification/:userName' element={<Verification/>} />
                 </Routes>
             </Wrapper>
             <BackToTop/>

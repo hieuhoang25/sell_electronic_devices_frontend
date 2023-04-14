@@ -18,6 +18,8 @@ import { useDispatch } from 'react-redux';
 import { signUp } from './thunk';
 import { useNavigate } from 'react-router-dom';
 import { signUpSchema } from './signUpSchema';
+import style from './Style.module.css'
+import Loading from '../../common/Loading/Loading';
 
 function Copyright(props) {
   return (
@@ -44,10 +46,11 @@ export default function SignUp() {
       password: '',
       phone: '',
       full_name:'',
-      confirmPassword:''
+      confirmPassword:'',
     },
     validationSchema: signUpSchema ,
      onSubmit: async (values)=>{
+      // console.log(values);
      await dispatch(signUp(values,navigate));
      }
   })
@@ -61,12 +64,14 @@ export default function SignUp() {
   // };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+    <ThemeProvider theme={theme} >
+      <div className={style.container}>
+      <Container component="main" maxWidth="xs"className={style.form} >
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            paddingTop: 5,
+            paddingBottom: 5,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -78,9 +83,24 @@ export default function SignUp() {
             color:'#137bc7'
 
           }}>
-            SIGN UP
+            Đăng kí
           </Typography>
-          <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
+          <Box className={style.box} component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
+          <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 1, mb: 1 }}
+                color="error"
+              >
+                <GoogleIcon style={{marginRight:10}}></GoogleIcon>
+                Đăng kí với google
+              </Button>
+              <div className={style.google_guide_container}>
+                <div className={style.hr_left}></div>
+                <p className={style.guide_google}>Hoặc đăng ký với email</p>
+                <div className={style.hr_right}></div>
+            </div>
             <Grid container spacing={2}>
               <Grid item xs={12} >
                 <TextField
@@ -89,7 +109,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="full_name"
-                  label="Full Name"
+                  label="Họ Và Tên"
                   autoFocus
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -102,7 +122,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="Username"
-                  label="User Name"
+                  label="Tên Tài Khoản"
                   name="username"
                   autoComplete="Username"
                   onChange={formik.handleChange}
@@ -113,7 +133,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="email"
-                  label="Email Address"
+                  label="Địa chỉ Email"
                   name="email"
                   autoComplete="email"
                   onChange={formik.handleChange}
@@ -124,8 +144,8 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="phone"
-                  label="Phone Number"
-                  type="number"
+                  label="Số Điện Thoại"
+                  // type="number"
                   id="phoneNumber"
                   autoComplete="new-password"
                   onChange={formik.handleChange}
@@ -136,7 +156,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Mật Khẩu"
                   type="password"
                   id="password"
                   autoComplete="new-password"
@@ -148,7 +168,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="confirmPassword"
-                  label="Confirm Password"
+                  label="Xác nhận mật khẩu"
                   type="password"
                   id="confirmPassword"
                   autoComplete="confirmPassword"
@@ -156,12 +176,12 @@ export default function SignUp() {
                 />
               </Grid>
             
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}
                   label="I want to receive inspiration, marketing promotions and updates via email."
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
             <Button
               type="submit"
@@ -169,19 +189,10 @@ export default function SignUp() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              Đăng kí
             </Button>
-            <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 1, mb: 1 }}
-                color="error"
-              >
-                <GoogleIcon></GoogleIcon>
-                Đăng nhập với google
-              </Button>
-            <Button
+           
+            {/* <Button
                 type="submit"
                 fullWidth
                 variant="contained"
@@ -190,18 +201,23 @@ export default function SignUp() {
               >
                 <FacebookIcon></FacebookIcon>
                 Đăng nhập với facebook
-              </Button>
-            <Grid container justifyContent="flex-end">
+              </Button> */}
+            <Grid container justifyContent="flex-end" className={style.signIn}>
               <Grid item>
                 <Link href="/login" variant="body2">
-                  Already have an account? Sign in
+                Bạn đã tạo tài khoản rồi? <span> Đăng Nhập</span> 
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        {/* <Copyright sx={{ mt: 5 }} /> */}
       </Container>
+      </div>
+      <div className={style.test}>
+      <Loading/>
+      </div>
+   
     </ThemeProvider>
   );
 }
