@@ -122,7 +122,7 @@ const FlashCard = ({ productItems, addToCart }) => {
                                         </h4>
                                         <span>
                                             <NumericFormat
-                                                product={product.discount_price}
+                                                value={product.discount_price}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
                                                 suffix={' VNĐ'}
