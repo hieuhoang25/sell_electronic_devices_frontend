@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Style from './Style.module.css';
+import './darkMode.css';
 const ButtonDarkMode = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const element = document.documentElement;
@@ -31,7 +31,7 @@ const ButtonDarkMode = () => {
     };
 
     return (
-        <div className={Style.ButtonDarkMode}>
+        <div className='ButtonDarkMode_darkMode'>
             <button
                 onClick={() => {
                    handleMode()

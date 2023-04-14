@@ -91,7 +91,7 @@ const Cart = () => {
                                             </span>
                                         )}
                                     </div>
-                                    <h4 style={{ height: 40 }}>
+                                    <h4 style={{ height: 40,color:'black' }}>
                                         {value.product_name}
                                     </h4>
                                     {value.discount !== 0 ? (
