@@ -20,7 +20,7 @@ const AuthReducer = (state = initialState, action) => {
 
         case LOGIN: {
             const { isAuthenticated, fullName, accessToken } = action.payload;
-            console.log(action.payload);
+            // console.log(action.payload);
             return {
                 ...state,
                 isAuthenticated,
