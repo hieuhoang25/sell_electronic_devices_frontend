@@ -100,7 +100,7 @@ const Cart = () => {
                                                 value={value.discount_price}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
-                                                suffix={'VNĐ'}
+                                                suffix={' VNĐ'}
                                             />
                                         </span>
                                     ) : (
@@ -109,7 +109,7 @@ const Cart = () => {
                                                 value={value.price}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
-                                                suffix={'VNĐ'}
+                                                suffix={' VNĐ'}
                                             />
                                         </span>
                                     )}

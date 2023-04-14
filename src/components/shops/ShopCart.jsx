@@ -8,32 +8,33 @@ import axios from '../../services/axios';
 import { USER, WISHLISTS } from '../../constants/user';
 import { useNavigate } from 'react-router-dom';
 import { Card, Avatar } from 'antd';
-import Slider from "react-slick"
+import Slider from 'react-slick';
 const { Meta } = Card;
 const ShopCart = ({ shopItems, isAuth, isLoading }) => {
     const [count, setCount] = useState(0);
     const [isFavorite, setFavorite] = useState([]);
-    let navigate = useNavigate();const SampleNextArrow = (props) => {
-        const { onClick } = props
+    let navigate = useNavigate();
+    const SampleNextArrow = (props) => {
+        const { onClick } = props;
         return (
-          <div className='control-btn' onClick={onClick}>
-            <button className='next'>
-              <i className='fa fa-long-arrow-alt-right'></i>
-            </button>
-          </div>
-        )
-      }
-      const SamplePrevArrow = (props) => {
-        const { onClick } = props
+            <div className="control-btn" onClick={onClick}>
+                <button className="next">
+                    <i className="fa fa-long-arrow-alt-right"></i>
+                </button>
+            </div>
+        );
+    };
+    const SamplePrevArrow = (props) => {
+        const { onClick } = props;
         return (
-          <div className='control-btn' onClick={onClick}>
-            <button className='prev'>
-              <i className='fa fa-long-arrow-alt-left'></i>
-            </button>
-          </div>
-        )
-      }
-      const settings = {
+            <div className="control-btn" onClick={onClick}>
+                <button className="prev">
+                    <i className="fa fa-long-arrow-alt-left"></i>
+                </button>
+            </div>
+        );
+    };
+    const settings = {
         dots: false,
         infinite: true,
         speed: 500,
@@ -41,7 +42,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
         slidesToScroll: 1,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />,
-      }
+    };
 
     //fetch wishlists of user
     useEffect(() => {
@@ -101,12 +102,11 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
     };
     return (
         <>
-         
             {!isLoading ? (
-                 shopItems.map((shopItems, index) => {
+                shopItems.map((shopItems, index) => {
                     return (
                         <div key={index} className="box myShop_Style">
-                            <div className="product top" >
+                            <div className="product top">
                                 <div className="img">
                                     {shopItems.discount != 0 && (
                                         <span className="discount">
@@ -117,9 +117,10 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                                         to={`/product-detail/${shopItems.id}`}
                                     >
                                         <img
-                                        style={{height:180,
-                                                objectFit: "contain"
-                                        }}
+                                            style={{
+                                                height: 180,
+                                                objectFit: 'contain',
+                                            }}
                                             src={getImage(shopItems.image)}
                                             alt="#"
                                         />
@@ -142,7 +143,14 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                                     <Link
                                         to={`/product-detail/${shopItems.id}`}
                                     >
-                                        <h3 style={{ color: 'black', height:40, marginBottom:14, marginTop:26 }}>
+                                        <h3
+                                            style={{
+                                                color: 'black',
+                                                height: 40,
+                                                marginBottom: 14,
+                                                marginTop: 26,
+                                            }}
+                                        >
                                             {shopItems.product_name}
                                         </h3>
                                     </Link>
@@ -160,7 +168,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                                                     }
                                                     displayType={'text'}
                                                     thousandSeparator={true}
-                                                    suffix={'VNĐ'}
+                                                    suffix={' VNĐ'}
                                                 />
                                             </h4>
                                         ) : (
@@ -169,7 +177,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                                                     value={shopItems.price}
                                                     displayType={'text'}
                                                     thousandSeparator={true}
-                                                    suffix={'VNĐ'}
+                                                    suffix={' VNĐ'}
                                                 />
                                             </h4>
                                         )}
@@ -179,8 +187,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                         </div>
                     );
                 })
-              
-           ) : (
+            ) : (
                 <>
                     {new Array(10).fill(null).map((index) => {
                         return (
