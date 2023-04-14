@@ -225,11 +225,14 @@ function App() {
                         }
                     ></Route>
                     <Route path="/signUp" element={<SignUp />}></Route>
-                    <Route path='/signUp/Verification/:userName' element={<Verification/>} />
+                    <Route
+                        path="/signUp/Verification/:userName"
+                        element={<Verification />}
+                    />
                 </Routes>
             </Wrapper>
-            <BackToTop/>
-            <ButtonDarkMode/>
+            <BackToTop />
+            <ButtonDarkMode />
         </>
     );
 }
