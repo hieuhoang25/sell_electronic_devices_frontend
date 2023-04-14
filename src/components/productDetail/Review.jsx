@@ -3,6 +3,8 @@ import { Button, Comment, Form } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import HalfRatingRead from '../../common/rating/HalfRatingRead';
 import Card from 'antd/es/card/Card';
+import Moment from 'react-moment';
+import 'moment-timezone';
 const Review = ({ listReview, handleClick, loading }) => {
     return (
         <Card loading={loading}>
@@ -19,7 +21,9 @@ const Review = ({ listReview, handleClick, loading }) => {
                                       <Comment.Metadata>
                                           <div>{item.variant_name}</div>
                                           <div>{item.variant_color}</div>
-                                          <div>{item.created_date}</div>
+                                          <Moment fromNow>
+                                              {item.created_date}
+                                          </Moment>
                                       </Comment.Metadata>
                                       <Comment.Text>
                                           <HalfRatingRead value={item.point} />

@@ -11,25 +11,25 @@ import { NumericFormat } from 'react-number-format';
 import { Link } from 'react-router-dom';
 const Dcard = () => {
     const SampleNextArrow = (props) => {
-        const { onClick } = props
+        const { onClick } = props;
         return (
-          <div className='control-btn' onClick={onClick}>
-            <button className='next'>
-              <i className='fa fa-long-arrow-alt-right'></i>
-            </button>
-          </div>
-        )
-      }
-      const SamplePrevArrow = (props) => {
-        const { onClick } = props
+            <div className="control-btn" onClick={onClick}>
+                <button className="next">
+                    <i className="fa fa-long-arrow-alt-right"></i>
+                </button>
+            </div>
+        );
+    };
+    const SamplePrevArrow = (props) => {
+        const { onClick } = props;
         return (
-          <div className='control-btn' onClick={onClick}>
-            <button className='prev'>
-              <i className='fa fa-long-arrow-alt-left'></i>
-            </button>
-          </div>
-        )
-      }
+            <div className="control-btn" onClick={onClick}>
+                <button className="prev">
+                    <i className="fa fa-long-arrow-alt-left"></i>
+                </button>
+            </div>
+        );
+    };
     const settings = {
         dots: false,
         infinite: true,
@@ -72,8 +72,11 @@ const Dcard = () => {
                                 key={index}
                                 to={'/product-detail/' + value.id}
                             >
-                                <div className="box product" key={index} >
-                                    <div className="img" style={{height:180}}>
+                                <div className="box product" key={index}>
+                                    <div
+                                        className="img"
+                                        style={{ height: 180 }}
+                                    >
                                         <img
                                             src={getImage(value.image)}
                                             alt=""
@@ -88,14 +91,16 @@ const Dcard = () => {
                                             </span>
                                         )}
                                     </div>
-                                    <h4 style={{height:40}}>{value.product_name}</h4>
+                                    <h4 style={{ height: 40 }}>
+                                        {value.product_name}
+                                    </h4>
                                     {value.discount != 0 ? (
                                         <span>
                                             <NumericFormat
                                                 value={value.discount_price}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
-                                                suffix={'VNĐ'}
+                                                suffix={' VNĐ'}
                                             />
                                         </span>
                                     ) : (
@@ -104,7 +109,7 @@ const Dcard = () => {
                                                 value={value.price}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
-                                                suffix={'VNĐ'}
+                                                suffix={' VNĐ'}
                                             />
                                         </span>
                                     )}

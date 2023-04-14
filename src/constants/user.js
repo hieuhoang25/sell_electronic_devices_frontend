@@ -35,4 +35,4 @@ export const USER_PROMO_LIST = `${USER}${PROMO}/list`;
 export const USER_PROMO_VALID = `${USER}${PROMO}/valid`;
 export const USER_PROMO_ORDER = `${USER}${PROMO}/order`;
 export const USER_PROMO_COUPON = `${USER}${PROMO}/coupon`;
-
+export const CANCEL_ORDER = '/cancelling-order';
