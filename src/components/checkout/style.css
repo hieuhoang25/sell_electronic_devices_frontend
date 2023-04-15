@@ -382,7 +382,7 @@ span {
 }
 
 .order-list-container {
-  max-height: 470px;
+  max-height: 300px;
   overflow: scroll;
   overflow-y: scroll;
   padding: .5rem 1rem;
@@ -575,4 +575,20 @@ color: red;
 #coupon_promo_code {
   font-size: 13px;
   background-color:#7c7c7c;
+}
+.payment-form .ant-radio-group .ant-space {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+.payment-form .ant-radio-group .ant-space  .ant-space-item{
+  border: 1px solid #7f8080;;
+  padding: .5rem;
+  border-radius: 15px;
+  background-color:#d7e8f7;;
+
+}
+.payment-form .ant-radio-group .ant-space  .ant-space-item .ant-radio {
+
 }

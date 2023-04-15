@@ -69,6 +69,11 @@ const OrderList = ({ onClickOrder, onAddPromotion}) => {
         }
     };
 
+    const getTotalAfterAddPromo = () => {
+        let t = Cart.total - getDiscountAmmountByCode();
+        return t <= 0? 0.0 : t;
+    }
+
     useEffect(() => {
         console.log('useEffec selec promo');
         const timeout = setTimeout(() => {
@@ -111,6 +116,10 @@ const OrderList = ({ onClickOrder, onAddPromotion}) => {
             </div>
         );
     };
+    const changeDescription = ({target}) => {
+console.log('hover value: ');
+console.log(target);
+    }
     const onOrderHandler = () => {
         onClickOrder();
     };
@@ -183,6 +192,7 @@ const OrderList = ({ onClickOrder, onAddPromotion}) => {
                                     showSearch
                                     placeholder="Chọn mã giảm giá"
                                     optionFilterProp="children"
+                                    onFocus={changeDescription}
                                     onChange={onChange}
                                     filterOption={(input, option) =>
                                         (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
@@ -233,7 +243,7 @@ const OrderList = ({ onClickOrder, onAddPromotion}) => {
                 ) : (
                     <div className="box total">
                         <h3>Tổng tiền</h3>
-                        <div className="total">{getCurrencyFormatComp(Cart.total - getDiscountAmmountByCode(), true)}</div>
+                        <div className="total">{getCurrencyFormatComp(getTotalAfterAddPromo(), true)}</div>
                     </div>
                 )}
             </div>
