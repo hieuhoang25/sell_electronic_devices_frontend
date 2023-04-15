@@ -7,7 +7,6 @@ import {
     getSearchDistrict,
     getSearchWard,
 } from '../../services/addressService';
-
 const AddressForm = ({ form }) => {
     // const inputProvince = Form.useWatch('input_province', form);
     const optionForDropDown = [];
@@ -186,7 +185,16 @@ const AddressForm = ({ form }) => {
                         {provinceOptions !== undefined &&
                             provinceOptions.length > 0 &&
                             getSelectedProvinceName()}
-                        <Form.Item name="input_province" label="Tỉnh thành">
+                        <Form.Item
+                            name="input_province"
+                            label="Tỉnh thành"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập tỉnh thành',
+                                },
+                            ]}
+                        >
                             <Select
                                 value={inputSearch}
                                 showSearch
@@ -205,7 +213,16 @@ const AddressForm = ({ form }) => {
                         </Form.Item>
                     </Col>
                     <Col span={8}>
-                        <Form.Item name="input_district" label="Quận/Huyện">
+                        <Form.Item
+                            name="input_district"
+                            label="Quận/Huyện"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập quận/huyện',
+                                },
+                            ]}
+                        >
                             <Select
                                 value={inputDistrictSearch}
                                 showSearch
@@ -224,7 +241,16 @@ const AddressForm = ({ form }) => {
                         </Form.Item>
                     </Col>
                     <Col span={8}>
-                        <Form.Item name="input_ward" label="Phường/Xã">
+                        <Form.Item
+                            name="input_ward"
+                            label="Phường/Xã"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập phường/xã',
+                                },
+                            ]}
+                        >
                             <Select
                                 value={inputWardSearch}
                                 showSearch

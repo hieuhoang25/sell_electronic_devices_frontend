@@ -32,7 +32,7 @@ const SamplePrevArrow = (props) => {
         </div>
     );
 };
-const FlashCard = ({ productItems, addToCart }) => {
+const FlashCard = () => {
     const [loading, setLoading] = useState(true);
     const [flashDeal, setFlashDeal] = useState([]);
     useEffect(() => {
@@ -120,27 +120,14 @@ const FlashCard = ({ productItems, addToCart }) => {
                                         <h4 style={{ height: 40 }}>
                                             {product.product_name}
                                         </h4>
-                                        {product.discount !== 0 ? (
-                                            <span>
-                                                <NumericFormat
-                                                    product={
-                                                        product.discount_price
-                                                    }
-                                                    displayType={'text'}
-                                                    thousandSeparator={true}
-                                                    suffix={'VNĐ'}
-                                                />
-                                            </span>
-                                        ) : (
-                                            <span>
-                                                <NumericFormat
-                                                    product={product.price}
-                                                    displayType={'text'}
-                                                    thousandSeparator={true}
-                                                    suffix={'VNĐ'}
-                                                />
-                                            </span>
-                                        )}
+                                        <span>
+                                            <NumericFormat
+                                                value={product.discount_price}
+                                                displayType={'text'}
+                                                thousandSeparator={true}
+                                                suffix={' VNĐ'}
+                                            />
+                                        </span>
                                     </div>
                                 </Link>
                             );

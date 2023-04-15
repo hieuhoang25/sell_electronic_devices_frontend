@@ -230,7 +230,14 @@ const AllPurchase = ({ status }) => {
                                 style={{ marginBottom: '20px' }}
                                 title={
                                     <div style={{ color: '#26aa99' }}>
-                                        <ShopOutlined /> {item.status_name}
+                                        <ShopOutlined /> {item.status_name} -
+                                        {' Lúc: '}
+                                        {new Date(
+                                            item.created_date,
+                                        ).toLocaleString('vi-VN')}
+                                        <span style={{ float: 'right' }}>
+                                            Địa chỉ: {item.address}
+                                        </span>
                                     </div>
                                 }
                             >
@@ -359,16 +366,95 @@ const AllPurchase = ({ status }) => {
                                                                     'right',
                                                             }}
                                                         >
-                                                            <div>
-                                                                <span
-                                                                    style={{
-                                                                        color: 'red',
-                                                                    }}
-                                                                >
-                                                                    {
+                                                            {product.promotion_value !=
+                                                            0 ? (
+                                                                <div>
+                                                                    <span
+                                                                        style={{
+                                                                            textDecoration:
+                                                                                'line-through',
+                                                                        }}
+                                                                    >
+                                                                        <span>
+                                                                            Giá
+                                                                            gốc:{' '}
+                                                                            <NumericFormat
+                                                                                value={
+                                                                                    product.productVariant_price
+                                                                                }
+                                                                                displayType={
+                                                                                    'text'
+                                                                                }
+                                                                                thousandSeparator={
+                                                                                    true
+                                                                                }
+                                                                                suffix={
+                                                                                    ' VNĐ'
+                                                                                }
+                                                                            />
+                                                                        </span>
+                                                                    </span>
+                                                                    <div
+                                                                        style={{
+                                                                            color: 'red',
+                                                                        }}
+                                                                    >
+                                                                        <span>
+                                                                            Số
+                                                                            tiền
+                                                                            Giảm:{' '}
+                                                                            <NumericFormat
+                                                                                value={
+                                                                                    product.promotion_value
+                                                                                }
+                                                                                displayType={
+                                                                                    'text'
+                                                                                }
+                                                                                thousandSeparator={
+                                                                                    true
+                                                                                }
+                                                                                suffix={
+                                                                                    ' VNĐ'
+                                                                                }
+                                                                            />
+                                                                        </span>
+                                                                    </div>
+                                                                    <div
+                                                                        style={{
+                                                                            color: 'red',
+                                                                        }}
+                                                                    >
+                                                                        <span>
+                                                                            Giá
+                                                                            đã
+                                                                            giảm:{' '}
+                                                                            <NumericFormat
+                                                                                value={
+                                                                                    product.discount_amount
+                                                                                }
+                                                                                displayType={
+                                                                                    'text'
+                                                                                }
+                                                                                thousandSeparator={
+                                                                                    true
+                                                                                }
+                                                                                suffix={
+                                                                                    ' VNĐ'
+                                                                                }
+                                                                            />
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            ) : (
+                                                                <div>
+                                                                    <span
+                                                                        style={{
+                                                                            color: 'red',
+                                                                        }}
+                                                                    >
                                                                         <NumericFormat
                                                                             value={
-                                                                                product.discount_amount
+                                                                                product.productVariant_price
                                                                             }
                                                                             displayType={
                                                                                 'text'
@@ -377,12 +463,12 @@ const AllPurchase = ({ status }) => {
                                                                                 true
                                                                             }
                                                                             suffix={
-                                                                                'đ'
+                                                                                ' VNĐ'
                                                                             }
                                                                         />
-                                                                    }
-                                                                </span>
-                                                            </div>
+                                                                    </span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         {/*End*/}
                                                     </div>
@@ -400,9 +486,86 @@ const AllPurchase = ({ status }) => {
                                 </Card>
 
                                 {/*Tổng giá*/}
+                                {item.promotion_name && (
+                                    <div
+                                        style={{
+                                            padding: '10px 10px 5px',
+                                            background: '#fffefb',
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: 'flex-end',
+                                                alignItems: 'center',
+                                            }}
+                                        >
+                                            <div
+                                                style={{
+                                                    margin: '0 10px 0 0',
+                                                    fontSize: '14px',
+                                                    lineHeight: '20px',
+                                                    color: 'rgba(0,0,0,.8)',
+                                                }}
+                                            >
+                                                Áp dụng mã giảm:
+                                            </div>
+                                            <div
+                                                style={{
+                                                    fontSize: '20px',
+                                                    color: '#ee4d2d',
+                                                    lineHeight: '30px',
+                                                }}
+                                            >
+                                                {item.promotion_name}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {item.promotion_name && (
+                                    <div
+                                        style={{
+                                            padding: '10px 10px 5px',
+                                            background: '#fffefb',
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: 'flex-end',
+                                                alignItems: 'center',
+                                            }}
+                                        >
+                                            <div
+                                                style={{
+                                                    margin: '0 10px 0 0',
+                                                    fontSize: '14px',
+                                                    lineHeight: '20px',
+                                                    color: 'rgba(0,0,0,.8)',
+                                                }}
+                                            >
+                                                Giảm:
+                                            </div>
+                                            <div
+                                                style={{
+                                                    fontSize: '20px',
+                                                    color: '#ee4d2d',
+                                                    lineHeight: '30px',
+                                                }}
+                                            >
+                                                {' '}
+                                                {item.promotion_isPercent
+                                                    ? item.discount + '%'
+                                                    : item.discount}{' '}
+                                                trên tổng hóa đơn
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div
                                     style={{
-                                        padding: '24px 24px 12px',
+                                        padding: '10px 10px 5px',
                                         background: '#fffefb',
                                     }}
                                 >
@@ -425,7 +588,7 @@ const AllPurchase = ({ status }) => {
                                         </div>
                                         <div
                                             style={{
-                                                fontSize: '24px',
+                                                fontSize: '20px',
                                                 color: '#ee4d2d',
                                                 lineHeight: '30px',
                                             }}
@@ -434,7 +597,7 @@ const AllPurchase = ({ status }) => {
                                                 value={item.total}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
-                                                suffix={'đ'}
+                                                suffix={' VNĐ'}
                                             />
                                         </div>
                                     </div>

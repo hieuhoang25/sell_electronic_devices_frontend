@@ -19,6 +19,7 @@ export const PRODUCT = '/product';
 export const PRODUCT_DETAIL = '/product-detail';
 export const PRODUCT_STORAGE = '/product-storage';
 export const PRODUCT_COLOR = '/product-color';
+export const PRODUCT_INVENTORY = `${PRODUCT_DETAIL}/inventory`;
 //API BRAND
 export const BRAND = '/brand';
 // OPTIONS

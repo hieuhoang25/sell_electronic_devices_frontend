@@ -23,7 +23,7 @@ import axios from '../../services/axios';
 import ProductDetailQuantityCounter from '../counterInc/ProductDetailQuantityCounter';
 import CartNotification from '../../common/notification/CartNotification';
 import CartNotification_TYPE from '../../common/notification/CartNotification';
-import { addItemToCart, updateCart } from '../../services/cartService.js';
+import { addItemToCart, updateCart,updateGuestCartState,incrementItemQuantity,decrementItemQuantity, } from '../../services/cartService.js';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import  './style.css'
 import {
@@ -48,6 +48,7 @@ import {
     PRODUCT_COLOR,
     PRODUCT_DETAIL,
     PRODUCT_STORAGE,
+    PRODUCT_INVENTORY
 } from '../../constants/index';
 import { getImage } from '../../common/img';
 import { NumericFormat } from 'react-number-format';
@@ -67,6 +68,8 @@ const ProductDetail = ({ isAuth }) => {
     const [selectedColor, setSelectedColor] = useState();
     const [cartQty, setCartQty] = useState(1);
     const [cartButtonDisabled, setCartbuttonDisabled] = useState(false);
+    const [inventory, setInventory] = useState({});
+    const [isChanged, setIsChanged] = useState(false);
     const myRef = useRef(null);
 
     const [cartAddedNotif, setCartAddedNotif] = useState({
@@ -121,11 +124,19 @@ const ProductDetail = ({ isAuth }) => {
         })
             .then((res) => {
                 console.log('product-detail: ', res.data);
-                setProductDetail(res.data);
+                setProductDetail(prev => res.data);
                 console.log('p detail: ', productDetail);
                 specificationTable.current = res.data.product_productAttributes;
-                setCartQty(1);
-                setIsLoading(false);
+
+                // 
+                if(isProductIncart(res.data.id)) {
+                    let q = findCartItemQuantity(findIndexOfProductId(res.data.id));
+                    setCartQty(prev => q);
+                }else {
+                    console.log('set cart qty: ', cartQty);
+                    setCartQty(prev => 1);
+                    setIsLoading(false);
+                }     
             })
             .catch((error) => {
                 console.log(error);
@@ -133,17 +144,113 @@ const ProductDetail = ({ isAuth }) => {
             });
     }
 
+    async function fetchInventory() {
+        const reQty =  cartQty;
+        const variantId = productDetail.id;
+        console.log('variant id: ', variantId);
+        const request = {
+            product_variant_id: variantId,
+            request_quantity: cartQty
+        }
+       axios.post(`${BASE}${PRODUCT_INVENTORY}`, request).then(res => {
+        console.log(res.data);
+        setInventory(res.data);
+       }).catch(e =>  {
+        console.log("fetch invetory error");
+        console.log(e.message)
+    });
+        // cartQty
+    }
+
     async function getProductDetail() {
         await fetchColor(productId);
         await fetchStorage(productId, productBody.current.colorId);
         await fetchProductDetail();
+     
     }
 
     useEffect(() => {
         getProductDetail();
         executeScroll();
+    
     }, []);
 
+    useEffect(async () => {
+        setIsLoading(true);
+        await fetchInventory();
+        setIsLoading(false);
+    },[productDetail,cartQty])
+   
+
+    const isProductIncart = (id = null) => {    
+        if(id !== null) return findIndexOfProductId(id);
+
+        return findIndexOfCurrentProductInCart() > -1;
+    }
+
+    const findCartItemQuantity = (cartIndex) => {
+        const { items } = Cart;
+        const { quantity: c_qty } = items[cartIndex];
+        return c_qty;
+    }
+
+    const findIndexOfCurrentProductInCart = () => {
+        const { items } = Cart;
+        const item_id = productDetail.id;
+        return items.findIndex((item) => item.productVariant.id === item_id);
+    }
+    const findIndexOfProductId = (id) => {
+        const { items } = Cart;
+        return items.findIndex((item) => item.productVariant.id === id);
+    }
+    
+    useEffect(() => {
+        setIsLoading(true); 
+        console.log('out of stock: ' , inventory.outOfStock);
+
+        if(inventory.need_changed) {
+            // alert('neeed changed')
+            let checkCart =  isProductIncart();
+      
+            console.log('inCart: ' , checkCart);
+            console.log('nene: ', inventory.need_changed);
+            setIsChanged(prev => inventory.need_changed);
+            if(checkCart) {
+                let quantity = findCartItemQuantity(findIndexOfCurrentProductInCart());
+                
+                let index = findIndexOfCurrentProductInCart();
+                let max = inventory.max_quantity;
+                    if(quantity > max) {
+                        // alert('updaete cart')
+                        dispatch(updateGuestCartState());
+                    }
+            }else if(cartQty >= inventory.max_quantity) {
+                setCartQty(inventory.max_quantity);
+            }
+
+            if(inventory.outOfStock) {
+                setCartbuttonDisabled(true);
+            }
+        }else if(!inventory.outOfStock) {
+            setCartQty(prev => prev);
+            setCartbuttonDisabled(false);
+
+        }else if(inventory.outOfStock)  {
+            // alert('out stock')
+            setCartbuttonDisabled(true);
+
+            let checkCart =  isProductIncart();
+            if(checkCart) dispatch(updateGuestCartState());
+
+            setCartQty(prev => 1);
+
+        }
+        // else {
+        //     setCartbuttonDisabled(false);
+        //     setCartQty(prev => 1);
+        // }
+        setIsLoading(false);
+    },[inventory])
     const executeScroll = () => {
         scrollIntoView(myRef.current, { behavior: 'smooth' });
     };
@@ -154,63 +261,123 @@ const ProductDetail = ({ isAuth }) => {
             dispatch(updateCart());
         }
     }, [Cart]);
+    const fetchWhenClickAddCart = async() => {
+        setIsLoading(true);
+        await fetchInventory();
+        setIsLoading(false);
+
+
+    }
     //End
     const handleAddToCart = async (callback) => {
-        const mess_message = productDetail.display_name;
 
-        const mess_title = 'Thêm vào giỏ hàng';
-        console.log('handlemessage', mess_message);
-        console.log('title:', cartAddedNotif.title);
-        console.log('cart: ', Cart);
+        fetchWhenClickAddCart().then(res => {
 
-        const item_id = productDetail.id;
-        console.log('item_id: ', item_id);
-        const { items } = Cart;
+            const mess_message = productDetail.display_name;
 
-        console.log('%cITEMS: ', 'color:red', items);
+            const mess_title = 'Thêm vào giỏ hàng';
+            console.log('handlemessage', mess_message);
+            console.log('title:', cartAddedNotif.title);
+            console.log('cart: ', Cart);
+    
+            const item_id = productDetail.id;
+            console.log('item_id: ', item_id);
+            const { items } = Cart;
+    
+            console.log('%cITEMS: ', 'color:red', items);
+    
+           
+            // console.log('items: ', items);
+            let cartIndex = findIndexOfCurrentProductInCart();
+            
+            const request = {
+                cart_id: Cart.id,
+                id: item_id,
+                product_variant_id: item_id,
+                quantity: cartQty,
+            };
+            const {max_quantity : MAXQTY, current_inventory: CUR_INVENTORY,  outOfStock: OUTOFSTOCK } = inventory;
+            // sản phẩm có trong giỏ
+            if (cartIndex >= 0) {
 
-        const request = {
-            cart_id: Cart.id,
-            id: item_id,
-            product_variant_id: item_id,
-            quantity: cartQty,
-        };
-        // console.log('items: ', items);
-        let cartIndex = items.findIndex(
-            (item) => item.productVariant.id === item_id,
-        );
-        // console.log('cartIndex', cartIndex);
-        // console.log('san pham trong gio? ', cartIndex);
-        // sản phẩm có trong giỏ
-        if (cartIndex >= 0) {
-            // console.log(' items[cartIndex]: ', items[cartIndex]);
-            const { quantity: c_qty } = items[cartIndex];
-            console.log('current quty; ', c_qty);
-            if (c_qty >= QTY_MAX) {
-                console.log('failed');
-                setCartAddedNotif((prev) => {
-                    return {
-                        ...prev,
-                        message: `Số lượng sản phẩm trong giỏ không quá ${QTY_MAX} sản phẩm`,
-                        title: 'Không thể thêm vào giỏ',
-                        isSuccess: false,
-                    };
-                });
+                const requestz = {
+                    cart_id: Cart.id,
+                    id: items[cartIndex].id,
+                    product_variant_id: item_id,
+                    quantity: cartQty,
+                };
+
+                const { quantity: c_qty } = items[cartIndex];
+                console.log('current quty; ', c_qty);
+                // if (c_qty >= QTY_MAX) {
+                if(c_qty > MAXQTY) {
+                    isLoading(true);
+                   dispatch(updateGuestCartState);
+                     isLoading(false);
+                   return;
+                }    
+                // if (c_qty >= MAXQTY) {
+                if((c_qty == QTY_MAX &&  cartQty == c_qty)) {
+                    setCartAddedNotif((prev) => {
+                        return {
+                            ...prev,
+                            message: `Bạn đã có ${QTY_MAX} sản phẩm trong giỏ. Số lượng sản phẩm trong giỏ không quá  sản phẩm`,
+                            title: 'Không thể thêm vào giỏ',
+                            isSuccess: false,
+                        };
+                    });
+                }else  if((c_qty == MAXQTY  &&  cartQty == c_qty ) || cartQty > MAXQTY && c_qty > MAXQTY &&  CUR_INVENTORY <=5) {
+                    setCartAddedNotif((prev) => {
+                        return {
+                            ...prev,
+                            message: `Sản phẩm chỉ còn lại ${ MAXQTY}, không đủ để thêm tiếp vào giỏ`,
+                            title: 'Không thể cập nhật giỏ hàng',
+                            isSuccess: false,
+                        };
+                    });
+                
+                } else {
+                    // alert('i[da')
+                    const currentItem = items.find;
+                    let fixedQty = cartQty;
+                    if(cartQty > c_qty) {
+                        const requestItemz = getCartDetailRequest(
+                            {...requestz, quantity: fixedQty},
+                            CartRequestTYPE.UPDATE,
+                        )   
+                        dispatch(incrementItemQuantity(requestItemz)) ;
+                    }else if(cartQty < c_qty) {
+                        const requestItemz= getCartDetailRequest(
+                            { ...requestz, quantity: fixedQty },
+                            CartRequestTYPE.DECR,
+                        );
+                        dispatch(decrementItemQuantity(requestItemz));
+                    }
+                        // c_qty + cartQty > QTY_MAX ? QTY_MAX - c_qty : cartQty;
+                        
+                   
+                    // const requestItem = getCartDetailRequest(
+                    //     { ...request, quantity: fixedQty },
+                    //     CartRequestTYPE.UPDATE,
+                    // );
+                    // console.log(' requestItem', requestItem);
+                    setCartAddedNotif((prev) => {
+                        return {
+                            ...prev,
+                            message: mess_message + `\nSố lượng:${cartQty}`,
+                            title: "Cập nhật giỏ hàng thành công",
+                            isSuccess: true,
+                        };
+                    });
+                    // dispatch(addItemToCart(requestItem));
+                }
             } else {
-                const currentItem = items.find;
-                let fixedQty =
-                    c_qty + cartQty > QTY_MAX ? QTY_MAX - c_qty : cartQty;
-                // const request = {
-                //     cart_id: Cart.id,
-                //     id: item_id,
-                //     quantity: fixedQty,
-                // };
-
                 const requestItem = getCartDetailRequest(
-                    { ...request, quantity: fixedQty },
+                    request,
                     CartRequestTYPE.ADD,
                 );
                 console.log(' requestItem', requestItem);
+                dispatch(addItemToCart(requestItem));
                 setCartAddedNotif((prev) => {
                     return {
                         ...prev,
@@ -219,24 +386,86 @@ const ProductDetail = ({ isAuth }) => {
                         isSuccess: true,
                     };
                 });
-                dispatch(addItemToCart(requestItem));
             }
-        } else {
-            const requestItem = getCartDetailRequest(
-                request,
-                CartRequestTYPE.ADD,
-            );
-            console.log(' requestItem', requestItem);
-            dispatch(addItemToCart(requestItem));
-            setCartAddedNotif((prev) => {
-                return {
-                    ...prev,
-                    message: mess_message,
-                    title: mess_title,
-                    isSuccess: true,
-                };
-            });
-        }
+        })
+        // const mess_message = productDetail.display_name;
+
+        // const mess_title = 'Thêm vào giỏ hàng';
+        // console.log('handlemessage', mess_message);
+        // console.log('title:', cartAddedNotif.title);
+        // console.log('cart: ', Cart);
+
+        // const item_id = productDetail.id;
+        // console.log('item_id: ', item_id);
+        // const { items } = Cart;
+
+        // console.log('%cITEMS: ', 'color:red', items);
+
+        // const request = {
+        //     cart_id: Cart.id,
+        //     id: item_id,
+        //     product_variant_id: item_id,
+        //     quantity: cartQty,
+        // };
+        // // console.log('items: ', items);
+        // let cartIndex = findIndexOfCurrentProductInCart();
+        // const {max_quantity : MAXQTY, current_inventory: CUR_INVENTORY,  outOfStock: OUTOFSTOCK } = inventory;
+        // // sản phẩm có trong giỏ
+        // if (cartIndex >= 0) {
+        //     const { quantity: c_qty } = items[cartIndex];
+        //     console.log('current quty; ', c_qty);
+        //     // if (c_qty >= QTY_MAX) {
+        //     if(c_qty > MAXQTY) {
+              
+        //        dispatch(updateGuestCartState);
+              
+        //        return;
+        //     }    
+        //     if (c_qty >= MAXQTY) {
+        //         console.log('failed');
+        //         setCartAddedNotif((prev) => {
+        //             return {
+        //                 ...prev,
+        //                 message: `Số lượng sản phẩm trong giỏ không quá ${QTY_MAX} sản phẩm`,
+        //                 title: 'Không thể thêm vào giỏ',
+        //                 isSuccess: false,
+        //             };
+        //         });
+        //     } else {
+        //         const currentItem = items.find;
+        //         let fixedQty =
+        //             c_qty + cartQty > QTY_MAX ? QTY_MAX - c_qty : cartQty;
+        //         const requestItem = getCartDetailRequest(
+        //             { ...request, quantity: fixedQty },
+        //             CartRequestTYPE.ADD,
+        //         );
+        //         console.log(' requestItem', requestItem);
+        //         setCartAddedNotif((prev) => {
+        //             return {
+        //                 ...prev,
+        //                 message: mess_message,
+        //                 title: mess_title,
+        //                 isSuccess: true,
+        //             };
+        //         });
+        //         dispatch(addItemToCart(requestItem));
+        //     }
+        // } else {
+        //     const requestItem = getCartDetailRequest(
+        //         request,
+        //         CartRequestTYPE.ADD,
+        //     );
+        //     console.log(' requestItem', requestItem);
+        //     dispatch(addItemToCart(requestItem));
+        //     setCartAddedNotif((prev) => {
+        //         return {
+        //             ...prev,
+        //             message: mess_message,
+        //             title: mess_title,
+        //             isSuccess: true,
+        //         };
+        //     });
+        // }
 
         // console.log('Đã thêm vào giỏ');
         // console.log('Qty: ', cartQty);
@@ -252,28 +481,12 @@ const ProductDetail = ({ isAuth }) => {
         });
     };
 
-    // useEffect(() => {
-    //     return () => {
-    //         console.log('clean up');
-    //         if (cartAddedNotif.isSuccess != null) {
-    //             console.log('clean up - set null');
-    //             setCartAddedNotif((prev) => {
-    //                 return {
-    //                     ...prev,
-    //                     isSuccess: null,
-    //                 };
-    //             });
-    //         }
-    //     };
-    // }, [cartAddedNotif]);
-
     function fetchIsWishlist(productId) {
         axios({
             method: 'get',
             url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}/${productId}`,
         })
             .then((res) => {
-                console.log(res.data);
                 setFavorite(res.data);
             })
             .catch((error) => {
@@ -349,12 +562,12 @@ const ProductDetail = ({ isAuth }) => {
     });
 
     // cartQtyHandler
-    const cartQtyOnChangeHandler = (value) => {
-        console.log('change quantity to: ', value);
+    const cartQtyOnChangeHandler = useCallback( async (value) => {
         setCartQty((prev) => {
             return value;
         });
-    };
+       await fetchInventory();
+    });
 
     return (
         <>
@@ -629,6 +842,9 @@ const ProductDetail = ({ isAuth }) => {
                                         cartQtyOnChangeHandler={
                                             cartQtyOnChangeHandler
                                         }
+                                        fetchInventory={fetchInventory}
+                                        inventory={inventory}
+                                        isButtonDisabled={cartButtonDisabled}
                                         // setCartbuttonDisabled={setCartbuttonDisabled}
                                     ></ProductDetailQuantityCounter>
 

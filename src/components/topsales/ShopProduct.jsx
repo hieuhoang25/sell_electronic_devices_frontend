@@ -65,7 +65,7 @@ const ShopProduct = ({ shopItems, isLoading }) => {
                                                 value={shopItems.price}
                                                 displayType={'text'}
                                                 thousandSeparator={true}
-                                                suffix={'VNĐ'}
+                                                suffix={' VNĐ'}
                                             />
                                         </h4>
                                         {/* step : 3  

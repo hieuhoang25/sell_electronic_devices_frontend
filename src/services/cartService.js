@@ -1,6 +1,6 @@
 // import { createSlice } from '@reduxjs/toolkit';
 import axios from './axios';
-import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL, MERGE_CART,UPDATE_GUEST_CART } from '../constants/user';
+import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL, MERGE_CART,UPDATE_GUEST_CART,UPDATE_AUTH_CART } from '../constants/user';
 import {
     addToCart,
     removeFromCart,
@@ -13,14 +13,13 @@ import {
     getTotal,
     getDiscountAmount,
     authenticateCart,
+    updateGuestCart
 } from '../redux/slices/CartSlice';
 
 const ENV_URL = process.env.REACT_APP_URL;
 export const fetchCartFromSever = () => async (dispatch, getState) => {
     console.log('fetchCartFromSErver,,,,');
     try {
-        // const cartz = useSelector((state) => state.cart);
-
         const { isAnonymous } = getState().cart;
         console.log('isAnnon', isAnonymous);
         const promt_path = !isAnonymous ? CART : null;
@@ -216,6 +215,9 @@ export const mergeAnnonCart = () => async (dispatch, getState) => {
     let { items } = getState().cart;
     let cart_id = await (await (await axios.get(`${ENV_URL}${CART}`)).data).id;
     let request = covertMergeCartRequest(items, cart_id);
+
+    dispatch(updateGuestCartState());
+    
     console.log('list request: ', request);
     if (request)
         await axios
@@ -283,21 +285,40 @@ export const updateCart = () => async (dispatch, getState) => {
 };
 
 export const updateGuestCartState = () => async(dispatch, getState) => {
-    let { items, id: cart_id } = getState().cart;
+    let { items, id: cart_id, isAnonymous } = getState().cart;
+   
     // let cart_id = await (await (await axios.get(`${ENV_URL}${CART}`)).data).id;
-    let request = convertUpdateCartRequest(items, cart_id);
-    console.log(request);
-    if (request)
-    await axios
-        .post(`${ENV_URL}${UPDATE_GUEST_CART}`, request)
-        .then((res) => {
-            console.log('cart: ');
-            console.log(res.data);
-            return;
+
+    if(!isAnonymous) {
+        // alert('updated remote cart')
+        await axios.get(`${ENV_URL}${UPDATE_AUTH_CART}`).then(res => {
+            console.log('res: ', res);
+            if(res.status = '409') {
+                dispatch(fetchCartFromSever());
+            }
         })
-        .catch((e) => {
-            console.log(e.message);
-        });
+     
+    }else {
+        let request = convertUpdateCartRequest(items, cart_id);
+        console.log(request);
+        if (request)
+        await axios
+            .post(`${ENV_URL}${UPDATE_GUEST_CART}`, request)
+            .then((res) => {
+                console.log('cart: ');
+                console.log(res.data);
+                dispatch(updateGuestCart(res.data));
+               
+                dispatch(updateCart);
+                console.log('finish updated: ' ,getState().cart);
+    
+                return;
+            })
+            .catch((e) => {
+                console.log(e.message);
+            });
+    }
+    
    
 }
 
@@ -310,6 +331,6 @@ const generateAutoIncrId = (arr) => {
 };
 
 export const clearAfterCheckOut = () => async (dispatch, getState) => {
-    alert('fetch ...');
+    // alert('fetch ...');
     dispatch(fetchCartFromSever());
 };
