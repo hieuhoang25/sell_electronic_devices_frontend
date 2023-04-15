@@ -1,14 +1,18 @@
-import { useState, Fragment, useEffect } from 'react';
+import { useState, Fragment, useEffect,memo } from 'react';
 import './style.css';
 import { QTY_MAX, QTY_MIN } from '../../common/Cart/Cart';
 function ProductDetailQuantityCounter({
     cartQty,
     cartQtyOnChangeHandler,
+    inventory,
+    fetchInventory
     // setCartbuttonDisabled,
 }) {
+    console.log(inventory);
+    const {max_quantity : MAXQTY, current_inventory: CUR_INVENTORY,  outOfStock: OUTOFSTOCK } = inventory;
     // let [num, setNum] = useState(1);
     let incNum = () => {
-        if (cartQty < QTY_MAX) {
+        if (cartQty < MAXQTY) {
             // console.log('pass value:', Number(cartQty) + 1);
             cartQtyOnChangeHandler(Number(cartQty) + 1);
 
@@ -16,6 +20,9 @@ function ProductDetailQuantityCounter({
         }
         handleChange();
     };
+    const checkInventory = () => {
+        
+    }
     let decNum = () => {
         if (cartQty > QTY_MIN) {
             cartQtyOnChangeHandler(Number(cartQty) - 1);
@@ -28,57 +35,32 @@ function ProductDetailQuantityCounter({
 
     const handleChange = () => {
         console.log('handle', cartQty);
-        // if (cartQty >= QTY_MAX || cartQty < QTY_MIN) {
-        //     setCartbuttonDisabled((prev) => {
-        //         return true;
-        //     });
-        // } else {
-        //     setCartbuttonDisabled((prev) => {
-        //         return false;
-        //     });
-        // }
     };
-
-    /*
-  
-  <div class="qty-input">
-	<button class="qty-count qty-count--minus" data-action="minus" type="button">-</button>
-	<input class="product-qty" type="number" name="product-qty" min="0" max="10" value="1">
-	<button class="qty-count qty-count--add" data-action="add" type="button">+</button>
-</div>
-  */
     return (
-        <div className="counter-wrapper">
-            <div class="counter-title">Chọn số lượng: </div>
-            <div class="counter-input-wrapper">
-                <div class="qty-input">
-                    <button
-                        class="qty-count qty-count--minus"
-                        data-action="minus"
-                        type="button"
-                        onClick={decNum}
-                        disabled={cartQty <= QTY_MIN}
-                    >
-                        -
-                    </button>
-                    <input
-                        class="product-qty"
-                        type="number"
-                        name="product-qty"
-                        value={cartQty}
-                        onChange={handleChange}
-                    />
-                    <button
-                        class="qty-count qty-count--add"
-                        data-action="add"
-                        type="button"
-                        onClick={incNum}
-                        disabled={cartQty >= QTY_MAX}
-                    >
-                        +
-                    </button>
+        <div className="counter-section">
+            {MAXQTY !== undefined && MAXQTY <= 5 && CUR_INVENTORY <= 5 && !OUTOFSTOCK && (
+                <h5 className="max-qty-noti">
+                    <i class="fa-solid fa-bell"></i>
+                    {'  '}Chỉ còn: {MAXQTY} sản phẩm
+                </h5>
+            )}
+            {OUTOFSTOCK && <h5 className="max-qty-noti outstock">{'  '} Hết hàng</h5>}
+
+            {!OUTOFSTOCK && (  <div className="counter-wrapper">
+                <div class="counter-title">Chọn số lượng: </div>
+                <div class="counter-input-wrapper">
+                    <div class="qty-input">
+                        <button class="qty-count qty-count--minus" data-action="minus" type="button" onClick={decNum} disabled={cartQty <= QTY_MIN}>
+                            -
+                        </button>
+                        <input class="product-qty" type="number" name="product-qty" value={cartQty} onChange={handleChange} />
+                        <button class="qty-count qty-count--add" data-action="add" type="button" onClick={incNum} disabled={cartQty >= MAXQTY}>
+                            +
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </div>) }
+          
         </div>
     );
     // <Fragment>
@@ -118,4 +100,4 @@ function ProductDetailQuantityCounter({
     }
 }
 
-export default ProductDetailQuantityCounter;
+export default memo(ProductDetailQuantityCounter);
