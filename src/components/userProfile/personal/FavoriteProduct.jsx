@@ -134,7 +134,7 @@ const FavoriteProduct = () => {
             style={{
                 width: '100%',
                 minHeight: '750px',
-                backgroundColor: 'rgba(0,0,0,.09)',
+                // backgroundColor: 'rgba(0,0,0,.09)',
                 overflow: 'hidden',
             }}>
             {!favItems || favItems.length === 0 ? (
@@ -142,8 +142,10 @@ const FavoriteProduct = () => {
                     className="d_flex"
                     style={{
                         width: '100%',
-                        height: '500px',
+                        alignItems: "center",
+                        justifyContent: "center",
                         flexDirection: 'column',
+                        minHeight: '500px'
                     }}>
                     <h3> Danh sách yêu thích trống</h3>
                     <Link to="/product">Đến trang sản phẩm</Link>
@@ -151,9 +153,9 @@ const FavoriteProduct = () => {
             ) : (
                 <div
                     className="site-card-wrapper wishlist-container"
-                    // style={{ padding: '10px' }}
+                    style={{ padding: '2rem .5rem' , margin: '4rem auto' }}
                 >
-                    <div
+                    {/* <div
                         style={{
                             display: 'flex',
                             justifyContent: 'space-between',
@@ -163,12 +165,7 @@ const FavoriteProduct = () => {
                         <span>Tổng trang: {totalPage}</span>
                         <span>Size: {size}</span>
                         <span>curreent: {curPage + 1} </span>
-                        {/* <span>
-                            <Button type="text" style={{ color: 'red' }}>
-                                Chỉnh sửa
-                            </Button>
-                        </span> */}
-                    </div>
+                    </div> */}
                     <div></div>
                     <Row gutter={[16, 24]} justify="center">
                         {favItems.map((value, index) => {
@@ -185,7 +182,7 @@ const FavoriteProduct = () => {
                         })}
                     </Row>
                     <div style={{ width: '100%', textAlign: 'center', margin: '2rem 2rem' }}>
-                        <Button
+                       {hasMore &&  <Button
                             style={{
                                 width: '50%',
                                 textAlign: 'center',
@@ -196,6 +193,7 @@ const FavoriteProduct = () => {
                             onClick={onClickLoadMore}>
                             Xem thêm
                         </Button>
+                       }
                     </div>
                 </div>
             )}
