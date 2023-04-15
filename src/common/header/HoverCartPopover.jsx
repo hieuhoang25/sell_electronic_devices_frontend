@@ -17,16 +17,7 @@ import Badge from '@mui/material/Badge';
 
 export default function HoverCartPopover({ Cart }) {
     const id = 'ouse-over-popover';
-    const items = Cart.items.slice(0, 3);
-
-    // const items = [];
-
-    //   const handleScroll = (e) => {
-    //     if (e.target.classList.contains("on-scrollbar") === false) {
-    //         e.target.classList.add("on-scrollbar");
-    //     }
-    // }
-    // window.addEventListener('scroll', handleScroll, true);
+    const items = Cart.items;
     return (
         <PopupState variant="popover" popupId="demo-popup-popover">
             {(popupState) => (
@@ -158,7 +149,12 @@ function MediaCard({ Item }) {
                                 showZero
                             >
                                 <Typography className="product-name" gutterBottom variant="subtitle2" component="h6">
-                                    {cartItem.displayName}
+                                <Link to={`/product-detail/${
+                                                        cartItem.productId
+                                                    }`}>
+                                                  {cartItem.displayName}
+                                                </Link>
+                                   
                                 </Typography>
                             </Badge>
                         ) : (

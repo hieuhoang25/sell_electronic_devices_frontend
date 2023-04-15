@@ -396,13 +396,13 @@ const CheckoutForm = ({ form, onFinish }) => {
                                         },
                                     ]}
                                 >
-                                    {form.getFieldError('payment') !== undefined ? <span>k {form.getFieldError('payment')[0]} </span> : ''}
+                                    {form.getFieldError('payment') !== undefined ? <span>{form.getFieldError('payment')[0]} </span> : ''}
 
                                     <Radio.Group>
                                         <Space wrap size={[5, 12]} style={{ width: '400px' }}>
                                             {payMethods.map((item, index) => {
                                                 return (
-                                                    <Radio key={index + Math.random() * 100} value={item.id}>
+                                                    <Radio className={selectedMethod? 'checked': ''}  key={index + Math.random() * 100} value={item.id}>
                                                         {item.method}
                                                     </Radio>
                                                 );
@@ -630,13 +630,13 @@ const CheckoutForm = ({ form, onFinish }) => {
                             </Form>
                         </Col>
 
-                        <Col className="discount-section" span={22}>
+                        {/* <Col className="discount-section" span={22}>
                             Mã giảm giá
                             <Space style={{ marginLeft: '0.5rem', width: '80%' }} direction="horizontal">
                                 <Input style={{ width: '100%' }} placeholder="Nhập mã giảm giá" />
                                 <Button style={{ width: 80 }}>Áp dụng</Button>
                             </Space>
-                        </Col>
+                        </Col> */}
                     </Row>
                 </section>
             )}

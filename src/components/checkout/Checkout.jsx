@@ -10,6 +10,7 @@ import { CHECKOUT } from '../../constants/user';
 import { ENV_URL } from '../../constants/index';
 import { clearAfterCheckOut } from '../../services/cartService';
 import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const paymentData = [{ p_id: 1, name: 'VISA/MASTER Card' }];
 
@@ -111,18 +112,20 @@ const Checkout = () => {
                     .post(`${ENV_URL}${CHECKOUT}`, CheckoutReducer)
                     .then((res) => {
                         console.log(res.data);
-                        alert('Thang toán thành công');
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Đặt hàng thành công`,
+                            showConfirmButton: false, 
+                            timer: 1200
+                        })
                         setTimeout(() => {
                             serviceDispatch(clearAfterCheckOut());
-                            //   navigate('/profile/')
-                            // window.location('/profilpe/');
-
                             navigate('/profile', {
                                 state: {
                                     profileId: '3',
                                 },
                             });
-                        }, 2000);
+                        }, 1400);
                     })
                     .catch((e) => {
                         console.log(e.message);
@@ -155,3 +158,33 @@ const Checkout = () => {
     );
 };
 export default memo(Checkout);
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+})
+//--------------------SIGN UP------------
+export const signUp = async (value,navigate) => {
+    try{
+        await axios.post(process.env.REACT_APP_URL + 'un/register',value)
+        Toast.fire({
+            icon: 'success',
+            title: `
+            successful registration !`
+        })
+        navigate('/login')
+    }catch(err){
+        console.log(err);
+        Toast.fire({
+            icon: 'error',
+            title: `registration failed !`
+        })  
+    }
+}

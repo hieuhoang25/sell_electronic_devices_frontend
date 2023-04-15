@@ -8,18 +8,8 @@ export const CartNotification_TYPE = {
     ERROR: Symbol('ERROR'),
 };
 
-const CartNotification = ({
-    type,
-    title,
-    message,
-    placement,
-
-    handleClick,
-    isButtonDisabled,
-    isSuccess,
-    setSuccessNull,
-}) => {
-    console.log('inside notif');
+const CartNotification = ({ type, title, message, placement, handleClick, isButtonDisabled, isSuccess, setSuccessNull }) => {
+    // console.log('inside notif');
     const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
@@ -29,7 +19,7 @@ const CartNotification = ({
         } else showNotif();
     }, [isSuccess]);
     const open = () => {
-        console.log('call open api');
+        // console.log('call open api');
         let icon = isSuccess ? (
             <ShoppingCartOutlined
                 style={{
@@ -59,7 +49,7 @@ const CartNotification = ({
     const openNotification = (type) => {
         try {
             if (isButtonDisabled) return;
-            console.log('called notif');
+            // console.log('called notif');
             handleClick(open);
             // successAddedNotifContent();
 
@@ -79,16 +69,16 @@ const CartNotification = ({
     return (
         <>
             {contextHolder}
-
-            <button
-                // ${
-                //         isButtonDisabled ? 'disabled' : ''
-                //     }
-                class={`add-cart-btn hvr-sweep-to-right`}
-                onClick={openNotification}
-            >
-                {buttonContent}
-            </button>
+            {isButtonDisabled && <></>}
+            {!isButtonDisabled && (
+                <button
+                    disabled={isButtonDisabled}
+                    class={`add-cart-btn hvr-sweep-to-right`}
+                    onClick={openNotification}
+                >
+                    {buttonContent}
+                </button>
+            )}
         </>
     );
 };

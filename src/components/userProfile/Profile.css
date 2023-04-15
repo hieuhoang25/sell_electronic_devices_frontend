@@ -38,4 +38,11 @@
 .wishlist-card .wishlist-card-body-btn {
     border-radius: 50%;
 }
+.profile-tabs .ant-tabs-content-holder .ant-tabs-content .ant-tabs-tabpane {
+    background-color: rgb(204 207 212 / 16%);
+}
+.profile-tabs .ant-tabs-content-holder .ant-tabs-content .ant-tabs-tabpane>div {
+    background-color: rgba(239, 241, 244, 0.16);
+}
+
 

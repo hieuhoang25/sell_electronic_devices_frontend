@@ -10,9 +10,9 @@ const SlideCard = () => {
     infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: false,
     appendDots: (dots) => {
-      return <ul style={{ margin: "0px" }}>{dots}</ul>
+      return <ul style={{ margin: "0px", paddingTop:"1rem" }}>{dots}</ul>
     },
   }
   return (
@@ -27,8 +27,8 @@ const SlideCard = () => {
                   <p>{value.desc}</p>
                   <button className='btn-primary'>Truy cập Bộ sưu tập</button>
                 </div>
-                <div className='right'>
-                  <img src={value.cover} alt='' />
+                <div style={{paddingBottom: "50px"}}  className='right'>
+                  <img height={300}   src={value.cover} alt='' />
                 </div>
               </div>
             </>

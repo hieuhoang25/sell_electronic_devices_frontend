@@ -41,6 +41,8 @@
   margin-top: 20px;
 }
 
+
+
 .cart-items .cart-details h4 {
   font-size: 15px;
   font-weight: 400;
@@ -205,6 +207,21 @@
 .cart-details  .card-cart-details {
   flex: 3 auto;;
 }
+
+.cart-items   .card-cart-details h3 {
+  display: flex;
+  align-items:center;
+}
+.cart-items   .card-cart-details .quanity-notif {
+  font-size: 12px;
+  margin-bottom: 0;
+  color: rgb(255 255 255);
+  border-radius: 50px;
+  padding: 1px 5px;
+  background-color: rgb(213 60 60);
+  border: 1px solid #ccc6c6;
+  margin-left: 0.5rem;
+}
 .cart-details .cart-list-right {
   flex: 3 ;
 
@@ -265,4 +282,9 @@
 
 .cart-details .cart-detail-action-cotainer .action-buttons .remove-cart-btn{ 
 color: gray;
+}
+
+.discounted-per-item {
+  color: #e94560;
+  font-weight: bold;
 }

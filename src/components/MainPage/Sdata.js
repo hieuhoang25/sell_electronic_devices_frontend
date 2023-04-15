@@ -3,26 +3,26 @@ const Sdata = [
   {
     id: 1,
     title: "Giảm giá 50% cho lần mua sắm đầu tiên của bạn",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis lobortis consequat eu, quam etiam at quis ut convallis.",
+    desc: "Ưu đãi hấp dẫn trong tháng 4. Nhận ngay voucher giảm giá khi đăng ký tài khoản.",
     cover: getImage("slide-1.png"),
   },
   {
     id: 2,
-    title: "Giảm giá 50% cho lần mua sắm đầu tiên của bạn",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis lobortis consequat eu, quam etiam at quis ut convallis.",
-    cover: getImage("slide-2.png"),
+    title: "Siêu sale !!!",
+    desc: "Giảm giá cực khủng cho các thương hiệu điện thoại OPPO, Xiaomi, Samsunng",
+    cover: '../images/SlideCard/slide-5.png',
   },
   {
     id: 3,
-    title: "Giảm giá 50% cho lần mua sắm đầu tiên của bạn",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis lobortis consequat eu, quam etiam at quis ut convallis.",
-    cover: getImage("slide-3.png"),
+    title: "Happy April get one Apple",
+    desc: "Flash deal giảm từ 30% cho các mặt hàng Apple",
+    cover: '../images/SlideCard/apple.png',
   },
   {
     id: 4,
-    title: "Giảm giá 50% cho lần mua sắm đầu tiên của bạn",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis lobortis consequat eu, quam etiam at quis ut convallis.",
-    cover: getImage("slide-4.png"),
+    title: "Khuyến mãi trong hè ",
+    desc: "Mua hàng nhận ngay voucher 20% cho đơn hàng bất kỳ",
+    cover: '../images/SlideCard/sale-sum.png',
   },
 ]
 export default Sdata

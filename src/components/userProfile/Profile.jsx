@@ -64,6 +64,7 @@ const Profile = () => {
     return (
         <>
             <Tabs
+                className='profile-tabs'
                 defaultActiveKey={!profileId ? '2' : profileId}
                 tabPosition="left"
                 items={items}
