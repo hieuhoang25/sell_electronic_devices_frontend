@@ -30,6 +30,7 @@ import Loadable from './components/Suspense/Loadable';
 import BackToTop from './common/backToTop/BackToTop';
 import ButtonDarkMode from './common/drakMode/ButtonDarkMode';
 import Verification from './components/SignUpPage/Verification';
+import Contact from './components/contact/Contact';
 const LoginPage = Loadable(
     lazy(() => import('./components/LoginPage/LoginPage')),
 );
@@ -202,6 +203,7 @@ function App() {
                         path="/signUp/Verification/:userName"
                         element={<Verification />}
                     />
+                    <Route path='/contact' element={<Contact/>} />
                 </Routes>
             </Wrapper>
             <BackToTop />
