@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import style from './Style.module.css';
+import  './signUp.css';
 import { SecurityScanOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { Block } from '@mui/icons-material';
@@ -43,14 +43,15 @@ const Verification = () => {
         dispatch(postVerification(value, Navigate));
     };
     return (
-        <div className={style.container}>
-            <div className={style.Verification_form}>
+        <div className='container_signUp'>
+            <div className='background_signUp'>
+            <div className='Verification_form_signUp'>
                 <form>
-                    <div className={style.content}>
+                    <div className='content_signUp'>
                         <h2>Xác minh</h2>
-                        <div className={style.security}>
+                        <div className='security_signUp'>
                             <SecurityScanOutlined
-                                style={{ fontSize: 40, color: 'blue' }}
+                                style={{ fontSize: 40, color: '#064f99' }}
                             />
                             <input
                                 placeholder="Mã xác minh gồm 4 số"
@@ -74,7 +75,7 @@ const Verification = () => {
                             của bạn vui lòng kiểm tha thư của bạn !
                         </p>
 
-                        <div className={style.box_button}>
+                        <div className='box_button_signUp'>
                             {valueBtn ? (
                                 <p></p>
                             ) : (
@@ -86,10 +87,10 @@ const Verification = () => {
                                     để bấm gửi lại !
                                 </p>
                             )}
-                            <div className={style.btn}>
+                            <div className='btn_signUp'>
                                 {valueBtn ? (
                                     <button
-                                        className={style.first}
+                                        className='first_signUp'
                                         onClick={() => {
                                             handleButton();
                                         }}
@@ -99,7 +100,7 @@ const Verification = () => {
                                     </button>
                                 ) : (
                                     <button
-                                        className={style.second}
+                                        className='second_signUp'
                                         disabled={true}
                                     >
                                         Gửi lại{' '}
@@ -108,14 +109,14 @@ const Verification = () => {
                                 {errValue ? (
                                     <button
                                         disabled={true}
-                                        className={style.last_xm}
+                                        className='last_xm_signUp'
                                     >
                                         Xác Minh
                                     </button>
                                 ) : (
                                     <button
                                         type="button"
-                                        className={style.first_xm}
+                                        className='first_xm_signUp'
                                         onClick={() => {
                                             handleVerification();
                                         }}
@@ -128,6 +129,8 @@ const Verification = () => {
                     </div>
                 </form>
             </div>
+            </div>
+           
         </div>
     );
 };

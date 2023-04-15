@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux';
 import { signUp } from './thunk';
 import { useNavigate } from 'react-router-dom';
 import { signUpSchema } from './signUpSchema';
-import style from './Style.module.css'
+import  './signUp.css'
 import Loading from '../../common/Loading/Loading';
 
 function Copyright(props) {
@@ -65,8 +65,9 @@ export default function SignUp() {
 
   return (
     <ThemeProvider theme={theme} >
-      <div className={style.container}>
-      <Container component="main" maxWidth="xs"className={style.form} >
+      <div className='container_signUp'>
+        <div className='background_signUp'>
+        <Container component="main" maxWidth="xs"className='form_signUp'>
         <CssBaseline />
         <Box
           sx={{
@@ -80,12 +81,12 @@ export default function SignUp() {
           <Typography component="h1" variant="h5" style={{
             fontSize:25,
             fontWeight:600,
-            color:'#137bc7'
+            color:'#137bc7',
 
           }}>
             Đăng kí
           </Typography>
-          <Box className={style.box} component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
+          <Box className='box_signUp' component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
           <Button
                 type="submit"
                 fullWidth
@@ -96,10 +97,10 @@ export default function SignUp() {
                 <GoogleIcon style={{marginRight:10}}></GoogleIcon>
                 Đăng kí với google
               </Button>
-              <div className={style.google_guide_container}>
-                <div className={style.hr_left}></div>
-                <p className={style.guide_google}>Hoặc đăng ký với email</p>
-                <div className={style.hr_right}></div>
+              <div className='google_guide_container_signUp'>
+                <div className='hr_left_signUp'></div>
+                <p className='guide_google_signUp'>Hoặc đăng ký với email</p>
+                <div className='hr_right_signUp'></div>
             </div>
             <Grid container spacing={2}>
               <Grid item xs={12} >
@@ -202,7 +203,7 @@ export default function SignUp() {
                 <FacebookIcon></FacebookIcon>
                 Đăng nhập với facebook
               </Button> */}
-            <Grid container justifyContent="flex-end" className={style.signIn}>
+            <Grid container justifyContent="flex-end" className='signIn_signUp'>
               <Grid item>
                 <Link href="/login" variant="body2">
                 Bạn đã tạo tài khoản rồi? <span> Đăng Nhập</span> 
@@ -213,8 +214,10 @@ export default function SignUp() {
         </Box>
         {/* <Copyright sx={{ mt: 5 }} /> */}
       </Container>
+        </div>
+     
       </div>
-      <div className={style.test}>
+      <div className='test_signUp'>
       <Loading/>
       </div>
    

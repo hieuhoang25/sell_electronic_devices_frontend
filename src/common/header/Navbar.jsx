@@ -41,7 +41,7 @@ const Navbar = () => {
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/product#section-product">
+                                <Link to="/contact">
                                     Liên hệ
                                 </Link>
                             </li>

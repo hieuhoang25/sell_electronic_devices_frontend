@@ -1,10 +1,10 @@
-.ButtonDarkMode {
+.ButtonDarkMode_darkMode {
     position: fixed;
     bottom: 40px;
     left: 10px;
     z-index: 10;
 }
-.ButtonDarkMode button {
+.ButtonDarkMode_darkMode button {
     background-color: black;
     color: white;
     width: 45px;
@@ -15,13 +15,13 @@
     border: 1px solid white;
     transition: all .5s;
 }
-.ButtonDarkMode button:hover{
+.ButtonDarkMode_darkModee button:hover{
     opacity: 1;
 }
-.ButtonDarkMode button i{
+.ButtonDarkMode_darkMode button i{
     font-size: 20px;
 }
-.dark .ButtonDarkMode button{
+.dark .ButtonDarkMode_darkMode button{
     background-color: white;
     color: black;
 }

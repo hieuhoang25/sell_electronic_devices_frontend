@@ -19,6 +19,7 @@ import axios from '../../services/axios';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { mergeAnnonCart } from '../../services/cartService';
 import { GOOGLE_AUTH_URL } from '../../constants/index';
+import './login.css'
 const LoginPage = () => {
     const theme = createTheme();
     const navigate = useNavigate();
@@ -83,9 +84,10 @@ const LoginPage = () => {
     };
     return (
         <ThemeProvider theme={theme}>
-            <Grid container component="main" sx={{ height: '100vh' }}>
+            <Grid  className='container_login' >
+                <Grid className='background_login' container component="main">
                 <CssBaseline />
-                <Grid
+                {/* <Grid
                     item
                     xs={false}
                     sm={4}
@@ -101,19 +103,20 @@ const LoginPage = () => {
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                     }}
-                />
+                /> */}
                 <Grid
                     item
                     xs={12}
                     sm={8}
-                    md={5}
+                    md={3.5}
                     component={Paper}
                     elevation={6}
                     square
+                    className='box_login'
                 >
                     <Box
                         sx={{
-                            my: 8,
+                            my: 6,
                             mx: 4,
                             display: 'flex',
                             flexDirection: 'column',
@@ -123,7 +126,7 @@ const LoginPage = () => {
                         {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               
             </Avatar> */}
-                        <Typography component="h1" variant="h5">
+                        <Typography component="h1" variant="h5" style={{color:'#137bc7', fontWeight:600}}>
                             Đăng nhập
                         </Typography>
                         <Box
@@ -206,19 +209,23 @@ const LoginPage = () => {
                             <Grid container>
                                 <Grid item xs>
                                     <Link href="#" variant="body2">
-                                        Forgot password?
+                                        Quên Mật khẩu?
                                     </Link>
                                 </Grid>
                                 <Grid item>
                                     <Link href="/signup" variant="body2">
-                                        {"Don't have an account? Sign Up"}
+                                        {"Chưa có tài khoản? Đăng kí"}
                                     </Link>
                                 </Grid>
                             </Grid>
                         </Box>
                     </Box>
                 </Grid>
+                </Grid>
+              
+                
             </Grid>
+            
         </ThemeProvider>
     );
 };

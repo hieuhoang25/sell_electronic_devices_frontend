@@ -3,6 +3,9 @@ footer {
   padding: 40px 0;
   color: #fff;
 }
+.dark footer{
+  background-color: #242526;
+}
 footer h1 {
   margin-bottom: 30px;
   color: #e94560;
@@ -20,6 +23,10 @@ footer .img i {
 }
 footer .img span {
   margin-top: 5px;
+}
+.dark footer p,
+.dark footer li{
+  opacity: .7;
 }
 footer p {
   font-size: 14px;
