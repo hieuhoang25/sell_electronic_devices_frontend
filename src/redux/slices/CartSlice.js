@@ -179,6 +179,15 @@ export const CartSlice =  createSlice({
            state.items = [];
            state.total = 0.0;
            state.totalCount = 0;            
+        },
+        updateGuestCart: (state,action) => {
+            console.log(action.payload);
+            const updated = convertGuestCartResponse(action.payload);
+            const updatedCart = {...updated};
+            console.log('updated cart: ');
+            console.log(updatedCart);
+            state = {...state ,...updatedCart}
+            return {...state};
         }
     }
 
@@ -201,7 +210,8 @@ export const {
     newCart,
     getTotal,
     getDiscountAmount,
-    clearAfterCheckOut
+    clearAfterCheckOut,
+    updateGuestCart
 } = CartSlice.actions;
 
 export default CartSlice.reducer;

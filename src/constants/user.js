@@ -16,6 +16,7 @@ export const NEW_GUEST_CART = `${API_UNAUTH_BASE}/cart`;
 export const GUEST_CART_DETAIL = `${API_UNAUTH_BASE}/cart/items`;
 export const MERGE_CART = `${CART}add`;
 export const UPDATE_GUEST_CART = `${NEW_GUEST_CART}/update`;
+export const UPDATE_AUTH_CART = `${CART}update`;
 export const RATING = '/rating';
 export const IS_RATING = '/is-rating';
 

@@ -9,7 +9,7 @@ export const CartNotification_TYPE = {
 };
 
 const CartNotification = ({ type, title, message, placement, handleClick, isButtonDisabled, isSuccess, setSuccessNull }) => {
-    console.log('inside notif');
+    // console.log('inside notif');
     const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const CartNotification = ({ type, title, message, placement, handleClick, isButt
         } else showNotif();
     }, [isSuccess]);
     const open = () => {
-        console.log('call open api');
+        // console.log('call open api');
         let icon = isSuccess ? (
             <ShoppingCartOutlined
                 style={{
@@ -49,7 +49,7 @@ const CartNotification = ({ type, title, message, placement, handleClick, isButt
     const openNotification = (type) => {
         try {
             if (isButtonDisabled) return;
-            console.log('called notif');
+            // console.log('called notif');
             handleClick(open);
             // successAddedNotifContent();
 
