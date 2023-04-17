@@ -83,7 +83,7 @@ const checkoutReducer = (state = initialState, action) => {
         case PROMO: {
             let promo_id = action.payload;
             console.log('promo_id: ' + promo_id);
-            return {...state, promotionUser_id: promo_id}
+            return { ...state, promotionUser_id: promo_id };
         }
         default:
             return state;
@@ -91,14 +91,15 @@ const checkoutReducer = (state = initialState, action) => {
 };
 export const CheckoutContext = React.createContext(null);
 const Checkout = () => {
-    const {PROMO} = CHECKOUT_TYPE;
+    const { PROMO } = CHECKOUT_TYPE;
     const [form] = Form.useForm();
     const [CheckoutReducer, dispatch] = useReducer(checkoutReducer, initialState);
+    const [disableCheckoutBtn, setDisableCheckoutBtn] = useState(false);
     const serviceDispatch = useDispatch();
     const navigate = useNavigate();
     const onAddPromotion = (promo_id) => {
-        dispatch({ type: PROMO , payload: promo_id});
-    }
+        dispatch({ type: PROMO, payload: promo_id });
+    };
     const onClickOrder = () => {
         console.log('Order ');
         console.log('Order State: ', CheckoutReducer);
@@ -108,28 +109,31 @@ const Checkout = () => {
                 console.log(res.data);
                 console.log(CheckoutReducer);
 
-                axios
-                    .post(`${ENV_URL}${CHECKOUT}`, CheckoutReducer)
-                    .then((res) => {
-                        console.log(res.data);
-                        Swal.fire({
-                            icon: 'success',
-                            title: `Đặt hàng thành công`,
-                            showConfirmButton: false, 
-                            timer: 1200
-                        })
-                        setTimeout(() => {
-                            serviceDispatch(clearAfterCheckOut());
-                            navigate('/profile', {
-                                state: {
-                                    profileId: '3',
-                                },
-                            });
-                        }, 1400);
-                    })
-                    .catch((e) => {
-                        console.log(e.message);
-                    });
+                // setDisableCheckoutBtn((prev) => true);
+
+                alert('thanh toán thành công');
+                // axios
+                //     .post(`${ENV_URL}${CHECKOUT}`, CheckoutReducer)
+                //     .then((res) => {
+                //         console.log(res.data);
+                //         Swal.fire({
+                //             icon: 'success',
+                //             title: `Đặt hàng thành công`,
+                //             showConfirmButton: false,
+                //             timer: 1200,
+                //         });
+                //         setTimeout(() => {
+                //             serviceDispatch(clearAfterCheckOut());
+                //             navigate('/profile', {
+                //                 state: {
+                //                     profileId: '3',
+                //                 },
+                //             });
+                //         }, 1400);
+                //     })
+                //     .catch((e) => {
+                //         console.log(e.message);
+                //     });
             })
             .catch((e) => {
                 console.log('%c Validate form fail: ', 'color: red');
@@ -150,7 +154,7 @@ const Checkout = () => {
                         <CheckoutForm onFinish={onClickOrder} form={form}></CheckoutForm>
                     </Col>
                     <Col className="gutter-row" span={8}>
-                        <OrderList onAddPromotion={onAddPromotion} onClickOrder={onClickOrder}></OrderList>
+                        <OrderList disableCheckoutBtn={disableCheckoutBtn} onAddPromotion={onAddPromotion} onClickOrder={onClickOrder}></OrderList>
                     </Col>
                 </Row>
             </section>
@@ -159,32 +163,14 @@ const Checkout = () => {
 };
 export default memo(Checkout);
 
-const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 2000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-})
-//--------------------SIGN UP------------
-export const signUp = async (value,navigate) => {
-    try{
-        await axios.post(process.env.REACT_APP_URL + 'un/register',value)
-        Toast.fire({
-            icon: 'success',
-            title: `
-            successful registration !`
-        })
-        navigate('/login')
-    }catch(err){
-        console.log(err);
-        Toast.fire({
-            icon: 'error',
-            title: `registration failed !`
-        })  
-    }
-}
+// const Toast = Swal.mixin({
+//     toast: true,
+//     position: 'top-end',
+//     showConfirmButton: false,
+//     timer: 2000,
+//     timerProgressBar: true,
+//     didOpen: (toast) => {
+//         toast.addEventListener('mouseenter', Swal.stopTimer);
+//         toast.addEventListener('mouseleave', Swal.resumeTimer);
+//     },
+// });

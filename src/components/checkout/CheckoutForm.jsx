@@ -149,6 +149,11 @@ const CheckoutForm = ({ form, onFinish }) => {
 
         console.log('usserAddresses: ', userAddresses);
 
+        if (userAddresses.length === 0) {
+            setOtherAddress(true);
+        } else {
+            setOtherAddress(false);
+        }
         setLoading(false);
     }, [userAddresses]);
 
@@ -274,36 +279,6 @@ const CheckoutForm = ({ form, onFinish }) => {
             }
             console.log('fetch address error: ' + error.response.status);
         }
-        // if(!addresses) return
-        // if (!addresses || addresses.length === 0) {
-        //     console.log('set user iniit');
-
-        //     const inital = [
-        //         {
-        //             id: -1,
-        //             address_line: '',
-        //             district: '',
-        //             postal_id: '',
-        //             province: '',
-        //             wards: '',
-        //         },
-        //     ];
-        //     setUserAddresses((prev) => {
-        //         return [...inital];
-        //     });
-        // } else {
-        //     console.log('set when found');
-        //     // let defaultAddress = addresses.filter( a => a.is_default)
-        //     // console.log(defaultAddress[0].province);
-        //     console.log('da: ', addresses);
-        //     let sorted = addresses.sort((a, b) => (a.is_default ? -1 : 1));
-        //     console.log('%csorted: ', 'color: red', sorted); // b - a for reverse sort
-
-        //     setUserAddresses((prev) => {
-        //         return addresses;
-        //     });
-
-        // return {...(defaultAddress[0])};
     };
 
     function getDefaultAddress() {
@@ -330,7 +305,7 @@ const CheckoutForm = ({ form, onFinish }) => {
         const timeOutId = setTimeout(() => {
             dispatch({ type: ACTION_PAY, payload: selectedMethod });
         }, 200);
-          return () => clearTimeout(timeOutId);
+        return () => clearTimeout(timeOutId);
     }, [selectedMethod]);
 
     const onChangeUsingAddressHandler = () => {
@@ -402,7 +377,7 @@ const CheckoutForm = ({ form, onFinish }) => {
                                         <Space wrap size={[5, 12]} style={{ width: '400px' }}>
                                             {payMethods.map((item, index) => {
                                                 return (
-                                                    <Radio className={selectedMethod? 'checked': ''}  key={index + Math.random() * 100} value={item.id}>
+                                                    <Radio className={selectedMethod ? 'checked' : ''} key={index + Math.random() * 100} value={item.id}>
                                                         {item.method}
                                                     </Radio>
                                                 );
@@ -514,7 +489,7 @@ const CheckoutForm = ({ form, onFinish }) => {
                                                         </Col>
                                                         {!otherAddress && (
                                                             <Col className="user-add-def-container" span={20}>
-                                                                <Row>
+                                                                <Row className={'top-field'} gutter={[16, 16]}>
                                                                     <Col className="address-field" span={12}>
                                                                         <span className="title">
                                                                             Tỉnh/Thành:
@@ -528,7 +503,8 @@ const CheckoutForm = ({ form, onFinish }) => {
 
                                                                         <span>{getSelectedAddress(DISTR)}</span>
                                                                     </Col>
-
+                                                                </Row>
+                                                                <Row gutter={[16, 16]}>
                                                                     <Col className="address-field">
                                                                         <span className="title">Địa chỉ: </span>
                                                                         <span>
@@ -539,55 +515,8 @@ const CheckoutForm = ({ form, onFinish }) => {
                                                             </Col>
                                                         )}
                                                         {otherAddress && (
-                                                            <Col
-                                                                className="user-add-def-container"
-                                                                span={20}
-                                                                // style={{
-                                                                //     backgroundColor:
-                                                                //         'gold',
-                                                                // }}
-                                                            >
-                                                                {/* <Row>
-                                                                        <Col
-                                                                            span={
-                                                                                12
-                                                                            }
-                                                                        >
-                                                                            Tỉnh/Thành:{' '}
-                                                                            <span>
-                                                                                {
-                                                                                    inputProvince
-                                                                                }
-                                                                            </span>
-                                                                        </Col>
-                                                                        <Col>
-                                                                            Quận/Huyện:{' '}
-                                                                            <span>
-                                                                                {
-                                                                                    inputDistrict
-                                                                                }
-                                                                            </span>
-                                                                        </Col>
-
-                                                                        <Col>
-                                                                            Địa
-                                                                            chỉ:{' '}
-                                                                            <span>
-                                                                                {inputAddressLine !==
-                                                                                    undefined &&
-                                                                                inputAddressLine.length >
-                                                                                    0
-                                                                                    ? inputAddressLine +
-                                                                                      ' '
-                                                                                    : ''}
-                                                                                {inputWard !==
-                                                                                    undefined &&
-                                                                                    `${inputWard}`}
-                                                                            </span>
-                                                                        </Col>
-                                                                    </Row> */}
-
-                                                                <Row>
+                                                            <Col className="user-add-def-container" span={20}>
+                                                                <Row span={24}>
                                                                     <Col className="address-field" span={12}>
                                                                         <span className="title">
                                                                             Tỉnh/Thành:
@@ -601,12 +530,20 @@ const CheckoutForm = ({ form, onFinish }) => {
 
                                                                         <span>{inputDistrict}</span>
                                                                     </Col>
-
-                                                                    <Col className="address-field">
-                                                                        <span className="title">Địa chỉ: </span>
-                                                                        <span>
-                                                                            {inputAddressLine !== undefined && inputAddressLine.length > 0 ? inputAddressLine + ' ' : ''}
+                                                                </Row>
+                                                                <Row span={24}>
+                                                                    <Col className="address-field" span={24}>
+                                                                        <span className="title">
+                                                                            Phường/Xã: {`  `}
                                                                             {inputWard !== undefined && `${inputWard}`}
+                                                                        </span>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row span={24}>
+                                                                    <Col className="address-field">
+                                                                        <span className="title">
+                                                                            Địa chỉ: {`  `}
+                                                                            {inputAddressLine !== undefined && inputAddressLine.length > 0 ? inputAddressLine + ' ' : ''}
                                                                         </span>
                                                                     </Col>
                                                                 </Row>
@@ -621,22 +558,14 @@ const CheckoutForm = ({ form, onFinish }) => {
 
                                 <></>
                                 <Collapse collapsible={otherAddress ? 'disabled' : 'header'} className="other-address-collapse" onChange={onChangeUsingOtherAddressHandler} activeKey={activeKey}>
-                                    <Panel showArrow={true} header={`Sử dụng địa chỉ khác`} key="1">
-                                        <AddressForm form={form}></AddressForm>
+                                    <Panel showArrow={true} header={`Sử dụng địa chỉ khác `} key="1">
+                                        <AddressForm otherAddress={otherAddress} form={form}></AddressForm>
                                     </Panel>
                                 </Collapse>
 
                                 {/* </div> */}
                             </Form>
                         </Col>
-
-                        {/* <Col className="discount-section" span={22}>
-                            Mã giảm giá
-                            <Space style={{ marginLeft: '0.5rem', width: '80%' }} direction="horizontal">
-                                <Input style={{ width: '100%' }} placeholder="Nhập mã giảm giá" />
-                                <Button style={{ width: 80 }}>Áp dụng</Button>
-                            </Space>
-                        </Col> */}
                     </Row>
                 </section>
             )}
