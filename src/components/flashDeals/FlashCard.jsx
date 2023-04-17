@@ -5,7 +5,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { NumericFormat } from 'react-number-format';
 import { getImage } from '../../common/img';
 import { Link } from 'react-router-dom';
-import { FLASH_DEAL, BASE } from '../../constants';
+import { FLASH_DEAL, BASE, REMOVING_EXPIRE_FLASH_DEAL } from '../../constants';
 import Countdown, {
     zeroPad,
     calcTimeDelta,
@@ -46,9 +46,19 @@ const FlashCard = () => {
                 setLoading(false);
             });
     }, []);
-    const handleUpdate = () => {
+    function removeExpiredFlashDeal(listProductId) {
+        return axios({
+            method: 'put',
+            url: `${BASE}${REMOVING_EXPIRE_FLASH_DEAL}`,
+            data: listProductId,
+        });
+    }
+    const handleUpdate = async (listProduct) => {
+        const productsId = listProduct.map((pr) => pr.id);
+        console.log(productsId);
+        await removeExpiredFlashDeal(productsId);
         setLoading(true);
-        axios
+        await axios
             .get(`${BASE}${FLASH_DEAL}`)
             .then((res) => {
                 setFlashDeal(res.data);
@@ -58,14 +68,28 @@ const FlashCard = () => {
                 setLoading(false);
             });
     };
-
-    const renderer = ({ hours, minutes, seconds, completed }) => {
-        return (
-            <span>
-                {zeroPad(hours)} Giờ {zeroPad(minutes)}:{zeroPad(seconds)}
-            </span>
-        );
+    const myCustomRendererParam = (start, discount) => {
+        const renderer = ({ hours, minutes, seconds, completed }) => {
+            if (start) {
+                return (
+                    <span>
+                        {zeroPad(hours)} Giờ {zeroPad(minutes)}:
+                        {zeroPad(seconds)}
+                    </span>
+                );
+            }
+            if (!start) {
+                return (
+                    <span>
+                        Giảm {discount} Sẽ Bắt đầu Sau {zeroPad(hours)} Giờ{' '}
+                        {zeroPad(minutes)}:{zeroPad(seconds)} Nữa!!
+                    </span>
+                );
+            }
+        };
+        return renderer;
     };
+
     const settings = {
         dots: false,
         infinite: true,
@@ -83,54 +107,165 @@ const FlashCard = () => {
                     flashDeal.length !== 0 &&
                     flashDeal.map((value, index) => {
                         return value.products.map((product, index) => {
-                            return (
-                                <Link
-                                    key={index}
-                                    to={'/product-detail/' + product.id}
-                                >
-                                    <div className="box product" key={index}>
+                            if (value.start)
+                                return (
+                                    <Link
+                                        key={index}
+                                        to={'/product-detail/' + product.id}
+                                    >
                                         <div
-                                            className="img"
-                                            style={{ height: 180 }}
+                                            className="box product"
+                                            key={index}
                                         >
-                                            <img
-                                                src={getImage(product.image)}
-                                                alt="#"
-                                                width="100%"
-                                            />
-                                            {product.discount !== 0 && (
+                                            <div
+                                                className="img"
+                                                style={{ height: 180 }}
+                                            >
+                                                <img
+                                                    src={getImage(
+                                                        product.image,
+                                                    )}
+                                                    alt="#"
+                                                    width="100%"
+                                                />
+                                                {product.discount !== 0 && (
+                                                    <span
+                                                        style={{
+                                                            color: 'white',
+                                                        }}
+                                                        className="discount"
+                                                    >
+                                                        -{product.discount}% Off
+                                                    </span>
+                                                )}
                                                 <span
                                                     style={{ color: 'white' }}
-                                                    className="discount"
+                                                    className="countdown"
                                                 >
-                                                    -{product.discount}% Off
+                                                    <Countdown
+                                                        date={
+                                                            value.expired_time
+                                                        }
+                                                        onComplete={() =>
+                                                            handleUpdate(
+                                                                value.products,
+                                                            )
+                                                        }
+                                                        renderer={myCustomRendererParam(
+                                                            value.start,
+                                                            value.name,
+                                                        )}
+                                                    />
                                                 </span>
-                                            )}
-                                            <span
-                                                style={{ color: 'white' }}
-                                                className="countdown"
-                                            >
-                                                <Countdown
-                                                    date={value.expired_time}
-                                                    onComplete={handleUpdate}
-                                                    renderer={renderer}
-                                                />
+                                            </div>
+                                            <h4 style={{ height: 40 }}>
+                                                {product.product_name}
+                                            </h4>
+                                            <span>
+                                                {product.discount_price != 0 ? (
+                                                    <NumericFormat
+                                                        value={
+                                                            product.discount_price
+                                                        }
+                                                        displayType={'text'}
+                                                        thousandSeparator={true}
+                                                        suffix={' VNĐ'}
+                                                    />
+                                                ) : (
+                                                    <NumericFormat
+                                                        value={product.price}
+                                                        displayType={'text'}
+                                                        thousandSeparator={true}
+                                                        suffix={' VNĐ'}
+                                                    />
+                                                )}
                                             </span>
                                         </div>
-                                        <h4 style={{ height: 40 }}>
-                                            {product.product_name}
-                                        </h4>
-                                        <span>
-                                            <NumericFormat
-                                                value={product.discount_price}
-                                                displayType={'text'}
-                                                thousandSeparator={true}
-                                                suffix={' VNĐ'}
-                                            />
-                                        </span>
-                                    </div>
-                                </Link>
-                            );
+                                    </Link>
+                                );
+                        });
+                    })}
+            </Slider>
+            <h1>Khuyến mãi sắp tới!</h1>
+            <Slider {...settings}>
+                {!loading &&
+                    flashDeal.length !== 0 &&
+                    flashDeal.map((value, index) => {
+                        return value.products.map((product, index) => {
+                            if (!value.start)
+                                return (
+                                    <Link
+                                        key={index}
+                                        to={'/product-detail/' + product.id}
+                                    >
+                                        <div
+                                            className="box product"
+                                            key={index}
+                                        >
+                                            <div
+                                                className="img"
+                                                style={{ height: 180 }}
+                                            >
+                                                <img
+                                                    src={getImage(
+                                                        product.image,
+                                                    )}
+                                                    alt="#"
+                                                    width="100%"
+                                                />
+                                                {product.discount !== 0 && (
+                                                    <span
+                                                        style={{
+                                                            color: 'white',
+                                                        }}
+                                                        className="discount"
+                                                    >
+                                                        -{product.discount}% Off
+                                                    </span>
+                                                )}
+                                                <span
+                                                    style={{ color: 'white' }}
+                                                    className="countdown"
+                                                >
+                                                    <Countdown
+                                                        date={
+                                                            value.expired_time
+                                                        }
+                                                        onComplete={
+                                                            handleUpdate
+                                                        }
+                                                        renderer={myCustomRendererParam(
+                                                            value.start,
+                                                            value.name,
+                                                        )}
+                                                    />
+                                                </span>
+                                            </div>
+                                            <h4 style={{ height: 40 }}>
+                                                {product.product_name}
+                                            </h4>
+                                            <span>
+                                                {product.discount_price != 0 ? (
+                                                    <NumericFormat
+                                                        value={
+                                                            product.discount_price
+                                                        }
+                                                        displayType={'text'}
+                                                        thousandSeparator={true}
+                                                        suffix={' VNĐ'}
+                                                    />
+                                                ) : (
+                                                    <NumericFormat
+                                                        value={product.price}
+                                                        displayType={'text'}
+                                                        thousandSeparator={true}
+                                                        suffix={' VNĐ'}
+                                                    />
+                                                )}
+                                            </span>
+                                        </div>
+                                    </Link>
+                                );
                         });
                     })}
             </Slider>
