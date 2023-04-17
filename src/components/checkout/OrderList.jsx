@@ -7,18 +7,10 @@ import { NumericFormat } from 'react-number-format';
 import { CloseOutlined } from '@ant-design/icons';
 import { USER_PROMO_VALID, USER_PROMO_ORDER } from '../../constants/user.js';
 import { ENV_URL } from '../../constants/index';
-import {
-    getCurrencyFormatComp,
-    getPromotion,
-    getPromotionValue,
-    getVariantDetail,
-    getColorOfCartItem,
-    getDiscountAmountOfItem,
-    getPriceDetail,
-} from '../../common/Cart/CartUtil';
+import { getCurrencyFormatComp, getPromotion, getPromotionValue, getVariantDetail, getColorOfCartItem, getDiscountAmountOfItem, getPriceDetail } from '../../common/Cart/CartUtil';
 import axios from '../../services/axios';
 import { getImage } from '../../common/img';
-const OrderList = ({ onClickOrder, onAddPromotion}) => {
+const OrderList = ({ disableCheckoutBtn, onClickOrder, onAddPromotion }) => {
     const [PromoForm] = Form.useForm();
     const [promoOptions, setPromoOptions] = useState([]);
     const [promotionList, setPromotionList] = useState([]);
@@ -71,8 +63,8 @@ const OrderList = ({ onClickOrder, onAddPromotion}) => {
 
     const getTotalAfterAddPromo = () => {
         let t = Cart.total - getDiscountAmmountByCode();
-        return t <= 0? 0.0 : t;
-    }
+        return t <= 0 ? 0.0 : t;
+    };
 
     useEffect(() => {
         console.log('useEffec selec promo');
@@ -82,7 +74,7 @@ const OrderList = ({ onClickOrder, onAddPromotion}) => {
             getDiscountAmmountByCode();
             onAddPromotion(selectedPromo);
         }, 400);
-        
+
         return () => {
             clearTimeout(timeout);
         };
@@ -116,10 +108,10 @@ const OrderList = ({ onClickOrder, onAddPromotion}) => {
             </div>
         );
     };
-    const changeDescription = ({target}) => {
-console.log('hover value: ');
-console.log(target);
-    }
+    const changeDescription = ({ target }) => {
+        console.log('hover value: ');
+        console.log(target);
+    };
     const onOrderHandler = () => {
         onClickOrder();
     };
@@ -194,9 +186,7 @@ console.log(target);
                                     optionFilterProp="children"
                                     onFocus={changeDescription}
                                     onChange={onChange}
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                    }
+                                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                                     options={promoOptions}
                                 />
                             </Tooltip>
@@ -248,7 +238,9 @@ console.log(target);
                 )}
             </div>
             <div className="order-btn">
-                <Button onClick={onOrderHandler}>Đặt hàng</Button>
+                <Button disabled={disableCheckoutBtn} onClick={onOrderHandler}>
+                    Đặt hàng
+                </Button>
             </div>
         </section>
     );
@@ -275,11 +267,7 @@ const OrderListItem = ({ product }) => {
                         <Col span={14}>
                             <div className="product-detail-info">
                                 <div className="product-detail-top">
-                                    <div className="discount-tag">
-                                        {getPromotion(product) && (
-                                            <span className="discount-container"> Giảm: {getPromotionValue(product)}</span>
-                                        )}
-                                    </div>
+                                    <div className="discount-tag">{getPromotion(product) && <span className="discount-container"> Giảm: {getPromotionValue(product)}</span>}</div>
                                     <h3
                                         style={{
                                             fontSize: '16px',
@@ -294,9 +282,7 @@ const OrderListItem = ({ product }) => {
                                         <div className="quantity-container">
                                             Số lượng: <span className="quantity"> {quantity}</span>
                                         </div>
-                                        <div className="price-container">
-                                            Giá: {getCurrencyFormatComp(getPriceDetail(product), false, 'price-per-product')}{' '}
-                                        </div>
+                                        <div className="price-container">Giá: {getCurrencyFormatComp(getPriceDetail(product), false, 'price-per-product')} </div>
                                         {/* <div>
                                             {getPromotion(product) && (
                                                 <span className='discount-container'> Giảm: {getPromotionValue(product)}</span>
