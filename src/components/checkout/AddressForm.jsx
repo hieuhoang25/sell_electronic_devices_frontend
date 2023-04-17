@@ -1,15 +1,10 @@
 import React, { useEffect, useState, memo } from 'react';
 import { Select, Row, Col, Space, Form, Input } from 'antd';
-import {
-    getProvince,
-    getSearchProvince,
-    getDistrict,
-    getSearchDistrict,
-    getSearchWard,
-} from '../../services/addressService';
-const AddressForm = ({ form }) => {
+import { getProvince, getSearchProvince, getDistrict, getSearchDistrict, getSearchWard } from '../../services/addressService';
+const AddressForm = ({ form, otherAddress }) => {
     // const inputProvince = Form.useWatch('input_province', form);
     const optionForDropDown = [];
+    console.log('to: ', otherAddress);
     const [provinceOptions, setProvinceOptions] = useState([]);
     const [districtOptions, setDistrictOptions] = useState([]);
     const [wardOptions, setWardOptions] = useState([]);
@@ -87,9 +82,7 @@ const AddressForm = ({ form }) => {
 
     useEffect(() => {
         // find district code
-        let selectedDis = districtOptions.filter(
-            (p) => p.label === inputDistrictSearch,
-        );
+        let selectedDis = districtOptions.filter((p) => p.label === inputDistrictSearch);
         // console.log('selectedP: ');
         // console.log(selectedDis);
         if (selectedDis !== undefined && selectedDis.length > 0) {
@@ -164,38 +157,29 @@ const AddressForm = ({ form }) => {
     };
     const setSelectedValueHandler = () => {
         let input = address;
-        const filter = provinceOptions.filter((select) =>
-            (select.label ?? '').toLowerCase().includes(input.toLowerCase()),
-        );
+        const filter = provinceOptions.filter((select) => (select.label ?? '').toLowerCase().includes(input.toLowerCase()));
         console.log(filter[0]);
         setInputSearch(filter.length > 0 ? filter[0].value : '');
     };
 
     return (
         <React.Fragment>
-            {form.getFieldValue('input_addressline')}
-            <Form
-                className="other-address-f"
-                layout="vertical"
-                name="basic"
-                form={form}
-            >
+            <Form className="other-address-f" layout="vertical" name="basic" form={form}>
                 <Row gutter={[16, 16]}>
                     <Col span={8}>
-                        {provinceOptions !== undefined &&
-                            provinceOptions.length > 0 &&
-                            getSelectedProvinceName()}
+                        {provinceOptions !== undefined && provinceOptions.length > 0 && getSelectedProvinceName()}
                         <Form.Item
                             name="input_province"
                             label="Tỉnh thành"
                             rules={[
                                 {
-                                    required: true,
+                                    required: otherAddress,
                                     message: 'Vui lòng nhập tỉnh thành',
                                 },
                             ]}
                         >
                             <Select
+                                allowClear={true}
                                 value={inputSearch}
                                 showSearch
                                 placeholder="Chọn tỉnh thành"
@@ -203,11 +187,7 @@ const AddressForm = ({ form }) => {
                                 onChange={onChange}
                                 onSearch={onSearch}
                                 // defaultValue={1}
-                                filterOption={(input, option) =>
-                                    (option?.label ?? '')
-                                        .toLowerCase()
-                                        .includes(input.toLowerCase())
-                                }
+                                filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                                 options={provinceOptions}
                             />
                         </Form.Item>
@@ -218,12 +198,13 @@ const AddressForm = ({ form }) => {
                             label="Quận/Huyện"
                             rules={[
                                 {
-                                    required: true,
+                                    required: otherAddress,
                                     message: 'Vui lòng nhập quận/huyện',
                                 },
                             ]}
                         >
                             <Select
+                                allowClear={true}
                                 value={inputDistrictSearch}
                                 showSearch
                                 placeholder="Chọn Quận/Huyện"
@@ -231,11 +212,7 @@ const AddressForm = ({ form }) => {
                                 onChange={onDistChange}
                                 onSearch={onDistSearch}
                                 // defaultValue={1}
-                                filterOption={(input, option) =>
-                                    (option?.label ?? '')
-                                        .toLowerCase()
-                                        .includes(input.toLowerCase())
-                                }
+                                filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                                 options={districtOptions}
                             />
                         </Form.Item>
@@ -246,12 +223,13 @@ const AddressForm = ({ form }) => {
                             label="Phường/Xã"
                             rules={[
                                 {
-                                    required: true,
+                                    required: otherAddress,
                                     message: 'Vui lòng nhập phường/xã',
                                 },
                             ]}
                         >
                             <Select
+                                allowClear={true}
                                 value={inputWardSearch}
                                 showSearch
                                 placeholder="Chọn Quận/Huyện"
@@ -259,18 +237,24 @@ const AddressForm = ({ form }) => {
                                 onChange={onWardChange}
                                 onSearch={onWardSearch}
                                 // defaultValue={1}
-                                filterOption={(input, option) =>
-                                    (option?.label ?? '')
-                                        .toLowerCase()
-                                        .includes(input.toLowerCase())
-                                }
+                                filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                                 options={wardOptions}
                             />
                         </Form.Item>
                     </Col>
                 </Row>
-                <Form.Item name="input_addressline" label="Địa chỉ">
+                <Form.Item
+                    name="input_addressline"
+                    label="Địa chỉ"
+                    rules={[
+                        {
+                            required: otherAddress,
+                            message: 'Vui lòng nhập địa chỉ',
+                        },
+                    ]}
+                >
                     <Input
+                        autoComplete="off"
                         placeholder="Địa chỉ"
                         style={{
                             width: '100%',

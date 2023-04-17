@@ -1,20 +1,8 @@
 // import { createSlice } from '@reduxjs/toolkit';
 import axios from './axios';
-import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL, MERGE_CART,UPDATE_GUEST_CART,UPDATE_AUTH_CART } from '../constants/user';
-import {
-    addToCart,
-    removeFromCart,
-    getItemsCount,
-    getBaseAmount,
-    getCartFromSever,
-    increment,
-    decrement,
-    newCart,
-    getTotal,
-    getDiscountAmount,
-    authenticateCart,
-    updateGuestCart
-} from '../redux/slices/CartSlice';
+import Moment from 'react-moment';
+import { CART, CART_ITEM, NEW_GUEST_CART, GUEST_CART_DETAIL, MERGE_CART, UPDATE_GUEST_CART, UPDATE_AUTH_CART } from '../constants/user';
+import { addToCart, removeFromCart, getItemsCount, getBaseAmount, getCartFromSever, increment, decrement, newCart, getTotal, getDiscountAmount, authenticateCart, updateGuestCart } from '../redux/slices/CartSlice';
 
 const ENV_URL = process.env.REACT_APP_URL;
 export const fetchCartFromSever = () => async (dispatch, getState) => {
@@ -37,6 +25,7 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
                     return;
                 });
         } else {
+            const { time } = getState().cart;
             console.log('get from localstorage');
             const { id: cartId } = getState().cart;
             // console.log('cartId: ', cartId);
@@ -200,7 +189,7 @@ const covertMergeCartRequest = (items, cart_id) => {
 };
 const convertUpdateCartRequest = (items, cart_id) => {
     return items.map((i) => {
-        let rndId = i.id === null || i.id === undefined|| i.id ===0?  Math.floor(Math.random() * 2000) + 1 : i.id;
+        let rndId = i.id === null || i.id === undefined || i.id === 0 ? Math.floor(Math.random() * 2000) + 1 : i.id;
         return {
             id: rndId,
             cart_id: cart_id,
@@ -208,7 +197,7 @@ const convertUpdateCartRequest = (items, cart_id) => {
             quantity: i.quantity,
         };
     });
-}
+};
 export const mergeAnnonCart = () => async (dispatch, getState) => {
     console.log('inside merge');
 
@@ -217,7 +206,7 @@ export const mergeAnnonCart = () => async (dispatch, getState) => {
     let request = covertMergeCartRequest(items, cart_id);
 
     dispatch(updateGuestCartState());
-    
+
     console.log('list request: ', request);
     if (request)
         await axios
@@ -284,43 +273,40 @@ export const updateCart = () => async (dispatch, getState) => {
     dispatch(getTotal());
 };
 
-export const updateGuestCartState = () => async(dispatch, getState) => {
+export const updateGuestCartState = () => async (dispatch, getState) => {
     let { items, id: cart_id, isAnonymous } = getState().cart;
-   
+
     // let cart_id = await (await (await axios.get(`${ENV_URL}${CART}`)).data).id;
 
-    if(!isAnonymous) {
+    if (!isAnonymous) {
         // alert('updated remote cart')
-        await axios.get(`${ENV_URL}${UPDATE_AUTH_CART}`).then(res => {
+        await axios.get(`${ENV_URL}${UPDATE_AUTH_CART}`).then((res) => {
             console.log('res: ', res);
-            if(res.status = '409') {
+            if ((res.status = '409')) {
                 dispatch(fetchCartFromSever());
             }
-        })
-     
-    }else {
+        });
+    } else {
         let request = convertUpdateCartRequest(items, cart_id);
         console.log(request);
         if (request)
-        await axios
-            .post(`${ENV_URL}${UPDATE_GUEST_CART}`, request)
-            .then((res) => {
-                console.log('cart: ');
-                console.log(res.data);
-                dispatch(updateGuestCart(res.data));
-               
-                dispatch(updateCart);
-                console.log('finish updated: ' ,getState().cart);
-    
-                return;
-            })
-            .catch((e) => {
-                console.log(e.message);
-            });
+            await axios
+                .post(`${ENV_URL}${UPDATE_GUEST_CART}`, request)
+                .then((res) => {
+                    console.log('cart: ');
+                    console.log(res.data);
+                    dispatch(updateGuestCart(res.data));
+
+                    dispatch(updateCart);
+                    console.log('finish updated: ', getState().cart);
+
+                    return;
+                })
+                .catch((e) => {
+                    console.log(e.message);
+                });
     }
-    
-   
-}
+};
 
 const generateAutoIncrId = (arr) => {
     console.log('generate id');

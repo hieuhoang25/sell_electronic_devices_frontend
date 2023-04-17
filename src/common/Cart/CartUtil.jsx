@@ -23,6 +23,10 @@ export function getProductName(cartItem) {
     return variant.product_name;
 }
 
+export function getProductVariantName(cartItem) {
+    let fullName = getProductName(cartItem) + ' ' + getColorOfCartItem(cartItem) + getStorageOfCartItem(cartItem);
+    return fullName;
+}
 export function getColorOfCartItem(cartItem) {
     return getProductVariantDetail(cartItem).color_name;
 }
@@ -32,42 +36,36 @@ export function getStorageOfCartItem(cartItem) {
 }
 
 export function getPromotion(cartItem) {
-    if(cartItem.discount_amount == 0) return false;
-    return getProductVariantDetail(cartItem).product_promotion == null
-        ? false
-        : true;
+    if (cartItem.discount_amount == 0) return false;
+    return getProductVariantDetail(cartItem).product_promotion == null ? false : true;
 }
 export function getPromotionValue(cartItem) {
-    const {discount_amount : detailDiscount } = cartItem;
+    const { discount_amount: detailDiscount } = cartItem;
     const { product_promotion: promotion } = getProductVariantDetail(cartItem);
     const { activate, is_percent, discount_amount } = promotion;
-   
-    console.log('get promotion value');
-    if(detailDiscount === 0) return '';
+
+    // console.log('get promotion value');
+    if (detailDiscount === 0) return '';
     // console.log(promotion);
 
-    console.log('have promo', detailDiscount);
-    return activate
-        ? is_percent
-            ? '-' + discount_amount + '%'
-            : detailDiscount
-        : '--';
+    // console.log('have promo', detailDiscount);
+    return activate ? (is_percent ? '-' + discount_amount + '%' : detailDiscount) : '--';
 }
 
 export function getDiscountAmount(cartItem) {
-    return cartItem.discount_amount ;
+    return cartItem.discount_amount;
 }
 
 export function isPercentDiscount(cartItem) {
     const { product_promotion: promotion } = getProductVariantDetail(cartItem);
     const { activate, is_percent, discount_amount } = promotion;
-        return is_percent;
+    return is_percent;
 }
 export function getPriceDetail(cartItem) {
     return cartItem.price_detail;
 }
 export function getDiscountAmountOfItem(item) {
-    let discountOfItem = item.price_detail - ( item.discount_amount * item.quantity );
+    let discountOfItem = item.price_detail - item.discount_amount * item.quantity;
     return discountOfItem <= 0 ? 0.0 : discountOfItem;
 }
 
@@ -102,26 +100,11 @@ export function getCartDetailRequest(action, CartRequestTYPEz) {
     }
 }
 
-export function getCurrencyFormatComp(
-    value,
-    haveSuffix = false,
-    className = '',
-) {
+export function getCurrencyFormatComp(value, haveSuffix = false, className = '') {
     return haveSuffix ? (
-        <NumericFormat
-            value={value}
-            displayType={'text'}
-            thousandSeparator={true}
-            suffix={' ' + CURRENCY_SUFFIX}
-            className={className}
-        />
+        <NumericFormat value={value} displayType={'text'} thousandSeparator={true} suffix={' ' + CURRENCY_SUFFIX} className={className} />
     ) : (
-        <NumericFormat
-            value={value}
-            displayType={'text'}
-            thousandSeparator={true}
-            className={className}
-        />
+        <NumericFormat value={value} displayType={'text'} thousandSeparator={true} className={className} />
     );
 }
 
@@ -152,7 +135,6 @@ export default class CartItemUtilClass {
         return this.cartItem.productVariant;
     }
     get displayName() {
-        
         return this.getVariantDetail().display_name;
     }
     get productId() {
@@ -172,28 +154,24 @@ export default class CartItemUtilClass {
     }
 
     get promotion() {
-        if(this.cartItem.discount_amount == 0) return false;
+        if (this.cartItem.discount_amount === 0) return false;
         return this.getVariantDetail().product_promotion == null ? false : true;
     }
     get promotionValue() {
         const { product_promotion: promotion } = this.getVariantDetail();
-        const {discount_amount} = this.cartItem;
-        if(discount_amount == 0) return 0;
+        const { discount_amount } = this.cartItem;
+        if (discount_amount == 0) return 0;
         if (promotion == null) {
             return 0;
         } else if (!promotion.activate) {
             return 0;
         } else {
             const { activate, is_percent, discount_amount } = promotion;
-            return activate
-                ? is_percent
-                    ? `-${discount_amount}%`
-                    : ('' + discount_amount )
-                : '';
+            return activate ? (is_percent ? `-${discount_amount}%` : '' + discount_amount) : '';
         }
     }
     get priceDiscountForPerItem() {
         let d = this.variantPrice - this.cartItem.discount_amount;
-        return d <= 0? 0 : d;
+        return d <= 0 ? 0 : d;
     }
 }

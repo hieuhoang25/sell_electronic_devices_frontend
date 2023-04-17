@@ -108,16 +108,13 @@ export default function HoverCartPopover({ Cart }) {
 }
 
 function MediaCard({ Item }) {
-    console.log('item: ', Item);
     const cartItem = new CartItemUtilClass(Item);
-    // const variant = cartItem.getVariantDetail.bind(cartItem)();
     return (
         <Card
             sx={{
                 maxWidth: 320,
                 marginBottom: '1rem',
-                boxShadow:
-                    'inset 0px 0px 0px 2px rgb(234 230 230 / 14%), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
+                boxShadow: 'inset 0px 0px 0px 2px rgb(234 230 230 / 14%), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
             }}
         >
             <CardContent sx={{ marginTop: '1rem', padding: '20px 16px' }}>
@@ -128,12 +125,7 @@ function MediaCard({ Item }) {
                         alignItems: 'center',
                     }}
                 >
-                    <CardMedia
-                        sx={{ height: 100, width: 200, flex: '1' }}
-                        square
-                        image={`${getImage(cartItem.ItemImage)}`}
-                        title="green iguana"
-                    />
+                    <CardMedia sx={{ height: 100, width: 200, flex: '1' }} square image={`${getImage(cartItem.ItemImage)}`} title="green iguana" />
 
                     <div className="card-content" style={{ paddingLeft: '1rem', flex: '2' }}>
                         {cartItem.promotion ? (
@@ -149,17 +141,12 @@ function MediaCard({ Item }) {
                                 showZero
                             >
                                 <Typography className="product-name" gutterBottom variant="subtitle2" component="h6">
-                                <Link to={`/product-detail/${
-                                                        cartItem.productId
-                                                    }`}>
-                                                  {cartItem.displayName}
-                                                </Link>
-                                   
+                                    <Link to={`/product-detail/${cartItem.productId}`}>{cartItem.displayName}</Link>
                                 </Typography>
                             </Badge>
                         ) : (
                             <Typography className="product-name" gutterBottom variant="subtitle2" component="h6">
-                                {cartItem.displayName}
+                                <Link to={`/product-detail/${cartItem.productId}`}>{cartItem.displayName}</Link>
                             </Typography>
                         )}
 
