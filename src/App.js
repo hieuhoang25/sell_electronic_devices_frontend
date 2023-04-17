@@ -1,11 +1,4 @@
-import React, {
-    lazy,
-    useEffect,
-    useState,
-    useRef,
-    useContext,
-    useMemo,
-} from 'react';
+import React, { lazy, useEffect, useState, useRef, useContext, useMemo } from 'react';
 import './App.css';
 import jwtDecode from 'jwt-decode';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -31,12 +24,8 @@ import BackToTop from './common/backToTop/BackToTop';
 import ButtonDarkMode from './common/drakMode/ButtonDarkMode';
 import Verification from './components/SignUpPage/Verification';
 import Contact from './components/contact/Contact';
-const LoginPage = Loadable(
-    lazy(() => import('./components/LoginPage/LoginPage')),
-);
-const Profile = Loadable(
-    lazy(() => import('./components/userProfile/Profile')),
-);
+const LoginPage = Loadable(lazy(() => import('./components/LoginPage/LoginPage')));
+const Profile = Loadable(lazy(() => import('./components/userProfile/Profile')));
 function App() {
     // const auth = JSON.parse(localStorage.auth);
 
@@ -46,9 +35,7 @@ function App() {
 
     // const auth = useSelector((state) => state.auth);
 
-    const localStorage = JSON.parse(
-        window.localStorage.getItem('persist:root'),
-    );
+    const localStorage = JSON.parse(window.localStorage.getItem('persist:root'));
     const authRedux = useSelector((state) => state.auth);
 
     var auth = '';
@@ -121,8 +108,9 @@ function App() {
                     dispatch(authenticateCart(true));
                     console.log('cart state in App.js', cart);
                 } else {
-                    console.log('set guest cart');
+                    console.log('set user cart');
                     dispatch(authenticateCart(false));
+                    console.log('user cart state in App.js', cart);
                 }
                 dispatch(fetchCartFromSever());
             })
@@ -156,26 +144,11 @@ function App() {
                             />
                         }
                     ></Route>
-                    <Route
-                        path="/product/:categoryId"
-                        element={<Product isAuth={auth.isAuthenticated} />}
-                    ></Route>
+                    <Route path="/product/:categoryId" element={<Product isAuth={auth.isAuthenticated} />}></Route>
 
                     <Route path="/cart" element={<Cart />}></Route>
-                    <Route
-                        path="/product"
-                        element={<Product isAuth={auth.isAuthenticated} />}
-                    ></Route>
-                    <Route
-                        path="/login"
-                        element={
-                            auth.isAuthenticated ? (
-                                <Navigate to="/" />
-                            ) : (
-                                <LoginPage />
-                            )
-                        }
-                    ></Route>
+                    <Route path="/product" element={<Product isAuth={auth.isAuthenticated} />}></Route>
+                    <Route path="/login" element={auth.isAuthenticated ? <Navigate to="/" /> : <LoginPage />}></Route>
                     <Route
                         path="/profile"
                         element={
@@ -184,12 +157,7 @@ function App() {
                             </Protected>
                         }
                     ></Route>
-                    <Route
-                        path="/product-detail/:productId"
-                        element={
-                            <ProductDetail isAuth={auth.isAuthenticated} />
-                        }
-                    ></Route>
+                    <Route path="/product-detail/:productId" element={<ProductDetail isAuth={auth.isAuthenticated} />}></Route>
                     <Route
                         path="/checkout"
                         element={
@@ -199,11 +167,8 @@ function App() {
                         }
                     ></Route>
                     <Route path="/signUp" element={<SignUp />}></Route>
-                    <Route
-                        path="/signUp/Verification/:userName"
-                        element={<Verification />}
-                    />
-                    <Route path='/contact' element={<Contact/>} />
+                    <Route path="/signUp/Verification/:userName" element={<Verification />} />
+                    <Route path="/contact" element={<Contact />} />
                 </Routes>
             </Wrapper>
             <BackToTop />
