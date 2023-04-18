@@ -24,9 +24,15 @@ const ShopProduct = ({ shopItems, isLoading }) => {
                                         objectFit: 'contain',
                                     }}
                                 >
-                                    {shopItems.discount !== 0 && (
+                                    {shopItems.discount !== 0 &&
+                                        shopItems.quantity !== 0 && (
+                                            <span className="discount">
+                                                {shopItems.discount}% Off
+                                            </span>
+                                        )}
+                                    {shopItems.quantity === 0 && (
                                         <span className="discount">
-                                            {shopItems.discount}% Off
+                                            Hết hàng
                                         </span>
                                     )}
                                     <Link
@@ -35,7 +41,7 @@ const ShopProduct = ({ shopItems, isLoading }) => {
                                         <img
                                             src={getImage(shopItems.image)}
                                             alt=""
-                                            style={{objectFit:'contain'}}
+                                            style={{ objectFit: 'contain' }}
                                         />
                                     </Link>
                                 </div>

@@ -113,6 +113,16 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                                             -{shopItems.discount}% Off
                                         </span>
                                     )}
+                                    {shopItems.quantity == 0 && (
+                                        <span
+                                            className="discount"
+                                            style={{
+                                                color: 'white',
+                                            }}
+                                        >
+                                            Hết hàng
+                                        </span>
+                                    )}
                                     <Link
                                         to={`/product-detail/${shopItems.id}`}
                                     >
@@ -125,6 +135,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                                             alt="#"
                                         />
                                     </Link>
+
                                     <div className="product-like">
                                         <Favorite
                                             value={shopItems.id}

@@ -82,16 +82,29 @@ const Cart = () => {
                                             alt="#"
                                             width="100%"
                                         />
-                                        {value.discount !== 0 && (
+                                        {value.discount !== 0 &&
+                                            value.quantity !== 0 && (
+                                                <span
+                                                    style={{
+                                                        color: 'white',
+                                                    }}
+                                                    className="discount"
+                                                >
+                                                    -{value.discount}% Off
+                                                </span>
+                                            )}
+                                        {value.quantity == 0 && (
                                             <span
-                                                style={{ color: 'white' }}
                                                 className="discount"
+                                                style={{
+                                                    color: 'white',
+                                                }}
                                             >
-                                                -{value.discount}% Off
+                                                Hết hàng
                                             </span>
                                         )}
                                     </div>
-                                    <h4 style={{ height: 40,color:'black' }}>
+                                    <h4 style={{ height: 40, color: 'black' }}>
                                         {value.product_name}
                                     </h4>
                                     {value.discount !== 0 ? (
