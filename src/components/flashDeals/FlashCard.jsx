@@ -46,17 +46,14 @@ const FlashCard = () => {
                 setLoading(false);
             });
     }, []);
-    function removeExpiredFlashDeal(listProductId) {
+    function removeExpiredFlashDeal() {
         return axios({
             method: 'put',
             url: `${BASE}${REMOVING_EXPIRE_FLASH_DEAL}`,
-            data: listProductId,
         });
     }
-    const handleUpdate = async (listProduct) => {
-        const productsId = listProduct.map((pr) => pr.id);
-        console.log(productsId);
-        await removeExpiredFlashDeal(productsId);
+    const handleUpdate = async () => {
+        await removeExpiredFlashDeal();
         setLoading(true);
         await axios
             .get(`${BASE}${FLASH_DEAL}`)
@@ -69,20 +66,20 @@ const FlashCard = () => {
             });
     };
     const myCustomRendererParam = (start, discount) => {
-        const renderer = ({ hours, minutes, seconds, completed }) => {
+        const renderer = ({ days, hours, minutes, seconds, completed }) => {
             if (start) {
                 return (
                     <span>
-                        {zeroPad(hours)} Giờ {zeroPad(minutes)}:
-                        {zeroPad(seconds)}
+                        {days > 0 && zeroPad(days) + ' Ngày'} {zeroPad(hours)}{' '}
+                        Giờ {zeroPad(minutes)}:{zeroPad(seconds)}
                     </span>
                 );
             }
             if (!start) {
                 return (
                     <span>
-                        Giảm {discount} Sẽ Bắt đầu Sau {zeroPad(hours)} Giờ{' '}
-                        {zeroPad(minutes)}:{zeroPad(seconds)} Nữa!!
+                        Bắt đầu sau: {days > 0 && zeroPad(days) + ' Ngày'}{' '}
+                        {zeroPad(hours)} {zeroPad(minutes)}:{zeroPad(seconds)}
                     </span>
                 );
             }
@@ -128,28 +125,39 @@ const FlashCard = () => {
                                                     alt="#"
                                                     width="100%"
                                                 />
-                                                {product.discount !== 0 && (
+                                                {product.discount !== 0 &&
+                                                    product.quantity !== 0 && (
+                                                        <span
+                                                            style={{
+                                                                color: 'white',
+                                                            }}
+                                                            className="discount"
+                                                        >
+                                                            -{product.discount}%
+                                                        </span>
+                                                    )}
+                                                {product.quantity === 0 && (
                                                     <span
+                                                        className="discount"
                                                         style={{
                                                             color: 'white',
                                                         }}
-                                                        className="discount"
                                                     >
-                                                        -{product.discount}% Off
+                                                        Hết hàng
                                                     </span>
                                                 )}
                                                 <span
-                                                    style={{ color: 'white' }}
+                                                    style={{
+                                                        color: 'white',
+                                                    }}
                                                     className="countdown"
                                                 >
                                                     <Countdown
                                                         date={
                                                             value.expired_time
                                                         }
-                                                        onComplete={() =>
-                                                            handleUpdate(
-                                                                value.products,
-                                                            )
+                                                        onComplete={
+                                                            handleUpdate
                                                         }
                                                         renderer={myCustomRendererParam(
                                                             value.start,
