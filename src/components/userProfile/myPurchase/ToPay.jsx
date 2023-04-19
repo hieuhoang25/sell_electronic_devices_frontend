@@ -1,5 +1,15 @@
 import { React, memo, useState, useEffect, useRef, useCallback } from 'react';
-import { Card, Space, Button, Divider, List, Skeleton, Empty } from 'antd';
+import {
+    Card,
+    Space,
+    Button,
+    Divider,
+    List,
+    Skeleton,
+    Empty,
+    notification,
+    Modal,
+} from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 import RatingForm from '../../../common/rating/RatingForm';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -7,6 +17,7 @@ import axios from '../../../services/axios';
 import './Purchase.css';
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import {
     BASE_USER,
     ORDER_TRACKING,
@@ -16,12 +27,19 @@ import {
     CANCEL_ORDER,
 } from '../../../constants/user';
 const ToPay = ({ status }) => {
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type, message) => {
+        api[type]({
+            message: message,
+        });
+    };
     //End
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const pagination = useRef();
     const page = useRef(0);
     const size = useRef(1);
+    const { confirm } = Modal;
     const loadMoreData = () => {
         axios({
             method: 'get',
@@ -69,7 +87,7 @@ const ToPay = ({ status }) => {
     useEffect(() => {
         loadMoreData();
     }, []);
-    const handleCancelOrder = async (idOrder, listOrderDetails) => {
+    const handleCancelOrder = (idOrder, listOrderDetails) => {
         // [
         //     {
         //       "id": 43,
@@ -82,7 +100,7 @@ const ToPay = ({ status }) => {
             productVariant_id: item.productVariant_id,
             quantity: item.quantity,
         }));
-        await axios({
+        return axios({
             method: 'put',
             url: `${BASE_USER}${CANCEL_ORDER}`,
             data: body,
@@ -90,7 +108,30 @@ const ToPay = ({ status }) => {
                 idOrder: idOrder,
             },
         });
-        await reloadOrder();
+    };
+    const showPromiseConfirm = (idOrder, listOrderDetails) => {
+        confirm({
+            title: 'Bạn có chắc muốn hủy đơn hàng này chứ ?',
+            icon: <ExclamationCircleFilled />,
+            onOk() {
+                return handleCancelOrder(idOrder, listOrderDetails)
+                    .then(async (res) => {
+                        await reloadOrder();
+                        openNotificationWithIcon(
+                            'success',
+                            'Hủy đơn hàng thành công',
+                        );
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        openNotificationWithIcon(
+                            'error',
+                            'Có lỗi trong khi hủy vui lòng thử lại!',
+                        );
+                    });
+            },
+            onCancel() {},
+        });
     };
     return (
         <>
@@ -515,7 +556,7 @@ const ToPay = ({ status }) => {
                                                     color: 'white',
                                                 }}
                                                 onClick={() => {
-                                                    handleCancelOrder(
+                                                    showPromiseConfirm(
                                                         item.id,
                                                         item.orderDetails,
                                                     );
