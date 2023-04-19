@@ -7,7 +7,16 @@ import {
     useCallback,
     useMemo,
 } from 'react';
-import { Card, Space, Button, Divider, List, Skeleton, Empty } from 'antd';
+import {
+    Card,
+    Space,
+    Button,
+    Divider,
+    List,
+    Skeleton,
+    Empty,
+    notification,
+} from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 import RatingForm from '../../../common/rating/RatingForm';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -22,6 +31,12 @@ import {
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
 const AllPurchase = ({ status }) => {
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type, message) => {
+        api[type]({
+            message: message,
+        });
+    };
     //Mở form đánh giá
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [productRating, setProductRating] = useState([]);
@@ -112,6 +127,10 @@ const AllPurchase = ({ status }) => {
             });
 
         setIsModalOpen(false);
+        openNotificationWithIcon(
+            'success',
+            'Cảm ơn bạn đã viết đánh giá cho sản phẩm',
+        );
     });
 
     const handleCancel = useCallback(() => {
@@ -222,6 +241,7 @@ const AllPurchase = ({ status }) => {
                     hasMore={data.length < pagination.current.totalElement}
                     scrollableTarget="scrollableDiv"
                 >
+                    {contextHolder}
                     <List
                         dataSource={data}
                         renderItem={(item, index) => (

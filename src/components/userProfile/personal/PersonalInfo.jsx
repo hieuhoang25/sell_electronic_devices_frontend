@@ -1,11 +1,13 @@
 import React, { useState, memo, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { Button, Form, Input, Radio, Modal } from 'antd';
+import { Button, Form, Input, Radio, Modal, notification, Space } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
 import DatePickerCalendar from './DatePicker';
 import './PersonalInfo.css';
 import { useSelector } from 'react-redux';
 import axios from '../../../services/axios';
+import { BASE_USER, INFO } from '../../../constants/user';
+import _ from 'lodash';
 
 const ChangeEmailForm = () => {
     // const { TextArea } = Input();
@@ -121,14 +123,14 @@ const ChangeEmailForm = () => {
     );
 };
 const UserForm = () => {
-    const [infoUser, setInfoUser] = useState();
-    useEffect(async () => {
-        const reponse_info = await axios
-            .get(process.env.REACT_APP_URL + 'user/info')
-            .catch((error) => console.log(error));
-        setInfoUser(reponse_info.data);
-        // infoUser = reponse_info.data;
-    }, []);
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type) => {
+        api[type]({
+            message: 'Cập nhật thông tin thành công',
+        });
+    };
+    const [infoUser, setInfoUser] = useState([]);
+
     const [open, setOpen] = useState(false);
     const showModal = () => {
         setOpen(true);
@@ -167,10 +169,45 @@ const UserForm = () => {
             </>
         );
     };
+    useEffect(async () => {
+        const reponse_info = await axios
+            .get(process.env.REACT_APP_URL + 'user/info')
+            .catch((error) => console.log(error));
+        const info = reponse_info.data;
+        const formData = [
+            {
+                name: 'full_name',
+                value: info.full_name,
+            },
+            {
+                name: 'email',
+                value: info.email,
+            },
+            {
+                name: 'phone',
+                value: info.phone,
+            },
+        ];
+        setInfoUser(formData);
+        // infoUser = reponse_info.data;
+    }, []);
     const [form] = Form.useForm();
     const [formLayout, setFormLayout] = useState('horizontal');
     const onFormLayoutChange = ({ layout }) => {
         setFormLayout(layout);
+    };
+    const [loading, setLoading] = useState(false);
+    const handleOnFinish = async (values) => {
+        setLoading(true);
+        const reponse_info = await axios({
+            method: 'put',
+            url: `${BASE_USER}${INFO}`,
+            data: values,
+        }).catch((err) => console.log(err));
+        // setInfoUser(values);
+        form.setFieldsValue(values);
+        setLoading(false);
+        openNotificationWithIcon('success');
     };
     const formItemLayout =
         formLayout === 'horizontal'
@@ -197,38 +234,59 @@ const UserForm = () => {
             {...formItemLayout}
             layout={formLayout}
             form={form}
-            initialValues={{
-                layout: formLayout,
-            }}
+            onFinish={handleOnFinish}
+            fields={infoUser}
             onValuesChange={onFormLayoutChange}
         >
             {/* <Form.Item label="Tên đăng nhập">
                 <div>NhatPhu00</div>
             </Form.Item> */}
-            <Form.Item label="Tên">
-                <Input value={infoUser?.full_name} />
+            <Form.Item
+                label="Tên"
+                name="full_name"
+                rules={[
+                    {
+                        required: true,
+                    },
+                ]}
+            >
+                <Input />
             </Form.Item>
-            <Form.Item label="Email">
+            <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                    {
+                        required: true,
+                    },
+                ]}
+            >
                 <Input
                     disabled
                     style={{
                         width: 'calc(100% - 90px)',
                     }}
-                    value={infoUser?.email}
                 />
-                <Button onClick={showModal} type="text">
+                {/* <Button onClick={showModal} type="text">
                     Thay đổi
-                </Button>
+                </Button> */}
             </Form.Item>
-            <Form.Item label="Số điện thoại">
+            <Form.Item
+                label="Số điện thoại"
+                name="phone"
+                rules={[
+                    {
+                        required: true,
+                    },
+                ]}
+            >
                 <Input
                     disabled
                     style={{
                         width: 'calc(100% - 90px)',
                     }}
-                    value={infoUser?.phone}
                 />
-                <Button type="text">Thay đổi</Button>
+                {/* <Button type="text">Thay đổi</Button> */}
             </Form.Item>
             {/* <Form.Item label="Giới tính">
                 <Radio.Group>
@@ -240,7 +298,14 @@ const UserForm = () => {
                 <DatePickerCalendar />
             </Form.Item> */}
             <Form.Item {...buttonItemLayout}>
-                <Button loading={true} icon={<SaveOutlined />} type="primary">
+                {contextHolder}
+                <Button
+                    htmlType="submit"
+                    icon={<SaveOutlined />}
+                    type="primary"
+                    loading={loading}
+                    // onClick={() => openNotificationWithIcon('success')}
+                >
                     Lưu
                 </Button>
             </Form.Item>

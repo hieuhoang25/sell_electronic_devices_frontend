@@ -1,5 +1,14 @@
 import { React, memo, useState, useEffect, useRef, useCallback } from 'react';
-import { Card, Space, Button, Divider, List, Skeleton, Empty } from 'antd';
+import {
+    Card,
+    Space,
+    Button,
+    Divider,
+    List,
+    Skeleton,
+    Empty,
+    notification,
+} from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from '../../../services/axios';
@@ -8,6 +17,12 @@ import { BASE_USER, ORDER_TRACKING, ORDER } from '../../../constants/user';
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
 const ToReceive = ({ status }) => {
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type) => {
+        api[type]({
+            message: 'Cảm ơn bạn đã mua hàng ở BonikShop!!',
+        });
+    };
     //End
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -74,6 +89,7 @@ const ToReceive = ({ status }) => {
     const handleReceived = useCallback(async (orderId) => {
         await updateOrderStatus(orderId);
         await reloadOrder();
+        openNotificationWithIcon('success');
     });
     return (
         <>
@@ -84,7 +100,7 @@ const ToReceive = ({ status }) => {
                     hasMore={data.length < pagination.current.totalElement}
                     scrollableTarget="scrollableDiv"
                 >
-                    {console.log(data)}
+                    {contextHolder}
                     <List
                         dataSource={data}
                         renderItem={(item) => (

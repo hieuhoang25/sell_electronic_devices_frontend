@@ -1,10 +1,21 @@
 import { React, memo, useState, useEffect, useRef, useCallback } from 'react';
-import { Card, Space, Button, Divider, List, Skeleton, Empty } from 'antd';
+import {
+    Card,
+    Space,
+    Button,
+    Divider,
+    List,
+    Skeleton,
+    Empty,
+    notification,
+    Modal,
+} from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 import RatingForm from '../../../common/rating/RatingForm';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from '../../../services/axios';
 import './Purchase.css';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import {
     BASE_USER,
     ORDER_TRACKING,
@@ -16,6 +27,12 @@ import {
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
 const AllPurchase = ({ status }) => {
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type, message) => {
+        api[type]({
+            message: message,
+        });
+    };
     //Mở form đánh giá
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [productRating, setProductRating] = useState([]);
@@ -25,6 +42,7 @@ const AllPurchase = ({ status }) => {
     const pagination = useRef();
     const page = useRef(0);
     const size = useRef(1);
+    const { confirm } = Modal;
     const [formValueRating, setformValueRating] = useState([
         // {
         //     value: [
@@ -106,6 +124,10 @@ const AllPurchase = ({ status }) => {
             });
 
         setIsModalOpen(false);
+        openNotificationWithIcon(
+            'success',
+            'Cảm ơn bạn đã viết đánh cho sản phẩm',
+        );
     });
     const handleCancel = useCallback(() => {
         setIsModalOpen(false);
@@ -247,8 +269,12 @@ const AllPurchase = ({ status }) => {
     const handleReceived = useCallback(async (orderId) => {
         await updateOrderStatus(orderId);
         await reloadOrder();
+        openNotificationWithIcon(
+            'success',
+            'Cảm ơn bạn đã mua hàng ở BonikShop!!',
+        );
     });
-    const handleCancelOrder = async (idOrder, listOrderDetails) => {
+    const handleCancelOrder = (idOrder, listOrderDetails) => {
         // [
         //     {
         //       "id": 43,
@@ -261,7 +287,7 @@ const AllPurchase = ({ status }) => {
             productVariant_id: item.productVariant_id,
             quantity: item.quantity,
         }));
-        await axios({
+        return axios({
             method: 'put',
             url: `${BASE_USER}${CANCEL_ORDER}`,
             data: body,
@@ -269,7 +295,30 @@ const AllPurchase = ({ status }) => {
                 idOrder: idOrder,
             },
         });
-        await reloadOrder();
+    };
+    const showPromiseConfirm = (idOrder, listOrderDetails) => {
+        confirm({
+            title: 'Bạn có chắc muốn hủy đơn hàng này chứ ?',
+            icon: <ExclamationCircleFilled />,
+            onOk() {
+                return handleCancelOrder(idOrder, listOrderDetails)
+                    .then(async (res) => {
+                        await reloadOrder();
+                        openNotificationWithIcon(
+                            'success',
+                            'Hủy đơn hàng thành công',
+                        );
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        openNotificationWithIcon(
+                            'error',
+                            'Có lỗi trong khi hủy vui lòng thử lại!',
+                        );
+                    });
+            },
+            onCancel() {},
+        });
     };
     return (
         <>
@@ -279,6 +328,7 @@ const AllPurchase = ({ status }) => {
                     next={loadMoreData}
                     hasMore={data.length < pagination.current.totalElement}
                 >
+                    {contextHolder}
                     <List
                         dataSource={data}
                         loading={loading}
@@ -699,12 +749,12 @@ const AllPurchase = ({ status }) => {
                                                             '#ee4d2d',
                                                         color: 'white',
                                                     }}
-                                                    onClick={() => {
-                                                        handleCancelOrder(
+                                                    onClick={() =>
+                                                        showPromiseConfirm(
                                                             item.id,
                                                             item.orderDetails,
-                                                        );
-                                                    }}
+                                                        )
+                                                    }
                                                 >
                                                     Hủy
                                                 </Button>
