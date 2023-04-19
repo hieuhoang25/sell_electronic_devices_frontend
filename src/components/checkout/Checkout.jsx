@@ -42,9 +42,23 @@ const initialState = {
 
 const checkoutReducer = (state = initialState, action) => {
     const { ADDRESS, PROMO, CHECKOUT, PAYMENT, OTHER_ADDRESS } = CHECKOUT_TYPE;
-    const { DISTR, METHOD, POSTID, PROMO: PROMO_REQ, PROVINCE, LINE, WARDS } = REQUEST;
+    const {
+        DISTR,
+        METHOD,
+        POSTID,
+        PROMO: PROMO_REQ,
+        PROVINCE,
+        LINE,
+        WARDS,
+    } = REQUEST;
 
-    const { PROVINCE: PAY_PROVINCE, POSTID: PAY_POSTID, WARDS: PAY_WARDS, LINE: PAY_LINE, DISTR: PAY_DISTR } = ADDRESS_FIELD;
+    const {
+        PROVINCE: PAY_PROVINCE,
+        POSTID: PAY_POSTID,
+        WARDS: PAY_WARDS,
+        LINE: PAY_LINE,
+        DISTR: PAY_DISTR,
+    } = ADDRESS_FIELD;
     console.log('inside reducer');
     switch (action.type) {
         case 'checkout':
@@ -57,7 +71,13 @@ const checkoutReducer = (state = initialState, action) => {
         case OTHER_ADDRESS: {
             console.log('call dispatch other address...');
             let addressFull = action.payload;
-            const { district: dis, address_line: line, province: prov, wards: wards, postal_id: postId } = action.payload;
+            const {
+                district: dis,
+                address_line: line,
+                province: prov,
+                wards: wards,
+                postal_id: postId,
+            } = action.payload;
             console.log('address full', addressFull);
             return {
                 ...state,
@@ -70,7 +90,13 @@ const checkoutReducer = (state = initialState, action) => {
         case ADDRESS: {
             console.log('call dispatch address...');
             let addressFull = action.payload;
-            const { district: dis, address_line: line, province: prov, wards: wards, postal_id: postId } = action.payload;
+            const {
+                district: dis,
+                address_line: line,
+                province: prov,
+                wards: wards,
+                postal_id: postId,
+            } = action.payload;
             console.log('address full', addressFull);
             return {
                 ...state,
@@ -93,7 +119,10 @@ export const CheckoutContext = React.createContext(null);
 const Checkout = () => {
     const { PROMO } = CHECKOUT_TYPE;
     const [form] = Form.useForm();
-    const [CheckoutReducer, dispatch] = useReducer(checkoutReducer, initialState);
+    const [CheckoutReducer, dispatch] = useReducer(
+        checkoutReducer,
+        initialState,
+    );
     const [disableCheckoutBtn, setDisableCheckoutBtn] = useState(false);
     const serviceDispatch = useDispatch();
     const navigate = useNavigate();
@@ -108,32 +137,29 @@ const Checkout = () => {
             .then((res) => {
                 console.log(res.data);
                 console.log(CheckoutReducer);
-
-                // setDisableCheckoutBtn((prev) => true);
-
-                alert('thanh toán thành công');
-                // axios
-                //     .post(`${ENV_URL}${CHECKOUT}`, CheckoutReducer)
-                //     .then((res) => {
-                //         console.log(res.data);
-                //         Swal.fire({
-                //             icon: 'success',
-                //             title: `Đặt hàng thành công`,
-                //             showConfirmButton: false,
-                //             timer: 1200,
-                //         });
-                //         setTimeout(() => {
-                //             serviceDispatch(clearAfterCheckOut());
-                //             navigate('/profile', {
-                //                 state: {
-                //                     profileId: '3',
-                //                 },
-                //             });
-                //         }, 1400);
-                //     })
-                //     .catch((e) => {
-                //         console.log(e.message);
-                //     });
+                setDisableCheckoutBtn((prev) => true);
+                axios
+                    .post(`${ENV_URL}${CHECKOUT}`, CheckoutReducer)
+                    .then((res) => {
+                        console.log(res.data);
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Đặt hàng thành công`,
+                            showConfirmButton: false,
+                            timer: 1200,
+                        });
+                        setTimeout(() => {
+                            serviceDispatch(clearAfterCheckOut());
+                            navigate('/profile', {
+                                state: {
+                                    profileId: '3',
+                                },
+                            });
+                        }, 1400);
+                    })
+                    .catch((e) => {
+                        console.log(e.message);
+                    });
             })
             .catch((e) => {
                 console.log('%c Validate form fail: ', 'color: red');
@@ -151,10 +177,17 @@ const Checkout = () => {
             <section className="main-section">
                 <Row justify="center" gutter={16}>
                     <Col className="gutter-row" span={12}>
-                        <CheckoutForm onFinish={onClickOrder} form={form}></CheckoutForm>
+                        <CheckoutForm
+                            onFinish={onClickOrder}
+                            form={form}
+                        ></CheckoutForm>
                     </Col>
                     <Col className="gutter-row" span={8}>
-                        <OrderList disableCheckoutBtn={disableCheckoutBtn} onAddPromotion={onAddPromotion} onClickOrder={onClickOrder}></OrderList>
+                        <OrderList
+                            disableCheckoutBtn={disableCheckoutBtn}
+                            onAddPromotion={onAddPromotion}
+                            onClickOrder={onClickOrder}
+                        ></OrderList>
                     </Col>
                 </Row>
             </section>
