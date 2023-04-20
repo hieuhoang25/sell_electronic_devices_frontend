@@ -14,8 +14,8 @@ const getProvince = async () => {
         withCredentials: false,
     });
 
-    console.log('respone data: ');
-    console.log(response.data);
+    // console.log('respone data: ');
+    // console.log(response.data);
     return response.data;
 };
 
@@ -57,10 +57,5 @@ const getSearchWard = async (districtId) => {
     });
     return response.data;
 };
-export {
-    getProvince,
-    getSearchProvince,
-    getDistrict,
-    getSearchDistrict,
-    getSearchWard,
-};
+
+export { getProvince, getSearchProvince, getDistrict, getSearchDistrict, getSearchWard };

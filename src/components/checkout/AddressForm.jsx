@@ -232,8 +232,8 @@ const AddressForm = ({ form, otherAddress }) => {
                                 allowClear={true}
                                 value={inputWardSearch}
                                 showSearch
-                                placeholder="Chọn Quận/Huyện"
                                 optionFilterProp="children"
+                                placeholder="Chọn Quận/Huyện"
                                 onChange={onWardChange}
                                 onSearch={onWardSearch}
                                 // defaultValue={1}

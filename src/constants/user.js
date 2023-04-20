@@ -26,7 +26,7 @@ export const ADDRESS = `/address`;
 
 // api/user/addresss/list
 export const USER_ADDRESS_LIST = `${USER}${ADDRESS}/list`;
-
+export const CRUD_USER_ADDRESS = `${USER}${ADDRESS}`
 // api/user/addresss/default
 export const USER_ADDRESS_DEFAULT = `${USER}${ADDRESS}/default`;
 
