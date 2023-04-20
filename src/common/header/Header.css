@@ -150,6 +150,7 @@ header {
 }
 
 .dark header {
+    box-shadow: -1px 15px 17px -8px rgba(255, 255, 255, 0.1);
     background-color: #242526;
     color: #e4e6eb;
 }
@@ -190,6 +191,9 @@ header ul li a:hover {
     box-shadow: -1px 11px 24px -11px rgba(0, 0, 0, 0.2);
     transition: 0.5s;
     border-radius: 0 0 10px 10px;
+}
+.dark .search.active{
+    border-bottom: solid 1px #686868;
 }
 
 @media (max-width: 768px) {
