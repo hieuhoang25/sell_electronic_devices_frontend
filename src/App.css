@@ -15,6 +15,12 @@ body {
     background: #f6f9fc;
     padding: 50px 0;
 }
+.dark .background{
+    background-color: #242526;
+}
+.dark .product{
+    background-color: #3a3b3c;
+}
 .container {
     max-width: 90%;
     margin: auto;
@@ -48,6 +54,12 @@ li {
 }
 .uppercase {
     text-transform: uppercase;
+}
+.dark h1:last-child,
+.dark h2:last-child ,
+.dark h3:last-child,.dark h4:last-child,
+.dark h5:last-child{
+    color: #e4e6eb;
 }
 .capitalize {
     text-transform: capitalize;
@@ -178,9 +190,16 @@ button {
     box-shadow: rgb(3 0 71 / 9%) 0px 1px 3px;
     margin: 10px;
 }
+
 .product h3 {
     font-weight: 400;
     font-size: 17px;
+}
+.product h3{
+    color: black;
+}
+.dark .product h3{
+    color: #e4e6eb;
 }
 .product .rate i {
     font-size: 15px;
@@ -231,9 +250,9 @@ button {
 .control-btn .prev {
     position: absolute;
     top: 40%;
-    width: 50px;
-    height: 50px;
-    line-height: 60px;
+    width: 40px;
+    height: 40px;
+    /* line-height: 60px; */
     background: #0f3460;
     border-radius: 50%;
     transform: 0.5s;

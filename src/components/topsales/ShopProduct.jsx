@@ -45,7 +45,7 @@ const ShopProduct = ({ shopItems, isLoading }) => {
                                     >
                                         <h3
                                             style={{
-                                                color: 'black',
+                                             
                                                 height: 40,
                                                 marginTop: 26,
                                                 marginBottom: 14,

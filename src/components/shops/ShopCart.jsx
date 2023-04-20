@@ -108,7 +108,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                         <div key={index} className="box myShop_Style">
                             <div className="product top">
                                 <div className="img">
-                                    {shopItems.discount != 0 && (
+                                    {shopItems.discount !== 0 && (
                                         <span className="discount">
                                             -{shopItems.discount}% Off
                                         </span>
@@ -145,7 +145,7 @@ const ShopCart = ({ shopItems, isAuth, isLoading }) => {
                                     >
                                         <h3
                                             style={{
-                                                color: 'black',
+                                               
                                                 height: 40,
                                                 marginBottom: 14,
                                                 marginTop: 26,

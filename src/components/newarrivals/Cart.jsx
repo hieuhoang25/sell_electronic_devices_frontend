@@ -75,7 +75,7 @@ const Cart = () => {
                                 <div className="box product" key={index}>
                                     <div
                                         className="img"
-                                        style={{ height: 180 }}
+                                        style={{ height: 180, padding: '0px 5px'}}
                                     >
                                         <img
                                             src={getImage(value.image)}
@@ -91,7 +91,7 @@ const Cart = () => {
                                             </span>
                                         )}
                                     </div>
-                                    <h4 style={{ height: 40,color:'black' }}>
+                                    <h4 style={{ height: 40}}>
                                         {value.product_name}
                                     </h4>
                                     {value.discount !== 0 ? (

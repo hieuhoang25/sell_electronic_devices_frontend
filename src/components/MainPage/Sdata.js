@@ -14,7 +14,7 @@ const Sdata = [
   },
   {
     id: 3,
-    title: "Happy April get one Apple",
+    title: "Mừng tháng 4 được 1 Apple",
     desc: "Flash deal giảm từ 30% cho các mặt hàng Apple",
     cover: '../images/SlideCard/apple.png',
   },

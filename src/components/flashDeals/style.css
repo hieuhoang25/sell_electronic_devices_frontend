@@ -2,6 +2,13 @@
   background: #f6f9fc;
   padding: 50px 0;
 }
+.dark .flash{
+  background-color: #242526;
+}
+.dark .flash h4,
+.dark .f_flex h1 {
+  color: #e4e6eb;
+}
 
 .flash h4 {
   font-weight: 400;
