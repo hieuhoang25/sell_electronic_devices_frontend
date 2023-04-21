@@ -87,7 +87,8 @@ const Catg = ({
                             }}
                             onChange={onChangeBrand}
                         >
-                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                            {/* <div style={{ display: 'flex', flexWrap: 'wrap' }}> */}
+                            <div style={{ display: 'grind', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
                                 {listBrand.map((item) => (
                                     <MyCheckBox
                                         key={item.id}
@@ -108,7 +109,8 @@ const Catg = ({
                             }}
                             onChange={onChangeStorage}
                         >
-                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                            {/* <div style={{ display: 'flex', flexWrap: 'wrap' }}> */}
+                            <div style={{ display: 'grind', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
                                 {listStorage.map((item) => (
                                     <MyCheckBox
                                         style={{ margin: '10px' }}
