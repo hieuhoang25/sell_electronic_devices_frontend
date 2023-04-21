@@ -38,7 +38,7 @@ const FavoriteProduct = () => {
         return res;
     };
     const fetchMoreFaveItems = async () => {
-        console.log('current page -----', page);
+        // console.log('current page -----', page);
         let res = await fetchListBy(page, ITEM_PER_PAGE);
         setFavList(res);
         let itemList = res.data;
@@ -48,9 +48,9 @@ const FavoriteProduct = () => {
             return prev.concat(itemList);
         });
         setHasMore(curPage + 1 < totalPage);
-        console.log('data: ', res);
-        console.log('items: ', favItems);
-        console.log('hasMore: ', hasMore);
+        // console.log('data: ', res);
+        // console.log('items: ', favItems);
+        // console.log('hasMore: ', hasMore);
     };
     const onClickLoadMore = () => {
         fetchMoreFaveItems();
@@ -60,7 +60,7 @@ const FavoriteProduct = () => {
     let { data: favItemsz, totalPage, page: curPage, size } = favList;
 
     if (!favItemsz) favItemsz = [];
-    console.log('%cITEMS: ', 'color:hotpink', favItems);
+    // console.log('%cITEMS: ', 'color:hotpink', favItems);
 
     function wishlistItemDetail(item) {
         const {
@@ -73,16 +73,16 @@ const FavoriteProduct = () => {
     }
     const handleFavoriteClick = useCallback(async function (item) {
         let itemIndex = favItems.findIndex((i) => i.product_id === item.id);
-        console.log('item index in list: ', itemIndex);
+        // console.log('item index in list: ', itemIndex);
         setFaveItems((prev) => {
             return [...prev.filter((value, index) => index !== itemIndex)];
         });
 
-        console.log('set false item: ', item.id);
-        console.log('faveItems after removed; ', favItems);
+        // console.log('set false item: ', item.id);
+        // console.log('faveItems after removed; ', favItems);
         let list = await removeWishlists(item.id);
         pushMore(list);
-        console.log('current page; ', page);
+        // console.log('current page; ', page);
     });
 
     async function pushMore(list) {
@@ -113,8 +113,8 @@ const FavoriteProduct = () => {
         }
     }
     useEffect(() => {
-        console.log('load remove fave');
-        console.log('faveItems after removed; ', favItems);
+        // console.log('load remove fave');
+        // console.log('faveItems after removed; ', favItems);
     }, [favItems]);
     //remove wishlist
     async function removeWishlists(product_id) {

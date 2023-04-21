@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Block } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { postResendOtp, postVerification } from './thunk';
+import Loading from '../../common/Loading/Loading';
 const Verification = () => {
     const { infoSignUP } = useSelector((state) => state.userReducer);
     const [valueBtn, setValueBtn] = useState(true);
@@ -130,7 +131,9 @@ const Verification = () => {
                 </form>
             </div>
             </div>
-           
+            <div className="test_signUp">
+                <Loading/>
+            </div>
         </div>
     );
 };

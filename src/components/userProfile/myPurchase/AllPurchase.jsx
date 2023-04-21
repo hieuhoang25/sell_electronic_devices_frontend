@@ -598,7 +598,7 @@ const AllPurchase = ({ status }) => {
                                     <div
                                         style={{
                                             padding: '10px 10px 5px',
-                                            background: '#fffefb',
+                                            // background: '#fffefb',
                                         }}
                                     >
                                         <div
@@ -613,7 +613,7 @@ const AllPurchase = ({ status }) => {
                                                     margin: '0 10px 0 0',
                                                     fontSize: '14px',
                                                     lineHeight: '20px',
-                                                    color: 'rgba(0,0,0,.8)',
+                                                    // color: 'rgba(0,0,0,.8)',
                                                 }}
                                             >
                                                 Áp dụng mã giảm:
@@ -649,7 +649,7 @@ const AllPurchase = ({ status }) => {
                                                     margin: '0 10px 0 0',
                                                     fontSize: '14px',
                                                     lineHeight: '20px',
-                                                    color: 'rgba(0,0,0,.8)',
+                                                    // color: 'rgba(0,0,0,.8)',
                                                 }}
                                             >
                                                 Giảm:
@@ -674,7 +674,7 @@ const AllPurchase = ({ status }) => {
                                 <div
                                     style={{
                                         padding: '10px 10px 5px',
-                                        background: '#fffefb',
+                                        // background: '#fffefb',
                                     }}
                                 >
                                     <div
@@ -689,7 +689,7 @@ const AllPurchase = ({ status }) => {
                                                 margin: '0 10px 0 0',
                                                 fontSize: '14px',
                                                 lineHeight: '20px',
-                                                color: 'rgba(0,0,0,.8)',
+                                                // color: 'rgba(0,0,0,.8)',
                                             }}
                                         >
                                             Tổng cộng:
@@ -714,7 +714,7 @@ const AllPurchase = ({ status }) => {
                                 <div
                                     style={{
                                         padding: '24px 24px 12px',
-                                        background: '#fffefb',
+                                        // background: '#fffefb',
                                     }}
                                 >
                                     <div

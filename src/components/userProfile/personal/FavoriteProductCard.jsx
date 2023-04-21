@@ -59,7 +59,7 @@ const FavoriteProductCard = ({
                 <div>
                     <Button
                         style={{
-                            backgroundColor: 'orangered',
+                            // backgroundColor: 'orangered',
                             color: 'white',
                         }}
                         onClick={() => {

@@ -1,4 +1,4 @@
-import { React, useState, memo, useEffect, useRef, useCallback } from 'react';
+    import { React, useState, memo, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Col,
@@ -77,7 +77,8 @@ const ProductDetail = ({ isAuth }) => {
     const [inventory, setInventory] = useState({});
     const [isChanged, setIsChanged] = useState(false);
     const myRef = useRef(null);
-
+    const  Navigate = useNavigate();
+    const  {isAuthenticated}  = useSelector(state => state.auth)
     const [cartAddedNotif, setCartAddedNotif] = useState({
         title: 'Thêm vào giỏ hàng',
         message: '',
@@ -85,13 +86,21 @@ const ProductDetail = ({ isAuth }) => {
         content: null,
         isSuccess: null,
     });
+    const  handleBuy = async () =>{
+        if( isAuthenticated){
+           await handleAddToCart()
+            navigate('/cart')
+        }else{
+            Navigate('/login')
+        }
+    }
     const productBody = useRef({
         productId: productId,
         colorId: null,
         storageId: null,
     });
     const specificationTable = useRef([]);
-    console.log(productId);
+    // console.log(productId);
     function fetchColor(id) {
         console.log('fetchColor: ', id);
         return axios({
@@ -116,7 +125,7 @@ const ProductDetail = ({ isAuth }) => {
                 // console.log('storeage: ', res.data);
                 setSelectedStorage(res.data[0].id);
                 setStorage(res.data);
-                console.log('storeage: ', res.data);
+                // console.log('storeage: ', res.data);
             })
             .catch((error) => error);
     }
@@ -129,9 +138,9 @@ const ProductDetail = ({ isAuth }) => {
             data: productBody.current,
         })
             .then((res) => {
-                console.log('product-detail: ', res.data);
+                // console.log('product-detail: ', res.data);
                 setProductDetail((prev) => res.data);
-                console.log('p detail: ', productDetail);
+                // console.log('p detail: ', productDetail);
                 specificationTable.current = res.data.product_productAttributes;
 
                 //
@@ -395,19 +404,19 @@ const ProductDetail = ({ isAuth }) => {
         //         });
         //     }
         // });
-
+        
         const mess_message = productDetail.display_name;
 
         const mess_title = 'Thêm vào giỏ hàng';
-        console.log('handlemessage', mess_message);
-        console.log('title:', cartAddedNotif.title);
-        console.log('cart: ', Cart);
+        // console.log('handlemessage', mess_message);
+        // console.log('title:', cartAddedNotif.title);
+        // console.log('cart: ', Cart);
 
         const item_id = productDetail.id;
-        console.log('item_id: ', item_id);
+        // console.log('item_id: ', item_id);
         const { items } = Cart;
 
-        console.log('%cITEMS: ', 'color:red', items);
+        // console.log('%cITEMS: ', 'color:red', items);
 
         const request = {
             cart_id: Cart.id,
@@ -424,9 +433,9 @@ const ProductDetail = ({ isAuth }) => {
         // sản phẩm có trong giỏ
         if (cartIndex >= 0) {
             const { quantity: c_qty } = items[cartIndex];
-            console.log('current quty; ', c_qty);
+            // console.log('current quty; ', c_qty);
             if (c_qty >= QTY_MAX) {
-                console.log('failed');
+                // console.log('failed');
                 setCartAddedNotif((prev) => {
                     return {
                         ...prev,
@@ -443,7 +452,7 @@ const ProductDetail = ({ isAuth }) => {
                     { ...request, quantity: fixedQty },
                     CartRequestTYPE.ADD,
                 );
-                console.log(' requestItem', requestItem);
+                // console.log(' requestItem', requestItem);
                 setCartAddedNotif((prev) => {
                     return {
                         ...prev,
@@ -459,7 +468,7 @@ const ProductDetail = ({ isAuth }) => {
                 request,
                 CartRequestTYPE.ADD,
             );
-            console.log(' requestItem', requestItem);
+            // console.log(' requestItem', requestItem);
             dispatch(addItemToCart(requestItem));
             setCartAddedNotif((prev) => {
                 return {
@@ -594,8 +603,6 @@ const ProductDetail = ({ isAuth }) => {
                     id="top-product-page"
                     ref={myRef}
                     style={{
-                        marginTop: '5rem',
-                        marginBottom: '5rem',
                         scrollMarginBotom: '8vh',
                     }}
                     className='top-product-page-v2'
@@ -627,11 +634,12 @@ const ProductDetail = ({ isAuth }) => {
                                     }}
                                 >
                                     <div
+                                    className='img'
                                         style={{
                                             position: 'relative',
                                             display: 'inline-block',
-                                            marginLeft: 20,
                                         }}
+                                    
                                     >
                                         <img
                                             width="300"
@@ -812,6 +820,7 @@ const ProductDetail = ({ isAuth }) => {
                                                         }}
                                                     >
                                                         <div
+                                                            className='text'
                                                             style={{
                                                                 padding: '1px',
                                                             }}
@@ -871,7 +880,8 @@ const ProductDetail = ({ isAuth }) => {
                                         ></ProductDetailQuantityCounter>
 
                                         {/*Them vaoo gio*/}
-                                        <div style={{ padding: '5px' }}>
+                                        <div className='btn_flex'>
+                                        <div className='btn' >
                                             <CartNotification
                                                 key={cartAddedNotif}
                                                 isButtonDisabled={
@@ -895,6 +905,14 @@ const ProductDetail = ({ isAuth }) => {
                                     style={{ width: '90%' }}
                                 /> */}
                                         </div>
+                                        <div className='btn_buy' onClick={handleBuy}>
+                                            <button type='button' onClick={
+                                                handleAddToCart
+                                                }>Mua Ngay</button>
+                                        </div>
+                                        </div>
+                                        
+                                        
                                     </div>
                                 </div>
 

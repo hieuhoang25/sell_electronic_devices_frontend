@@ -31,7 +31,7 @@
     right: 0;
     bottom: 0;
     z-index: -1;
-    background: #9fdefb;
+    background: #58b0d8;
     transform: scaleX(0);
     transform-origin: 0 50%;
     transition: transform 0.3s ease-out;
@@ -71,4 +71,37 @@
     /* color:rgb(104, 104, 104); */
     transform: scaleX(1);
     background-color: #b0afaf30;
+}
+.notification_buy h2{
+    color: rgb(241, 140, 7);
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+}
+.notification_buy .img img{
+    width: 300px;
+    border-radius: 20px;
+}
+.notification_buy .img{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.notification_buy .notification_btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+}
+.notification_buy .notification_btn button:first-of-type{
+    background-color: #58b0d8;
+    color: #ffffff;
+}
+.notification_sign_up_buy h4{
+    margin: 0;
+    padding-right: 5px;
+}
+.notification_sign_up_buy{
+    display: flex;
+    align-items: center;
 }

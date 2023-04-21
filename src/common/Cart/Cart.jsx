@@ -57,7 +57,7 @@ const Cart = () => {
                     }).then((data) => {
                         const request = getCartDetailRequest({ cart_id: Cart.id, quantity: 1, id: id }, CartRequestTYPE.DELETE);
                         // request.id = id;
-                        console.log('call delete ', request);
+                        // console.log('call delete ', request);
                         dispatch(removeItemFromCart(request));
                         dispatch(updateCart());
                     });

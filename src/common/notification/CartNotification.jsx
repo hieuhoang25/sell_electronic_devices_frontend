@@ -53,9 +53,9 @@ const CartNotification = ({ type, title, message, placement, handleClick, isButt
             handleClick(open);
             // successAddedNotifContent();
 
-            console.log(message);
+            // console.log(message);
         } catch {}
-        console.log('message: ', message);
+        // console.log('message: ', message);
     };
     const showNotif = () => {
         open();

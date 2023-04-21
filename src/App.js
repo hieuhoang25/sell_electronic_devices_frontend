@@ -24,6 +24,7 @@ import BackToTop from './common/backToTop/BackToTop';
 import ButtonDarkMode from './common/drakMode/ButtonDarkMode';
 import Verification from './components/SignUpPage/Verification';
 import Contact from './components/contact/Contact';
+import NotFoundPage from './common/Notfound/NotFoundPage';
 const LoginPage = Loadable(lazy(() => import('./components/LoginPage/LoginPage')));
 const Profile = Loadable(lazy(() => import('./components/userProfile/Profile')));
 function App() {
@@ -169,6 +170,7 @@ function App() {
                     <Route path="/signUp" element={<SignUp />}></Route>
                     <Route path="/signUp/Verification/:userName" element={<Verification />} />
                     <Route path="/contact" element={<Contact />} />
+                    <Route path='/*' element={<NotFoundPage/>} />
                 </Routes>
             </Wrapper>
             <BackToTop />

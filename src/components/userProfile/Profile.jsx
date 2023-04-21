@@ -6,14 +6,15 @@ import MyPurchase from './myPurchase/MyPurchase';
 import ChangePassword from './personal/ChangePassword';
 import FavoriteProduct from './personal/FavoriteProduct';
 import Address from './personal/Address';
-
 import { useLocation } from 'react-router-dom';
 import './Profile.css';
+import { useSelector } from 'react-redux';
 const Profile = () => {
     // const dispatch = useDispatch();
     // useEffect(()=>{
     //   dispatch(fetchInfoUer)
     // },[dispatch])
+    const {infoUser} = useSelector (state => state.infoUserReducer)
     const location = useLocation();
     let profileId = '2';
     if (location.state) {
@@ -27,13 +28,14 @@ const Profile = () => {
             label: (
                 <div>
                     <div>
-                        <div style={{ width: '155%' }}>
+                        <div >
                             <Photo />
-                            <div>NhatPhu00</div>
+                            <div className='Profile_name'>{infoUser?.full_name}</div>
                         </div>
                     </div>
                 </div>
             ),
+            disabled: true,
         },
         {
             key: '2',

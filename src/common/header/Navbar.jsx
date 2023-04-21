@@ -24,7 +24,7 @@ const Navbar = () => {
                                 <CategoriesDropDown></CategoriesDropDown>
                             </li>
                             <li>
-                                <Link to="/">Trang chủ</Link>
+                                <Link to="/"><i class="fa fa-home"></i> Trang chủ</Link>
                             </li>
                             <li>
                                 <Link
@@ -37,11 +37,13 @@ const Navbar = () => {
                                         })
                                     }
                                 >
+                                    <i class="fa fa-store"></i>
                                     Sản phẩm
                                 </Link>
                             </li>
                             <li>
                                 <Link to="/contact">
+                                <i class="fa fa-headset"></i>
                                     Liên hệ
                                 </Link>
                             </li>

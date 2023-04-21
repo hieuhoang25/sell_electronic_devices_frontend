@@ -71,6 +71,7 @@ function CategoriesDropDown() {
                     style={{ marginBottom: '1rem' }}
                     className="ant-dropdown-button"
                 >
+                    <i class="fa fa-stream"></i>
                     Danh mục sản phẩm
                 </Button>
             </Dropdown>

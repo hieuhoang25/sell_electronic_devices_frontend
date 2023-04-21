@@ -135,7 +135,7 @@ const ToPay = ({ status }) => {
     };
     return (
         <>
-            {!loading && data.length != 0 ? (
+            {!loading && data.length !== 0 ? (
                 <InfiniteScroll
                     dataLength={data.length}
                     next={loadMoreData}
@@ -411,7 +411,7 @@ const ToPay = ({ status }) => {
                                     <div
                                         style={{
                                             padding: '10px 10px 5px',
-                                            background: '#fffefb',
+                                            // background: '#fffefb',
                                         }}
                                     >
                                         <div
@@ -426,7 +426,7 @@ const ToPay = ({ status }) => {
                                                     margin: '0 10px 0 0',
                                                     fontSize: '14px',
                                                     lineHeight: '20px',
-                                                    color: 'rgba(0,0,0,.8)',
+                                                    // color: 'rgba(0,0,0,.8)',
                                                 }}
                                             >
                                                 Áp dụng mã giảm:
@@ -447,7 +447,7 @@ const ToPay = ({ status }) => {
                                     <div
                                         style={{
                                             padding: '10px 10px 5px',
-                                            background: '#fffefb',
+                                            // background: '#fffefb',
                                         }}
                                     >
                                         <div
@@ -462,7 +462,7 @@ const ToPay = ({ status }) => {
                                                     margin: '0 10px 0 0',
                                                     fontSize: '14px',
                                                     lineHeight: '20px',
-                                                    color: 'rgba(0,0,0,.8)',
+                                                    // color: 'rgba(0,0,0,.8)',
                                                 }}
                                             >
                                                 Giảm:
@@ -487,7 +487,7 @@ const ToPay = ({ status }) => {
                                 <div
                                     style={{
                                         padding: '10px 10px 5px',
-                                        background: '#fffefb',
+                                        // background: '#fffefb',
                                     }}
                                 >
                                     <div
@@ -502,7 +502,7 @@ const ToPay = ({ status }) => {
                                                 margin: '0 10px 0 0',
                                                 fontSize: '14px',
                                                 lineHeight: '20px',
-                                                color: 'rgba(0,0,0,.8)',
+                                                // color: 'rgba(0,0,0,.8)',
                                             }}
                                         >
                                             Tổng cộng:
@@ -527,7 +527,7 @@ const ToPay = ({ status }) => {
                                 <div
                                     style={{
                                         padding: '24px 24px 12px',
-                                        background: '#fffefb',
+                                        // background: '#fffefb',
                                     }}
                                 >
                                     <div

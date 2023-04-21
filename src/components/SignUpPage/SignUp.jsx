@@ -155,7 +155,14 @@ export default function SignUp() {
                                             name="username"
                                             autoComplete="Username"
                                             onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                         />
+                                           {formik.errors.username &&
+                                            formik.touched.username && (
+                                                <span style={{ color: 'red' }}>
+                                                    {formik.errors.username}
+                                                </span>
+                                            )}
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
@@ -166,7 +173,14 @@ export default function SignUp() {
                                             name="email"
                                             autoComplete="email"
                                             onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                         />
+                                           {formik.errors.email &&
+                                            formik.touched.email && (
+                                                <span style={{ color: 'red' }}>
+                                                    {formik.errors.email}
+                                                </span>
+                                            )}
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
@@ -178,7 +192,14 @@ export default function SignUp() {
                                             id="phoneNumber"
                                             autoComplete="new-password"
                                             onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                         />
+                                           {formik.errors.phone &&
+                                            formik.touched.phone && (
+                                                <span style={{ color: 'red' }}>
+                                                    {formik.errors.phone}
+                                                </span>
+                                            )}
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
@@ -190,7 +211,14 @@ export default function SignUp() {
                                             id="password"
                                             autoComplete="new-password"
                                             onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                         />
+                                           {formik.errors.password &&
+                                            formik.touched.password && (
+                                                <span style={{ color: 'red' }}>
+                                                    {formik.errors.password}
+                                                </span>
+                                            )}
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
@@ -202,7 +230,14 @@ export default function SignUp() {
                                             id="confirmPassword"
                                             autoComplete="confirmPassword"
                                             onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}  
                                         />
+                                           {formik.errors.confirmPassword &&
+                                            formik.touched.confirmPassword && (
+                                                <span style={{ color: 'red' }}>
+                                                    {formik.errors.confirmPassword}
+                                                </span>
+                                            )}
                                     </Grid>
 
                                     {/* <Grid item xs={12}>

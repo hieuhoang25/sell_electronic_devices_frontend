@@ -3,7 +3,11 @@
   height: auto;
   padding: 50px 0;
 }
-
+.dark .cart-items{
+  background-color: #242526;
+  border-bottom:1px solid #717171;
+  border-top: 1px solid #717171;
+}
 .cart-items .cart-details {
   width: 70%;
 }

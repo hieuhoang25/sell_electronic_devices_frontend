@@ -20,6 +20,7 @@ import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { mergeAnnonCart } from '../../services/cartService';
 import { GOOGLE_AUTH_URL } from '../../constants/index';
 import './login.css'
+import Loading from '../../common/Loading/Loading';
 const LoginPage = () => {
     const theme = createTheme();
     const navigate = useNavigate();
@@ -37,6 +38,9 @@ const LoginPage = () => {
     };
     const [formError, setFormError] = useState('');
     const handleLogin = async () => {
+        dispatch({
+            type:'OPEN_LOADING'
+        })
         const response_login = await axios
             .post(process.env.REACT_APP_URL + 'un/login', formLogin)
             .catch((error) => {
@@ -64,6 +68,10 @@ const LoginPage = () => {
             },
         });
         dispatch(mergeAnnonCart());
+        setTimeout(()=>{ 
+            dispatch({
+            type:'CLOSE_LOADING'
+        })},1500)
         navigate('/');
     };
     const handleChangePassword = (e) => {
@@ -225,7 +233,7 @@ const LoginPage = () => {
               
                 
             </Grid>
-            
+            <Loading/>
         </ThemeProvider>
     );
 };

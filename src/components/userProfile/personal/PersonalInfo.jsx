@@ -4,16 +4,19 @@ import { Button, Form, Input, Radio, Modal, notification, Space } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
 import DatePickerCalendar from './DatePicker';
 import './PersonalInfo.css';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from '../../../services/axios';
 import { BASE_USER, INFO } from '../../../constants/user';
 import _ from 'lodash';
+import './PersonalInfo.css'
 
 const ChangeEmailForm = () => {
+
     // const { TextArea } = Input();
     const onFinish = (values) => {
         // console.log('Received values of form: ', values);
     };
+  
     return (
         <Form
             name="complex-form"
@@ -123,6 +126,7 @@ const ChangeEmailForm = () => {
     );
 };
 const UserForm = () => {
+    const dispatch = useDispatch()
     const [api, contextHolder] = notification.useNotification();
     const openNotificationWithIcon = (type) => {
         api[type]({
@@ -189,6 +193,10 @@ const UserForm = () => {
             },
         ];
         setInfoUser(formData);
+        dispatch({
+            type: "GET_INFO_USER",
+            payload: info
+        })
         // infoUser = reponse_info.data;
     }, []);
     const [form] = Form.useForm();
@@ -219,7 +227,14 @@ const UserForm = () => {
                       span: 14,
                   },
               }
-            : null;
+            : {
+                labelCol: {
+                    span: 5,
+                },
+                wrapperCol: {
+                    span: 14,
+                },
+            };
     const buttonItemLayout =
         formLayout === 'horizontal'
             ? {
@@ -228,7 +243,13 @@ const UserForm = () => {
                       offset: 5,
                   },
               }
-            : null;
+            :{
+                wrapperCol: {
+                    span: 14,
+                    offset: 5,
+                },
+            }
+            ;
     return (
         <Form
             {...formItemLayout}
@@ -250,7 +271,9 @@ const UserForm = () => {
                     },
                 ]}
             >
-                <Input />
+                <Input  style={{
+                        width: 'calc(100% - 90px)',
+                    }} />
             </Form.Item>
             <Form.Item
                 label="Email"
@@ -297,7 +320,9 @@ const UserForm = () => {
             {/* <Form.Item label="Ngày sinh">
                 <DatePickerCalendar />
             </Form.Item> */}
-            <Form.Item {...buttonItemLayout}>
+            <Form.Item 
+            {...buttonItemLayout}
+            >
                 {contextHolder}
                 <Button
                     htmlType="submit"
@@ -342,16 +367,17 @@ function PersonalInfo() {
             }}
         >
             <div
-                style={{
-                    margin: 'auto',
-                    width: 600,
-                    height: 600,
-                    boxShadow: '0 1px 2px 0 rgb(0 0 0 / 13%)',
-                    boxSizing: 'border-box',
-                    backgroundColor: '#fff',
-                    padding: '50px',
-                    marginTop: '50px',
-                }}
+            className='presonalInfo_personal'
+                // style={{
+                //     margin: 'auto',
+                //     width: 600,
+                //     height: 600,
+                //     boxShadow: '0 1px 2px 0 rgb(0 0 0 / 13%)',
+                //     boxSizing: 'border-box',
+                //     backgroundColor: '#fff',
+                //     padding: '50px',
+                //     marginTop: '50px',
+                // }}
             >
                 <div>
                     <h3>Hồ Sơ Của Tôi</h3>

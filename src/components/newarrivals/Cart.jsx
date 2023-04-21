@@ -56,7 +56,7 @@ const Cart = () => {
                 setLoading(false);
             })
             .catch((err) => {
-                // console.log(err.message);
+                // console.log(err);
                 setLoading(false);
             });
         // console.log(productArrival);

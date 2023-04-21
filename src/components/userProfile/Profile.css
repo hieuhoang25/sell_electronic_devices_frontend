@@ -31,7 +31,10 @@
 .wishlist-card .wishlist-card-body-info {
     flex: 1;
 }
-
+.Profile_name{
+    color: #4183c4;
+    font-weight: 600;
+}
 .wishlist-card .product-name {
     margin: 0rem 0 1rem 0;
 }
@@ -41,8 +44,19 @@
 .profile-tabs .ant-tabs-content-holder .ant-tabs-content .ant-tabs-tabpane {
     background-color: rgb(204 207 212 / 16%);
 }
+/* :where(.css-dev-only-do-not-override-sk7ap8).ant-avatar.ant-avatar-icon{
+color: #4183c4;
+} */
 .profile-tabs .ant-tabs-content-holder .ant-tabs-content .ant-tabs-tabpane>div {
     background-color: rgba(239, 241, 244, 0.16);
+}
+.dark .profile-tabs{
+    background-color: #3a3b3c;
+    border-top: 1px solid rgb(150, 150, 150);
+    border-bottom: 1px solid rgb(150, 150, 150);
+}
+.dark .profile-tabs .ant-tabs-content-holder .ant-tabs-content .ant-tabs-tabpane>div{
+    background-color: #242526;
 }
 
 
