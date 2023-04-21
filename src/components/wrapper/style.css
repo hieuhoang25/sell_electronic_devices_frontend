@@ -8,8 +8,14 @@
   line-height: 70px;
   margin-bottom: 20px;
 }
+.dark .wrapper .img {
+  background-color: gray;
+}
 .wrapper .img i {
   font-size: 25px;
+}
+.dark .wrapper .img i{
+  color: #e4e6eb;
 }
 .wrapper .product {
   padding: 30px;

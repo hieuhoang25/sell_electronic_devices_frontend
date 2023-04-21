@@ -68,7 +68,7 @@ const Shop = ({
     return (
         <>
             {/* <Home CartItem={sliderItem} /> */}
-            <section className="shop background">
+            <section className="shop background ">
                 <div id="section-product" className="container d_flex">
                     <Catg
                         categories={categories}
@@ -92,13 +92,14 @@ const Shop = ({
                                 sortValue={sortValue}
                             />
                         </div>
-                        <div className="product-content  grid1">
+                        <div className="product-content grid1">
                             <ShopCart
                                 shopItems={shopItems}
                                 isAuth={isAuth}
                                 isLoading={isLoading}
                             />
                         </div>
+                        
                         {totalPage != 0 && (
                             <Pagination
                                 pageSize={1}

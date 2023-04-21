@@ -598,6 +598,7 @@ const ProductDetail = ({ isAuth }) => {
                         marginBottom: '5rem',
                         scrollMarginBotom: '8vh',
                     }}
+                    className='top-product-page-v2'
                 >
                     <div className="productDetail">
                         <div>

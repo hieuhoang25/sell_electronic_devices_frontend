@@ -2,6 +2,17 @@
    max-width:80% ;
    margin: auto;
 }
+.top-product-page-v2{
+padding: 100px 0;
+}
+.dark .productDetail .product_style,
+.dark .productDetail .product_tskt{
+    background-color: #3a3b3c;
+    color: #e4e6eb;
+}
+.dark .top-product-page-v2{
+    background-color: #242526;
+}
 .productDetail .product_style{
     padding-top: 20px;
     margin-right: 20px;

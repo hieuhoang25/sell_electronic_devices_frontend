@@ -12,13 +12,16 @@ const Shop = ({ addToCart, shopItems, title, isAuth }) => {
                                 <h2>{title}</h2>
                             </div>
                         </div>
-                        <div className="product-content  grid1">
+                        <div className='container'>
+                        <div className="product-content grid1">
                             <ShopCart
                                 addToCart={addToCart}
                                 shopItems={shopItems}
                                 isAuth={isAuth}
                             />
                         </div>
+                        </div>
+                       
                     </div>
                 </div>
             </section>
