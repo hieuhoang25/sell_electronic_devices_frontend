@@ -884,7 +884,6 @@ const ProductDetail = ({ isAuth }) => {
                                         </div>
                                     </div>
                                 </div>
-
                                 {/*Thông số kỹ thuật*/}
                                 <div
                                     className="product_tskt"
