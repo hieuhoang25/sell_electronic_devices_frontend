@@ -1,8 +1,9 @@
-import React, { memo, useState, useReducer, useContext } from 'react';
-import { Col, Row, Form } from 'antd';
+import React, { memo, useState, useReducer, useContext} from 'react';
+import { Col, Row, Form, notification} from 'antd';
+
 import CheckoutForm from './CheckoutForm';
 import OrderList from './OrderList';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,Link} from 'react-router-dom';
 import './style.css';
 import { ADDRESS_FIELD } from './CheckoutForm';
 import axios from '../../services/axios';
@@ -11,6 +12,7 @@ import { ENV_URL } from '../../constants/index';
 import { clearAfterCheckOut } from '../../services/cartService';
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
+import {checkAllOutOfStock} from '../../common/Cart/CartUtil'
 
 const paymentData = [{ p_id: 1, name: 'VISA/MASTER Card' }];
 
@@ -117,6 +119,21 @@ const checkoutReducer = (state = initialState, action) => {
 };
 export const CheckoutContext = React.createContext(null);
 const Checkout = () => {
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type, message, description = '', placements = 'top', duration = '2') => {
+        api[type]({
+            message: message,
+            placement: placements,
+            description: description,
+            duration: duration
+        });
+    };
+    const Cart = useSelector((state) => {
+        return state.cart;
+    });
+    const {items} = Cart;
+
+
     const { PROMO } = CHECKOUT_TYPE;
     const [form] = Form.useForm();
     const [CheckoutReducer, dispatch] = useReducer(
@@ -137,10 +154,10 @@ const Checkout = () => {
             .then((res) => {
                 console.log(res.data);
                 console.log(CheckoutReducer);
-                setDisableCheckoutBtn((prev) => true);
                 axios
                     .post(`${ENV_URL}${CHECKOUT}`, CheckoutReducer)
                     .then((res) => {
+                        setDisableCheckoutBtn((prev) => true);
                         console.log(res.data);
                         Swal.fire({
                             icon: 'success',
@@ -158,23 +175,39 @@ const Checkout = () => {
                         }, 1400);
                     })
                     .catch((e) => {
+                      
                         console.log(e.message);
+                        openNotificationWithIcon('error','Có lỗi xảy ra')
+                        setDisableCheckoutBtn((prev) => true);
+                        setTimeout(() => {
+                            navigate('/cart');
+                        },2000)
+                        
                     });
             })
             .catch((e) => {
                 console.log('%c Validate form fail: ', 'color: red');
                 console.log(e.errorFields);
             });
-        // console.log(form.validateFields());
-        // form/;
-        // ! test mode
-
-        // !end test mod
     };
 
     return (
         <CheckoutContext.Provider value={{ CheckoutReducer, dispatch }}>
-            <section className="main-section">
+         {contextHolder}
+         {checkAllOutOfStock(items) && 
+                                   (
+                                    <div style={{minHeight:"500px"}}  className="main-section d_flex_jus_center algin-center">
+                                    <div className='out-stock d_flex_col'>
+                                   <h5>Không có sản phẩm nào để thanh toán</h5>
+                                    <Link to={'/product/1'} className="shop-btn">
+                                        <i class="fa-solid fa-cart-shopping"></i>
+                                        {`   `} Tiếp tục mua sắm
+                                    </Link>
+                                    </div>
+                                    </div>) 
+                                    }
+          {!checkAllOutOfStock(items) && 
+            <section className="main-section">  
                 <Row justify="center" gutter={16}>
                     <Col className="gutter-row" span={12}>
                         <CheckoutForm
@@ -191,19 +224,8 @@ const Checkout = () => {
                     </Col>
                 </Row>
             </section>
+            }
         </CheckoutContext.Provider>
     );
 };
 export default memo(Checkout);
-
-// const Toast = Swal.mixin({
-//     toast: true,
-//     position: 'top-end',
-//     showConfirmButton: false,
-//     timer: 2000,
-//     timerProgressBar: true,
-//     didOpen: (toast) => {
-//         toast.addEventListener('mouseenter', Swal.stopTimer);
-//         toast.addEventListener('mouseleave', Swal.resumeTimer);
-//     },
-// });
