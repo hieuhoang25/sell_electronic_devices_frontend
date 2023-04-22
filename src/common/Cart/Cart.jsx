@@ -3,16 +3,18 @@ import './style.css';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { Button, Modal, Space } from 'antd';
+import { Button, Modal, Space, notification,Spin,Tooltip } from 'antd';
 import { Button as MUIButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { HeartOutlined, HeartFilled, FrownOutlined } from '@ant-design/icons';
 import axios from '../../services/axios';
 import LoginPromptNotification from '../../common/notification/LoginPromptNotification';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { BASE, PRODUCT_INVENTORY } from '../../constants/index';
+import { BASE, PRODUCT_INVENTORY, ENV_URL } from '../../constants/index';
+import { USER, WISHLISTS } from '../../constants/user';
 import { removeItemFromCart, incrementItemQuantity, decrementItemQuantity, updateCart, mergeAnnonCart, updateGuestCartState } from '../../services/cartService.js';
 import Moment from 'react-moment';
 import { getImage } from '../../common/img';
@@ -30,6 +32,7 @@ import {
     getProductId,
     isPercentDiscount,
     getDiscountAmount,
+    getProductVariantName,
 } from './CartUtil';
 import moment from 'moment';
 export const QTY_MAX = 5;
@@ -38,10 +41,24 @@ export const QTY_MIN = 1;
 const Cart = () => {
     const dispatch = useDispatch();
     const Cart = useSelector((state) => state.cart);
+    const { isAuthenticated: isAuth } = useSelector((state) => state.auth);
     const { items, total, baseAmount, totalCount, discount } = Cart;
     const [inventory, setInventory] = useState([]);
     const { confirm } = Modal;
     const [isLoading, setIsLoading] = useState(true);
+    const [disableCheckoutBtn, setDisableCheckoutBtn] = useState(false);
+    const [wishlists,setWishLists] = useState([]);
+    let history = useNavigate();
+
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type, message, description = '', placements = 'top', duration = '2') => {
+        api[type]({
+            message: message,
+            placement: placements,
+            description: description,
+            duration: duration
+        });
+    };
 
     const showPromiseConfirm = (message, id) => {
         confirm({
@@ -60,6 +77,7 @@ const Cart = () => {
                         // console.log('call delete ', request);
                         dispatch(removeItemFromCart(request));
                         dispatch(updateCart());
+                        fetchAllItemInventory().catch((e) => console.log(e.message));
                     });
                 } catch {
                     return console.log('Oops errors!');
@@ -71,37 +89,53 @@ const Cart = () => {
     // showPromiseConfirm('Sản phẩm sẽ bị xoá khỏi giỏ');
     const removeItemHandler = (id) => {};
 
-    let history = useNavigate();
-
     function onCheckoutHandler() {
         if (Cart.isAnonymous) {
+           
         } else {
-            history('/checkout');
+            dispatch(updateGuestCartState()).then((r) => {
+                console.log('return: ', r);
+                let { status } = r;
+                if (r === 409) {
+                    openNotificationWithIcon('info', 'Giỏ hàng có thay đổi', 'top', 2);
+                }else {
+                    history('/checkout');
+                }
+            });
+
+            // history('/checkout');
         }
     }
     function onUpdateGuestHandler() {
         dispatch(updateGuestCartState());
     }
-    async function fetchAllItemInventory() {
-        let list = [];
+    const fetchAllItemInventory = useCallback(async () => {
         if (items.length !== 0) {
             try {
-                items.map(async (i, index) => {
-                    const value = await await fetchInventory(i);
-                    list.push({ index: index, ...value });
-                    return value;
+                const f = items.map(async (item, index) => {
+                    const fe = async (item) => {
+                        return await fetchInventory(item);
+                    };
+                    const res = await fe(item);
+                    return { id: item.id, index: index, ...res };
+                });
+                return Promise.all(f).then(function (results) {
+                    console.log(results);
+                    setInventory((prev) => results);
+                    return results;
                 });
             } catch (e) {
                 console.log(e.message);
+                setIsLoading(true);
             }
+        } else {
+            console.log('items empty');
         }
-        const inventories = list;
-        setInventory((prev) => {
-            return inventories;
-        });
-    }
-    async function fetchInventory(item) {
-        const reQty = item.quantity;
+    });
+
+    const fetchInventory = useCallback(async (item, qty = -1) => {
+        console.log('fetch inventory of item');
+        const reQty = qty == -1 ? item.quantity : qty;
         const variantId = item.productVariant.id;
         console.log('variant id: ', variantId);
         const request = {
@@ -111,7 +145,7 @@ const Cart = () => {
         return await axios
             .post(`${BASE}${PRODUCT_INVENTORY}`, request)
             .then((res) => {
-                // console.log(res.data);
+                console.log('return current inventory of item:', res.data);
                 return res.data;
                 // setInventory(res.data);
             })
@@ -120,52 +154,183 @@ const Cart = () => {
                 console.log(e.message);
             });
         // cartQty
-    }
-    // const fetchUpdated = useCallback(async () => {
-    //     await fetchAllItemInventory();
-    // });
+    });
+    const fetchUpdated = useCallback(async () => {
+        await fetchAllItemInventory();
+    });
 
     function incrementQty(item) {
-        // await fetchUpdated();
-
-        // let inventoryOfItem = findInventoryByIndex(index);
-        console.log(inventory);
-        // let need_changed = inventoryOfItem.need_changed;
-        // console.log(need_changed);
-        // if (need_changed) {
-        //     dispatch(updateGuestCartState());
-        // } else {
         let newQty = item.quantity + 1;
+        const fetched = async (item, newQty) => fetchInventory(item, newQty);
 
-        console.log('item s id: ', item.id);
-        const request = getCartDetailRequest(
-            {
-                cart_id: Cart.id,
-                id: item.id,
-                quantity: newQty,
-                product_variant_id: item.productVariant.id,
-            },
-            CartRequestTYPE.UPDATE,
-        );
+        fetchAllItemInventory()
+            .then((res) => {
+                console.log('invetoris: ', inventory);
+                console.log('res', res);
+                let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
+                // console.log('needed_change', res.need_changed);
+                // console.log('item s id: ', item.id);
+                console.log('cur item invent', inventory[inventOfItemIndex]);
+                const request = getCartDetailRequest(
+                    {
+                        cart_id: Cart.id,
+                        id: item.id,
+                        quantity: newQty,
+                        product_variant_id: item.productVariant.id,
+                    },
+                    CartRequestTYPE.UPDATE,
+                );
 
-        console.log('increment request:', request);
-        dispatch(incrementItemQuantity(request));
-        // }
+                console.log('increment request:', request);
+                dispatch(incrementItemQuantity(request));
+            })
+
+            .catch((e) => console.log(e.message));
+        // fetched(item, newQty).then(res => {
+
+        // })
     }
 
     function decrementQty(item) {
         let newQty = item.quantity - 1;
-        const request = getCartDetailRequest(
-            {
-                cart_id: Cart.id,
-                id: item.id,
-                quantity: newQty,
-                product_variant_id: item.productVariant.id,
-            },
-            CartRequestTYPE.DECR,
-        );
-        console.log('decrement request:', request);
-        dispatch(decrementItemQuantity(request));
+
+        const fetched = async (item, newQty) => fetchInventory(item, newQty);
+
+        fetchAllItemInventory()
+            .then((res) => {
+                console.log('invetoris: ', inventory);
+                console.log('res', res);
+                let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
+                // console.log('needed_change', res.need_changed);
+                // console.log('item s id: ', item.id);
+                console.log('cur item invent', inventory[inventOfItemIndex]);
+                console.log('needed_change', res.need_changed);
+                const request = getCartDetailRequest(
+                    {
+                        cart_id: Cart.id,
+                        id: item.id,
+                        quantity: newQty,
+                        product_variant_id: item.productVariant.id,
+                    },
+                    CartRequestTYPE.DECR,
+                );
+                console.log('decrement request:', request);
+                dispatch(decrementItemQuantity(request));
+            })
+
+            .catch((e) => console.log(e.message));
+    }
+
+    async function fetchIsWishlist(item) {
+        let { productVariant } = item;
+        let { product_id: productId } = productVariant;
+       return await axios({
+            method: 'get',
+            url: `${ENV_URL}${USER}${WISHLISTS}/${productId}`,
+        })
+            .then((res) => {
+               return res.data;
+            })
+            .catch((error) => {
+              return false;
+            });
+    }
+
+    const fetchAllWihshList = useCallback(async() =>  {
+
+        if (items.length !== 0) {
+            if(!Cart.isAnonymous) {
+                try {
+                    const f = items.map(async (item, index) => {
+                        const fe = async (item) => {
+                            return await fetchIsWishlist(item);
+                        };
+                        const res = await fe(item);
+                        console.log('fav res: ', res);
+                        let {productVariant:variant} = item;
+                       
+                        return { id: item.id, index: index, is_favorite: res, product_id: variant.product_id};
+                    });
+                    return Promise.all(f).then(function (results) {
+                        console.log(results);
+                        setWishLists((prev) => results);
+                        return results;
+                    });
+                } catch (e) {
+                    console.log(e.message);
+                    setIsLoading(true);
+                }
+            }else {
+                const annon_wishlist = items.map((item, index) => {
+                    let {productVariant:variant} = item;
+                    return { id: item.id, index: index, is_favorite: false,product_id: variant.product_id};
+                })
+                setWishLists((prev) => [...annon_wishlist]);
+            }
+            
+        } else {
+            console.log('wishlist empty');
+        }
+    })
+
+    const handleFavoriteClick = useCallback((index) => {
+            // alert("call wishlit" + index)
+            if(Cart.isAnonymous) {
+                openNotificationWithIcon('info','Bạn cần đăng nhập để có thể thêm sản phẩm vào yêu thích')
+            }else {
+                let itemIndexInWishlist = wishlists.findIndex(w => w.index === index);
+                console.log("w index: ", wishlists[itemIndexInWishlist]);
+                if(itemIndexInWishlist !== -1) {
+
+                    let{ is_favorite: wishlistItemState, product_id: productId} = wishlists[itemIndexInWishlist];
+
+                    if(!wishlistItemState)  addWishlists(productId)
+                    else  removeWishlists(productId);
+                }else openNotificationWithIcon('error',"Có lỗi xảy ra, vui lòng thử lại sau")
+            }
+    })
+
+
+
+    // const handleFavoriteClick = () => {
+    //     if (isAuth) {
+    //         if (isFavorite) {
+    //             removeWishlists(productId);
+    //             setFavorite(false);
+    //         } else {
+    //             addWishlists(productId);
+    //             setFavorite(true);
+    //         }
+    //     } else return history('/login');
+    // };
+
+    //add wishlist
+    function addWishlists(product_id) {
+        axios({
+            method: 'post',
+            url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}`,
+            data: [{ product_id: product_id }],
+        }).then(res => {
+            openNotificationWithIcon('success',"Đã thêm sản phẩm vào yêu thích",'','top',1)
+            fetchAllWihshList().catch(e => console.log(e))
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+    //remove wishlist
+    function removeWishlists(product_id) {
+        axios({
+            method: 'delete',
+            url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}`,
+            data: [{ product_id: product_id }],
+        }).then(res => {
+            openNotificationWithIcon('success',"Đã xoá sản phẩm khỏi yêu thích",'','top',1)
+            fetchAllWihshList().catch(e => console.log(e))
+        })
+        .catch((error) => {
+            console.log(error);
+        });
     }
 
     const findInventoryByIndex = (index) => {
@@ -177,28 +342,58 @@ const Cart = () => {
     const getCurrentQtyOfItem = (index) => {
         return findInventoryByIndex(index).current_inventory;
     };
+    const getCurrentIsInWishList = (index) => {
+        if(wishlists.length !== 0) {
+            return wishlists[index].is_favorite;
+        } 
+        else return false; 
+    }
+    const getTotalItemCountExcludeOutStock = () => {
+        let cartcount = items.reduce((total, item)  => {
+            if(item.quantity > 0)return  total + item.quantity;
+            else return total;
+        },0)
+        return cartcount;
+    }
 
-    useEffect(async () => {
+    useEffect(() => {
         console.log('...load first');
         setIsLoading(true);
         // await fetchAllItemInventory();
-        setIsLoading(false);
-    }, []);
-    // useEffect(() => {
-    //     console.log('list iven: ', inventory);
-    //     if (inventory.length !== 0) {
-    //         console.log('indes if');
-    //         let index = inventory.findIndex((i) => {
-    //             console.log('tupe: ', typeof i.need_changed);
-    //             return i.need_changed;
-    //         });
+        dispatch(updateGuestCartState()).then((res) => console.log('res: ', res));
 
-    //         console.log('index; ', index);
-    //         if (index != -1) {
-    //             onUpdateGuestHandler();
-    //         }
-    //     }
-    // }, [inventory]);
+        fetchAllItemInventory().catch((e) => console.log(e.message));
+        fetchAllWihshList().catch(e => console.log(e.message))
+        setIsLoading(false);
+
+        return () => {
+            setInventory((prev) => []);
+            setWishLists(prev => [])
+        };
+    }, []);
+
+    useEffect(() => {
+        console.log('list iven: ', inventory);
+        if (inventory.length !== 0) {
+            console.log('indes if');
+            let index = inventory.findIndex((i) => {
+                console.log('tupe: ', typeof i.need_changed);
+                return i.need_changed;
+            });
+
+            console.log('index; ', index);
+            if (index != -1) {
+                // alert('need_dhn')
+                openNotificationWithIcon('info', 'Số lượng giỏ hàng thay đổi', '', 3);
+                dispatch(updateGuestCartState());
+            }
+        }
+    }, [inventory]);
+
+    useEffect(() => {
+        console.log('%cwishlist list: ',"color: red", wishlists);
+        
+    }, [wishlists]);
 
     useEffect(() => {
         console.log('dispatch change');
@@ -206,29 +401,53 @@ const Cart = () => {
             console.log('updateCart()');
             dispatch(updateCart(Cart));
         }
+        let d = checkAllOutOfStock(Cart.items);
+
+        if (d) setDisableCheckoutBtn((prev) => true);
     }, [Cart]);
 
+    const checkAllOutOfStock = (items) => {
+        if (items.length > 0) {
+            let filterd = items.filter((i) => i.quantity > 0);
+            return filterd.length === 0;
+        }
+        return false;
+    };
     const cartAfterLoginHandler = () => {
         dispatch(mergeAnnonCart());
     };
     const onCompare = () => {
-        let time = new Date(Cart.time);
-        let now = new Date();
-        moment(time).add(30, 'minutes');
-        console.log('time: ', time);
-        console.log(moment(time).add(30, 'minutes')._d);
-        console.log(moment(time).add(30, 'minutes'));
-        console.log(now);
+        let time =moment(new Date(Cart.time));
+        let now = moment(new Date());
+        let mock = moment('22 04 2023 09:17:00', "DD MM YYYY hh:mm:ss");
+        
+        let dueTime = moment(mock).add(30, 'minutes');
+        // console.log('mock: ',mock);
+        // console.log('time: ', time._d);
+        // console.log('dueTime: ', dueTime._d);
+       
+        // console.log('now: ', now._d);
+
+        // console.log(now >= dueTime)
+        return now >= dueTime;
     };
     // prodcut qty total
     return (
         <>
+        {isLoading && <div style={{minHeight: "500px"}} className='container d_flex_jus_center algin-center'>
+        <Spin />
+        </div>}
+            {contextHolder}
             {!isLoading && (
                 <section className="cart-items">
-                    <div className="container d_flex">
+                    <div className="cart-container container d_flex">
                         {/* if hamro cart ma kunai pani item xaina bhane no diplay */}
-
-                        <div className={`cart-details ${items.length === 0 ? 'w-100-im' : ''} `}>
+                        <div className='top'>
+                        <div className='d_flex'>
+                            <h3 style={{padding: "10px"}} >Giỏ hàng của bạn ({totalCount} sản phẩm) </h3>
+                        </div>
+                        </div>
+                        <div className={`detail cart-details ${items.length === 0 ? 'w-100-im' : ''} `}>
                             {items.length === 0 && (
                                 <div className="no-items product d_flex_jus_center">
                                     <div>
@@ -247,24 +466,27 @@ const Cart = () => {
                                     /* const productQty = item.price * item.qty; */
                                 }
                                 return (
-                                    <div className="cart-list product d_flex" key={item.id}>
-                                        <div className="img">
-                                            <img src={getImage(getVariantDetail(item).image)} alt="" />
-                                        </div>
+                                    <div className={`cart-list product d_flex ${item.quantity === 0 ? 'out-stock' : ''}`} key={item.id}>
+                                        {item.quantity > 0 && (
+                                            <div className="img">
+                                                <img src={getImage(getVariantDetail(item).image)} alt="" />
+                                            </div>
+                                        )}
+                                        {item.quantity === 0 && (
+                                            <div className="img">
+                                                <span className="out-stock-badge">Sản phẩm hết hàng</span>
+                                                <img src={getImage(getVariantDetail(item).image)} alt="" />
+                                            </div>
+                                        )}
                                         <div className="card-cart-details">
                                             <div className="cart-details-item-title">
                                                 <h3 className="cart-details-item-name">
-                                                    <Link to={`/product-detail/${getProductId(item)}`}>{getProductName(item)}</Link>
-                                                    {/* {inventory.length !== 0 && getMaxQtyOfItem(index) <= 5 && findInventoryByIndex(index).current_inventory <= 5 && (
-                                                        <span className="quanity-notif">Chỉ còn lại {getCurrentQtyOfItem(index)} sản phẩm</span>
-                                                    )} */}
-                                                </h3>
+                                                    <Link to={`/product-detail/${getProductId(item)}`}>{getProductVariantName(item)}</Link>
 
-                                                {/* <h4 className="cart-details-item-price">
-                                                {getCurrencyFormatComp(
-                                                    getVariantDetail(item).price,
-                                                )}
-                                            </h4> */}
+                                                    {inventory.length !== 0 && getMaxQtyOfItem(index) <= 5 && findInventoryByIndex(index).current_inventory <= 5 && (
+                                                        <span className="quanity-notif">Chỉ còn lại {getCurrentQtyOfItem(index)} sản phẩm</span>
+                                                    )}
+                                                </h3>
                                             </div>
                                             <ul className="cart-product-atrs">
                                                 <li>
@@ -275,8 +497,12 @@ const Cart = () => {
                                                     RAM:
                                                     <span>{getStorageOfCartItem(item)}</span>
                                                 </li>
-                                                <li className="single-price">Đơn giá: {getCurrencyFormatComp(getVariantDetail(item).price, false, 'atr-price')}</li>
-                                                {getPromotion(item) && (
+                                                <li className="single-price">
+                                                Đơn giá: {getCurrencyFormatComp(getVariantDetail(item).price, false, 'atr-price')}
+                                                {!getPromotion(item) && item.quantity > 0 && (
+                                                     <span> {` x `} {item.quantity}{' '} </span>) } 
+                                                </li>              
+                                                {getPromotion(item) && item.quantity > 0 && (
                                                     <li>
                                                         Giảm giá:
                                                         {!isPercentDiscount(item) && (
@@ -297,11 +523,47 @@ const Cart = () => {
                                                         )}
                                                     </li>
                                                 )}
+
+                                                {getPromotion(item) && item.quantity <= 0 && (
+                                                    <li>
+                                                        Giảm giá:
+                                                        {!isPercentDiscount(item) && (
+                                                            <span>
+                                                                {getCurrencyFormatComp(getPromotionValue(item), false, 'discounted-per-item')}
+                                                                <span>
+                                                                    {' '}
+                                                                    {` x `} {item.quantity}{' '}
+                                                                </span>
+                                                            </span>
+                                                        )}
+                                                        {isPercentDiscount(item) && (
+                                                            <span className="percent">
+                                                                {getCurrencyFormatComp(getDiscountAmount(item), false, 'discounted-per-item')}
+                                                                {/* {` x `} {item.quantity} */}
+                                                                {` (${getPromotionValue(item)}) `}
+                                                            </span>
+                                                        )}
+                                                    </li>
+                                                )}
                                             </ul>
                                             <div className="cart-detail-action-cotainer">
-                                                <Stack className="action-buttons" direction="row" spacing={2}>
-                                                    <MUIButton startIcon={<FavoriteIcon />}>Yêu thích</MUIButton>
-                                                    <MUIButton className="remove-cart-btn" startIcon={<DeleteIcon />} onClick={() => showPromiseConfirm(`Bạn có muốn xoá ${getProductName(item)} khỏi giỏ hàng?`, item.id)}>
+                                                <Stack className="action-buttons" direction="row" spacing={2}>  
+                                                <div>
+                                                </div>                   
+                                                     {wishlists.length > 0 && getCurrentIsInWishList(index) && 
+                                                     ( <Tooltip  placement="top" title={'Xoá khỏi yêu thích'} >
+                                                     <MUIButton  onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteIcon />}>Yêu thích</MUIButton> 
+                                                     </Tooltip>)   
+                                                       }   
+                                                    
+                                                     {wishlists.length > 0 && !getCurrentIsInWishList(index) && (
+                                                        <Tooltip  placement="top" title={'Thêm vào yêu thích'} >
+                                                        <MUIButton  onClick={() => handleFavoriteClick(index)}  startIcon={<FavoriteBorderIcon />}>Yêu thích</MUIButton>
+                                                          </Tooltip>
+                                                     )  }   
+                                                   
+                                                
+                                                    <MUIButton className="remove-cart-btn" startIcon={<DeleteIcon />} onClick={() => showPromiseConfirm(`Bạn có muốn xoá ${getProductVariantName(item)} khỏi giỏ hàng?`, item.id)}>
                                                         Xoá
                                                     </MUIButton>
                                                 </Stack>
@@ -324,21 +586,28 @@ const Cart = () => {
                                                     )}
                                                 </h3>
                                             </div>
-
+                                            {item.quantity === 0 && <div></div>}
                                             {/* {inventory.length !== 0 && ( */}
-                                            <div className="cart-items-function">
-                                                <div className="cartControl d_flex">
-                                                    <button disabled={item.quantity <= QTY_MIN} className="desCart" onClick={() => decrementQty(item)}>
-                                                        <i className="fa-solid fa-minus"></i>
-                                                    </button>
+                                            {inventory.length !== 0 && item.quantity > 0 && (
+                                                <div className="cart-items-function">
+                                                    <div className="cartControl d_flex">
+                                                        <button disabled={item.quantity <= QTY_MIN} className="desCart" onClick={() => decrementQty(item)}>
+                                                            <i className="fa-solid fa-minus"></i>
+                                                        </button>
 
-                                                    <div className="quantity">{item.quantity}</div>
+                                                        <div className="quantity">{item.quantity}</div>
+                                                        {/* 
+                                                        <button disabled={item.quantity >= QTY_MAX} className="incCart" onClick={() => incrementQty(item)}>
+                                                            <i className="fa-solid fa-plus"></i>
+                                                        </button> */}
 
-                                                    <button disabled={item.quantity >= QTY_MAX} className="incCart" onClick={() => incrementQty(item)}>
-                                                        <i className="fa-solid fa-plus"></i>
-                                                    </button>
-                                                </div>
-                                                {/* <div className="cartControl d_flex">
+                                                        <button disabled={item.quantity >= getMaxQtyOfItem(index)} className="incCart" onClick={() => incrementQty(item, index)}>
+                                                            <i className="fa-solid fa-plus"></i>
+                                                        </button>
+                                                    </div>
+
+                                                    {/* { inventory.length !== 0 &&
+                                                     ( <div className="cartControl d_flex">
                                                         <button disabled={item.quantity <= QTY_MIN} className="desCart" onClick={() => decrementQty(item)}>
                                                             <i className="fa-solid fa-minus"></i>
                                                         </button>
@@ -346,8 +615,11 @@ const Cart = () => {
                                                         <button disabled={item.quantity >= getMaxQtyOfItem(index)} className="incCart" onClick={() => incrementQty(item, index)}>
                                                             <i className="fa-solid fa-plus"></i>
                                                         </button>
-                                                    </div> */}
-                                            </div>
+                                                    </div>)
+                                                } */}
+                                                </div>
+                                            )}
+
                                             {/* )} */}
                                         </div>
                                     </div>
@@ -356,34 +628,51 @@ const Cart = () => {
                         </div>
                         {items.length !== 0 && (
                             <div className="cart-total fix product">
-                                <h2>Thông tin đơn hàng</h2>
-                                <div className=" d_flex">
-                                    <h4>Tạm tính :</h4>
-                                    {getCurrencyFormatComp(baseAmount)}
-                                </div>
-                                <div className=" d_flex">
-                                    <h4>Giảm giá : </h4>
-                                    {getCurrencyFormatComp(Cart.discount)}
-                                    {/* <h3>${getBaseAmount}.00</h3> */}
-                                </div>
-                                <h3 className="d_flex cart-total-last">
-                                    <span className="cart-total-title">Tổng tiền:</span>
-                                    {getCurrencyFormatComp(Cart.total)}
-                                </h3>
-                                {Cart.isAnonymous ? (
-                                    <>
-                                        <LoginPromptNotification> </LoginPromptNotification>
-                                        {/* <button onClick={onUpdateGuestHandler} className="btn-primary w-100">
-                               Update Guest Cart
-                            </button> */}
-                                        {/* <button onClick={onCompare}> Updated Cart</button> */}
-                                    </>
+                                {checkAllOutOfStock(items) ? (
+                                   <div className='out-stock d_flex_col'>
+                                   <h5>Không có sản phẩm nào để thanh toán</h5>
+                                    <Link to={'/product/1'} className="shop-btn">
+                                        <i class="fa-solid fa-cart-shopping"></i>
+                                        {`   `} Tiếp tục mua sắm
+                                    </Link>
+                                    </div>
                                 ) : (
-                                    <>
-                                        <button onClick={onCheckoutHandler} className="btn-primary w-100">
-                                            Thanh toán
-                                        </button>
-                                    </>
+                                    <div>
+                                        <h2>Thông tin đơn hàng</h2>
+
+                                        <div className=" d_flex">
+                                            <h4>Số lượng :</h4>
+                                            {/* {totalCount} */}
+                                            <span>
+                                            {getTotalItemCountExcludeOutStock()}
+                                            </span>
+                                         
+                                        </div>
+                                        <div className=" d_flex">
+                                            <h4>Tạm tính :</h4>
+                                            {getCurrencyFormatComp(baseAmount)}
+                                        </div>
+                                        <div className=" d_flex">
+                                            <h4>Giảm giá : </h4>
+                                            {getCurrencyFormatComp(Cart.discount)}
+                                            {/* <h3>${getBaseAmount}.00</h3> */}
+                                        </div>
+                                        <h3 className="d_flex cart-total-last">
+                                            <span className="cart-total-title">Tổng tiền:</span>
+                                            {getCurrencyFormatComp(Cart.total)}
+                                        </h3>
+                                        {Cart.isAnonymous ? (
+                                            <>
+                                                <LoginPromptNotification> </LoginPromptNotification>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button disabled={disableCheckoutBtn} onClick={onCheckoutHandler} className="btn-primary w-100">
+                                                    Thanh toán
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         )}
