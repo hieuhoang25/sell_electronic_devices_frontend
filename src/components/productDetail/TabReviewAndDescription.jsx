@@ -12,6 +12,7 @@ const TabReviewAndDescription = ({
   loading,
 }) => (
   <Tabs
+  style={{margin:" 2rem"}}
     defaultActiveKey="1"
     items={[
       {

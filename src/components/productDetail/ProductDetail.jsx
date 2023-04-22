@@ -1,4 +1,4 @@
-    import { React, useState, memo, useEffect, useRef, useCallback } from 'react';
+import { React, useState, memo, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Col,
@@ -11,6 +11,7 @@ import {
     Form,
     Alert,
     Spin,
+    Tooltip,
 } from 'antd';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import HalfRatingRead from '../../common/rating/HalfRatingRead';
@@ -23,6 +24,7 @@ import axios from '../../services/axios';
 import ProductDetailQuantityCounter from '../counterInc/ProductDetailQuantityCounter';
 import CartNotification from '../../common/notification/CartNotification';
 import CartNotification_TYPE from '../../common/notification/CartNotification';
+import { getCurrencyFormatComp } from '../../common/Cart/CartUtil';
 import {
     addItemToCart,
     updateCart,
@@ -77,8 +79,8 @@ const ProductDetail = ({ isAuth }) => {
     const [inventory, setInventory] = useState({});
     const [isChanged, setIsChanged] = useState(false);
     const myRef = useRef(null);
-    const  Navigate = useNavigate();
-    const  {isAuthenticated}  = useSelector(state => state.auth)
+    const Navigate = useNavigate();
+    const { isAuthenticated } = useSelector((state) => state.auth);
     const [cartAddedNotif, setCartAddedNotif] = useState({
         title: 'Thêm vào giỏ hàng',
         message: '',
@@ -86,21 +88,21 @@ const ProductDetail = ({ isAuth }) => {
         content: null,
         isSuccess: null,
     });
-    const  handleBuy = async () =>{
-        if( isAuthenticated){
-           await handleAddToCart()
-            navigate('/cart')
-        }else{
-            Navigate('/login')
+    const handleBuy = async () => {
+        if (isAuthenticated) {
+            await handleAddToCart();
+            navigate('/cart');
+        } else {
+            Navigate('/login');
         }
-    }
+    };
     const productBody = useRef({
         productId: productId,
         colorId: null,
         storageId: null,
     });
     const specificationTable = useRef([]);
-    // console.log(productId);
+    console.log('product-id: ', productId);
     function fetchColor(id) {
         console.log('fetchColor: ', id);
         return axios({
@@ -142,44 +144,13 @@ const ProductDetail = ({ isAuth }) => {
                 setProductDetail((prev) => res.data);
                 // console.log('p detail: ', productDetail);
                 specificationTable.current = res.data.product_productAttributes;
-
-                //
-                if (isProductIncart(res.data.id)) {
-                    let q = findCartItemQuantity(
-                        findIndexOfProductId(res.data.id),
-                    );
-                    setCartQty((prev) => q);
-                } else {
-                    // console.log('set cart qty: ', cartQty);
-                    setCartQty((prev) => 1);
-                    setIsLoading(false);
-                }
+                setCartQty((prev) => 1);
+                setIsLoading(false);
             })
             .catch((error) => {
                 console.log(error);
                 setIsLoading(false);
             });
-    }
-
-    async function fetchInventory() {
-        const reQty = cartQty;
-        const variantId = productDetail.id;
-        console.log('variant id: ', variantId);
-        const request = {
-            product_variant_id: variantId,
-            request_quantity: cartQty,
-        };
-        axios
-            .post(`${BASE}${PRODUCT_INVENTORY}`, request)
-            .then((res) => {
-                console.log(res.data);
-                setInventory(res.data);
-            })
-            .catch((e) => {
-                console.log('fetch invetory error');
-                console.log(e.message);
-            });
-        // cartQty
     }
 
     async function getProductDetail() {
@@ -193,9 +164,11 @@ const ProductDetail = ({ isAuth }) => {
         executeScroll();
     }, []);
 
-    useEffect(async () => {
+    useEffect(() => {
         setIsLoading(true);
-        await fetchInventory();
+
+        fetchInventory().catch((e) => console.log(e.mess_message));
+
         setIsLoading(false);
     }, [productDetail, cartQty]);
 
@@ -221,37 +194,74 @@ const ProductDetail = ({ isAuth }) => {
         return items.findIndex((item) => item.productVariant.id === id);
     };
 
+    // fetchInventory
+    async function fetchInventory() {
+        console.log('fetch inventory');
+        const reQty = cartQty;
+        const variantId = productDetail.id;
+        console.log('variant id: ', variantId);
+        const request = {
+            product_variant_id: variantId,
+            request_quantity: cartQty,
+        };
+        return axios
+            .post(`${BASE}${PRODUCT_INVENTORY}`, request)
+            .then((res) => {
+                console.log(res.data);
+                setInventory(res.data);
+                return res.data;
+            })
+            .catch((e) => {
+                console.log('fetch invetory error');
+                console.log(e.message);
+                return [];
+            });
+        // cartQty
+    }
+
+    // cartQtyHandler
+    const cartQtyOnChangeHandler = useCallback(async (value) => {
+        setCartQty((prev) => {
+            return value;
+        });
+    });
+
     useEffect(() => {
         setIsLoading(true);
-        // console.log('out of stock: ' , inventory.outOfStock);
-
+        let checkCart = isProductIncart();
         if (inventory.need_changed) {
             // alert('neeed changed')
-            let checkCart = isProductIncart();
+            console.log('need=cjanged: ');
 
-            // console.log('inCart: ', checkCart);
-            // console.log('nene: ', inventory.need_changed);
-            setIsChanged((prev) => inventory.need_changed);
+            console.log('cartQty: ', cartQty);
+            console.log('inventory now: ', inventory);
+            console.log('compare : ', cartQty >= inventory.max_quantity);
+            // setIsChanged((prev) => inventory.need_changed);
             if (checkCart) {
+                console.log('checkcart true');
                 let quantity = findCartItemQuantity(
                     findIndexOfCurrentProductInCart(),
                 );
 
                 let index = findIndexOfCurrentProductInCart();
                 let max = inventory.max_quantity;
+
                 if (quantity > max) {
-                    // alert('updaete cart')
+                    dispatch(updateGuestCartState());
+                } else if (quantity === 0 && !inventory.outOfStock) {
                     dispatch(updateGuestCartState());
                 }
-            } else if (cartQty >= inventory.max_quantity) {
-                setCartQty(inventory.max_quantity);
             }
-
+            if (cartQty >= inventory.max_quantity && !inventory.outOfStock) {
+                console.log('fix counter quantity');
+                alert('reduce');
+                setCartQty((prev) => inventory.max_quantity);
+            }
             if (inventory.outOfStock) {
                 setCartbuttonDisabled(true);
             }
         } else if (!inventory.outOfStock) {
-            setCartQty((prev) => prev);
+            // setCartQty((prev) => prev);
             setCartbuttonDisabled(false);
         } else if (inventory.outOfStock) {
             // alert('out stock')
@@ -262,10 +272,16 @@ const ProductDetail = ({ isAuth }) => {
 
             setCartQty((prev) => 1);
         }
-        // else {
-        //     setCartbuttonDisabled(false);
-        //     setCartQty(prev => 1);
-        // }
+
+        // refresh cart when inventory back
+        if (checkCart) {
+            let quantity = findCartItemQuantity(
+                findIndexOfCurrentProductInCart(),
+            );
+            if (quantity === 0 && !inventory.outOfStock) {
+                dispatch(updateGuestCartState());
+            }
+        }
         setIsLoading(false);
     }, [inventory]);
     const executeScroll = () => {
@@ -284,175 +300,89 @@ const ProductDetail = ({ isAuth }) => {
         setIsLoading(false);
     };
     //End
-    const handleAddToCart = async (callback) => {
-        // fetchWhenClickAddCart().then((res) => {
-        //     const mess_message = productDetail.display_name;
+    const handleAddToCart = (callback) => {
+        fetchInventory().then((res) => {
+            const mess_message = productDetail.display_name;
 
-        //     const mess_title = 'Thêm vào giỏ hàng';
-        //     // console.log('handlemessage', mess_message);
-        //     // console.log('title:', cartAddedNotif.title);
-        //     console.log('cart: ', Cart);
+            const mess_title = 'Thêm vào giỏ hàng';
+            console.log('handlemessage', mess_message);
+            console.log('title:', cartAddedNotif.title);
+            console.log('cart: ', Cart);
 
-        //     const item_id = productDetail.id;
-        //     console.log('item_id: ', item_id);
-        //     const { items } = Cart;
+            const item_id = productDetail.id;
+            console.log('item_id: ', item_id);
+            const { items } = Cart;
 
-        //     // console.log('%cITEMS: ', 'color:red', items);
+            console.log('%cITEMS: ', 'color:red', items);
+            let {
+                current_inventory: currentInv,
+                need_changed,
+                outOfStock,
+                max_quantity: MAX_QTY,
+            } = res;
+            const request = {
+                cart_id: Cart.id,
+                id: item_id,
+                product_variant_id: item_id,
+                quantity: cartQty,
+            };
+            // console.log('items: ', items);
+            let cartIndex = items.findIndex(
+                (item) => item.productVariant.id === item_id,
+            );
+            // console.log('cartIndex', cartIndex);
+            // console.log('san pham trong gio? ', cartIndex);
+            // sản phẩm có trong giỏ
+            if (cartIndex >= 0) {
+                const { quantity: c_qty } = items[cartIndex];
+                console.log('current quty; ', c_qty);
+                console.log('red: ', res);
+                if (c_qty >= MAX_QTY && MAX_QTY < 5 && c_qty < QTY_MAX) {
+                    setCartAddedNotif((prev) => {
+                        return {
+                            ...prev,
+                            message: `Chỉ còn ${MAX_QTY} sản phẩm. Bạn đã có ${c_qty} sản phẩm trong giỏ`,
+                            title: 'Số lượng sản phẩm không đủ để thêm vào giỏ',
+                            isSuccess: false,
+                        };
+                    });
+                } else if (c_qty >= QTY_MAX) {
+                    console.log('failed');
+                    setCartAddedNotif((prev) => {
+                        return {
+                            ...prev,
+                            message: `Số lượng sản phẩm trong giỏ không quá ${QTY_MAX} sản phẩm`,
+                            title: 'Không thể thêm vào giỏ',
+                            isSuccess: false,
+                        };
+                    });
+                } else {
+                    const currentItem = items.find;
+                    let fixedQty =
+                        c_qty + cartQty > MAX_QTY ? MAX_QTY - c_qty : cartQty;
 
-        //     // console.log('items: ', items);
-        //     let cartIndex = findIndexOfCurrentProductInCart();
-
-        //     const request = {
-        //         cart_id: Cart.id,
-        //         id: item_id,
-        //         product_variant_id: item_id,
-        //         quantity: cartQty,
-        //     };
-        //     const {
-        //         max_quantity: MAXQTY,
-        //         current_inventory: CUR_INVENTORY,
-        //         outOfStock: OUTOFSTOCK,
-        //     } = inventory;
-        //     // sản phẩm có trong giỏ
-        //     if (cartIndex >= 0) {
-        //         const requestz = {
-        //             cart_id: Cart.id,
-        //             id: items[cartIndex].id,
-        //             product_variant_id: item_id,
-        //             quantity: cartQty,
-        //         };
-
-        //         const { quantity: c_qty } = items[cartIndex];
-        //         // console.log('current quty; ', c_qty);
-        //         // if (c_qty >= QTY_MAX) {
-        //         if (c_qty > MAXQTY) {
-        //             isLoading(true);
-        //             dispatch(updateGuestCartState);
-        //             isLoading(false);
-        //             return;
-        //         }
-        //         // if (c_qty >= MAXQTY) {
-        //         if (c_qty == QTY_MAX && cartQty == c_qty) {
-        //             setCartAddedNotif((prev) => {
-        //                 return {
-        //                     ...prev,
-        //                     message: `Bạn đã có ${QTY_MAX} sản phẩm trong giỏ. Số lượng sản phẩm trong giỏ không quá  sản phẩm`,
-        //                     title: 'Không thể thêm vào giỏ',
-        //                     isSuccess: false,
-        //                 };
-        //             });
-        //         } else if (
-        //             (c_qty == MAXQTY && cartQty == c_qty) ||
-        //             (cartQty > MAXQTY && c_qty > MAXQTY && CUR_INVENTORY <= 5)
-        //         ) {
-        //             setCartAddedNotif((prev) => {
-        //                 return {
-        //                     ...prev,
-        //                     message: `Sản phẩm chỉ còn lại ${MAXQTY}, không đủ để thêm tiếp vào giỏ`,
-        //                     title: 'Không thể cập nhật giỏ hàng',
-        //                     isSuccess: false,
-        //                 };
-        //             });
-        //         } else {
-        //             // alert('i[da')
-        //             const currentItem = items.find;
-        //             let fixedQty = cartQty;
-        //             if (cartQty > c_qty) {
-        //                 const requestItemz = getCartDetailRequest(
-        //                     { ...requestz, quantity: fixedQty },
-        //                     CartRequestTYPE.UPDATE,
-        //                 );
-        //                 dispatch(incrementItemQuantity(requestItemz));
-        //             } else if (cartQty < c_qty) {
-        //                 const requestItemz = getCartDetailRequest(
-        //                     { ...requestz, quantity: fixedQty },
-        //                     CartRequestTYPE.DECR,
-        //                 );
-        //                 dispatch(decrementItemQuantity(requestItemz));
-        //             }
-        //             // c_qty + cartQty > QTY_MAX ? QTY_MAX - c_qty : cartQty;
-
-        //             // const requestItem = getCartDetailRequest(
-        //             //     { ...request, quantity: fixedQty },
-        //             //     CartRequestTYPE.UPDATE,
-        //             // );
-        //             // console.log(' requestItem', requestItem);
-        //             setCartAddedNotif((prev) => {
-        //                 return {
-        //                     ...prev,
-        //                     message: mess_message + `\nSố lượng:${cartQty}`,
-        //                     title: 'Cập nhật giỏ hàng thành công',
-        //                     isSuccess: true,
-        //                 };
-        //             });
-        //             // dispatch(addItemToCart(requestItem));
-        //         }
-        //     } else {
-        //         const requestItem = getCartDetailRequest(
-        //             request,
-        //             CartRequestTYPE.ADD,
-        //         );
-        //         console.log(' requestItem', requestItem);
-        //         dispatch(addItemToCart(requestItem));
-        //         setCartAddedNotif((prev) => {
-        //             return {
-        //                 ...prev,
-        //                 message: mess_message,
-        //                 title: mess_title,
-        //                 isSuccess: true,
-        //             };
-        //         });
-        //     }
-        // });
-        
-        const mess_message = productDetail.display_name;
-
-        const mess_title = 'Thêm vào giỏ hàng';
-        // console.log('handlemessage', mess_message);
-        // console.log('title:', cartAddedNotif.title);
-        // console.log('cart: ', Cart);
-
-        const item_id = productDetail.id;
-        // console.log('item_id: ', item_id);
-        const { items } = Cart;
-
-        // console.log('%cITEMS: ', 'color:red', items);
-
-        const request = {
-            cart_id: Cart.id,
-            id: item_id,
-            product_variant_id: item_id,
-            quantity: cartQty,
-        };
-        // console.log('items: ', items);
-        let cartIndex = items.findIndex(
-            (item) => item.productVariant.id === item_id,
-        );
-        // console.log('cartIndex', cartIndex);
-        // console.log('san pham trong gio? ', cartIndex);
-        // sản phẩm có trong giỏ
-        if (cartIndex >= 0) {
-            const { quantity: c_qty } = items[cartIndex];
-            // console.log('current quty; ', c_qty);
-            if (c_qty >= QTY_MAX) {
-                // console.log('failed');
-                setCartAddedNotif((prev) => {
-                    return {
-                        ...prev,
-                        message: `Số lượng sản phẩm trong giỏ không quá ${QTY_MAX} sản phẩm`,
-                        title: 'Không thể thêm vào giỏ',
-                        isSuccess: false,
-                    };
-                });
+                    const requestItem = getCartDetailRequest(
+                        { ...request, quantity: fixedQty },
+                        CartRequestTYPE.ADD,
+                    );
+                    console.log(' requestItem', requestItem);
+                    setCartAddedNotif((prev) => {
+                        return {
+                            ...prev,
+                            message: mess_message,
+                            title: mess_title,
+                            isSuccess: true,
+                        };
+                    });
+                    dispatch(addItemToCart(requestItem));
+                }
             } else {
-                const currentItem = items.find;
-                let fixedQty =
-                    c_qty + cartQty > QTY_MAX ? QTY_MAX - c_qty : cartQty;
                 const requestItem = getCartDetailRequest(
-                    { ...request, quantity: fixedQty },
+                    request,
                     CartRequestTYPE.ADD,
                 );
-                // console.log(' requestItem', requestItem);
+                console.log(' requestItem', requestItem);
+                dispatch(addItemToCart(requestItem));
                 setCartAddedNotif((prev) => {
                     return {
                         ...prev,
@@ -461,24 +391,8 @@ const ProductDetail = ({ isAuth }) => {
                         isSuccess: true,
                     };
                 });
-                dispatch(addItemToCart(requestItem));
             }
-        } else {
-            const requestItem = getCartDetailRequest(
-                request,
-                CartRequestTYPE.ADD,
-            );
-            // console.log(' requestItem', requestItem);
-            dispatch(addItemToCart(requestItem));
-            setCartAddedNotif((prev) => {
-                return {
-                    ...prev,
-                    message: mess_message,
-                    title: mess_title,
-                    isSuccess: true,
-                };
-            });
-        }
+        });
     };
 
     const setSuccessNull = () => {
@@ -571,14 +485,6 @@ const ProductDetail = ({ isAuth }) => {
         productBody.current.storageId = value;
     });
 
-    // cartQtyHandler
-    const cartQtyOnChangeHandler = useCallback(async (value) => {
-        setCartQty((prev) => {
-            return value;
-        });
-        await fetchInventory();
-    });
-
     return (
         <>
             {isLoading ? (
@@ -605,7 +511,7 @@ const ProductDetail = ({ isAuth }) => {
                     style={{
                         scrollMarginBotom: '8vh',
                     }}
-                    className='top-product-page-v2'
+                    className="top-product-page-v2"
                 >
                     <div className="productDetail">
                         <div>
@@ -634,12 +540,11 @@ const ProductDetail = ({ isAuth }) => {
                                     }}
                                 >
                                     <div
-                                    className='img'
+                                        className="img"
                                         style={{
                                             position: 'relative',
                                             display: 'inline-block',
                                         }}
-                                    
                                     >
                                         <img
                                             width="300"
@@ -653,32 +558,60 @@ const ProductDetail = ({ isAuth }) => {
                                                 zIndex: 2,
                                                 borderRadius: '50%',
                                                 right: '20rem',
-                                                top: 0,
+                                                top: '-1rem',
                                                 transform: 'translateY(50%)',
                                             }}
                                         >
-                                            <Button
-                                                onClick={handleFavoriteClick}
-                                                shape="circle"
-                                                icon={
-                                                    isFavorite ? (
-                                                        <HeartFilled
-                                                            style={{
-                                                                color: 'red',
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <HeartOutlined />
-                                                    )
+                                            <Tooltip
+                                                placement="top"
+                                                title={
+                                                    isFavorite
+                                                        ? 'Xoá khỏi yêu thích'
+                                                        : 'Thêm vào yêu thích'
                                                 }
-                                            />
+                                            >
+                                                <Button
+                                                    onClick={
+                                                        handleFavoriteClick
+                                                    }
+                                                    shape="circle"
+                                                    icon={
+                                                        isFavorite ? (
+                                                            <HeartFilled
+                                                                style={{
+                                                                    color: 'red',
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <HeartOutlined />
+                                                        )
+                                                    }
+                                                />
+                                            </Tooltip>
                                         </div>
                                     </div>
 
                                     <div style={{ marginLeft: 2 }}>
                                         {/*Ten va so sao san pham*/}
-                                        <div>
-                                            {productDetail.display_name}
+                                        <div className="product_name d_flex_col">
+                                            <h4>
+                                                {' '}
+                                                {productDetail.display_name}
+                                                {productDetail.discount !=
+                                                    0 && (
+                                                    <span
+                                                        style={{
+                                                            color: 'red',
+                                                            marginLeft: '5px',
+                                                            fontSize: '15px',
+                                                        }}
+                                                    >
+                                                        -
+                                                        {productDetail.discount}
+                                                        % off
+                                                    </span>
+                                                )}
+                                            </h4>
                                             <HalfRatingRead
                                                 value={
                                                     productDetail.product_averagePoint
@@ -686,59 +619,77 @@ const ProductDetail = ({ isAuth }) => {
                                             />
                                         </div>
                                         {/*Gia san pham*/}
-                                        <div>
-                                            {productDetail.discount != 0 ? (
-                                                <span
-                                                    style={{
-                                                        color: 'red',
-                                                        marginRight: '5px',
-                                                    }}
-                                                >
-                                                    <NumericFormat
+                                        <div className="product_price">
+                                            <div>
+                                                {productDetail.discount != 0 ? (
+                                                    <span
+                                                        style={{
+                                                            color: 'red',
+                                                            marginRight: '5px',
+                                                        }}
+                                                    >
+                                                        {getCurrencyFormatComp(
+                                                            productDetail.discount_price,
+                                                            true,
+                                                            'price discount-price',
+                                                        )}
+                                                        {/* <NumericFormat
                                                         value={
                                                             productDetail.discount_price
                                                         }
                                                         displayType={'text'}
                                                         thousandSeparator={true}
                                                         suffix={'đ'}
-                                                    />
-                                                </span>
-                                            ) : (
-                                                <span
-                                                    style={{
-                                                        color: 'red',
-                                                        marginRight: '5px',
-                                                    }}
-                                                >
-                                                    <NumericFormat
+                                                    /> */}
+                                                    </span>
+                                                ) : (
+                                                    <span
+                                                        style={{
+                                                            color: 'red',
+                                                            marginRight: '5px',
+                                                        }}
+                                                    >
+                                                        {getCurrencyFormatComp(
+                                                            productDetail.price,
+                                                            true,
+                                                            'price price-detail',
+                                                        )}
+                                                        {/* <NumericFormat
                                                         value={
                                                             productDetail.price
                                                         }
                                                         displayType={'text'}
                                                         thousandSeparator={true}
                                                         suffix={'đ'}
-                                                    />
-                                                </span>
-                                            )}
+                                                    /> */}
+                                                    </span>
+                                                )}
 
-                                            {productDetail.discount != 0 && (
-                                                <span
-                                                    style={{
-                                                        textDecoration:
-                                                            'line-through',
-                                                    }}
-                                                >
-                                                    <NumericFormat
+                                                {productDetail.discount !=
+                                                    0 && (
+                                                    <span
+                                                        style={{
+                                                            textDecoration:
+                                                                'line-through',
+                                                        }}
+                                                    >
+                                                        {getCurrencyFormatComp(
+                                                            productDetail.price,
+                                                            false,
+                                                            'price old-price',
+                                                        )}
+                                                        {/* <NumericFormat
                                                         value={
                                                             productDetail.price
                                                         }
                                                         displayType={'text'}
                                                         thousandSeparator={true}
                                                         suffix={'đ'}
-                                                    />
-                                                </span>
-                                            )}
-                                            {productDetail.discount != 0 && (
+                                                    /> */}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {/* {productDetail.discount != 0 && (
                                                 <span
                                                     style={{
                                                         color: 'red',
@@ -748,10 +699,13 @@ const ProductDetail = ({ isAuth }) => {
                                                     -{productDetail.discount}%
                                                     off
                                                 </span>
-                                            )}
+                                            )} */}
                                         </div>
                                         {/*Phần ram và dung lượng*/}
-                                        <Form name="validate_other">
+                                        <Form
+                                            name="validate_other"
+                                            style={{ margin: '1rem 0' }}
+                                        >
                                             <Form.Item
                                                 rules={[
                                                     {
@@ -798,7 +752,10 @@ const ProductDetail = ({ isAuth }) => {
                                                 {/*Phần màu sản phẩm nếu có*/}
                                             </Form.Item>
                                         </Form>
-                                        <Form name="validate_other">
+                                        <Form
+                                            name="validate_other"
+                                            style={{ margin: '1rem 0' }}
+                                        >
                                             <Form.Item
                                                 rules={[
                                                     {
@@ -820,9 +777,11 @@ const ProductDetail = ({ isAuth }) => {
                                                         }}
                                                     >
                                                         <div
-                                                            className='text'
+                                                            className="text"
                                                             style={{
                                                                 padding: '1px',
+                                                                marginBottom:
+                                                                    '0.5rem',
                                                             }}
                                                         >
                                                             Chọn màu để xem giá
@@ -880,23 +839,29 @@ const ProductDetail = ({ isAuth }) => {
                                         ></ProductDetailQuantityCounter>
 
                                         {/*Them vaoo gio*/}
-                                        <div className='btn_flex'>
-                                        <div className='btn' >
-                                            <CartNotification
-                                                key={cartAddedNotif}
-                                                isButtonDisabled={
-                                                    cartButtonDisabled
-                                                }
-                                                title={cartAddedNotif.title}
-                                                type={cartAddedNotif.type}
-                                                message={cartAddedNotif.message}
-                                                handleClick={handleAddToCart}
-                                                isSuccess={
-                                                    cartAddedNotif.isSuccess
-                                                }
-                                                setSuccessNull={setSuccessNull}
-                                            ></CartNotification>
-                                            {/* <CustomizedNotification
+                                        <div className="btn_flex">
+                                            <div className="btn">
+                                                <CartNotification
+                                                    key={cartAddedNotif}
+                                                    isButtonDisabled={
+                                                        cartButtonDisabled
+                                                    }
+                                                    title={cartAddedNotif.title}
+                                                    type={cartAddedNotif.type}
+                                                    message={
+                                                        cartAddedNotif.message
+                                                    }
+                                                    handleClick={
+                                                        handleAddToCart
+                                                    }
+                                                    isSuccess={
+                                                        cartAddedNotif.isSuccess
+                                                    }
+                                                    setSuccessNull={
+                                                        setSuccessNull
+                                                    }
+                                                ></CartNotification>
+                                                {/* <CustomizedNotification
                                     buttonContent="Thêm vào giỏ"
                                     handleClick={handleAddToCart}
                                     type="success"
@@ -904,15 +869,19 @@ const ProductDetail = ({ isAuth }) => {
                                     message="Đã thêm vào giỏ"
                                     style={{ width: '90%' }}
                                 /> */}
+                                            </div>
+                                            <div
+                                                className="btn_buy"
+                                                onClick={handleBuy}
+                                            >
+                                                <button
+                                                    type="button"
+                                                    onClick={handleAddToCart}
+                                                >
+                                                    Mua Ngay
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div className='btn_buy' onClick={handleBuy}>
-                                            <button type='button' onClick={
-                                                handleAddToCart
-                                                }>Mua Ngay</button>
-                                        </div>
-                                        </div>
-                                        
-                                        
                                     </div>
                                 </div>
 
