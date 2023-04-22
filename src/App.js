@@ -49,35 +49,6 @@ function App() {
     // console.log('authRedux', authRedux);
 
     const cart = useSelector((state) => state.cart);
-
-    //Step 2 :
-    const [CartItem, setCartItem] = useState([]);
-
-    //Step 4 :
-    // const addToCart = (product) => {
-    //     // if hamro product alredy cart xa bhane  find garna help garxa
-    //     const productExit = CartItem.find((item) => item.id === product.id);
-    //     // if productExit chai alredy exit in cart then will run fun() => setCartItem
-    //     // ani inside => setCartItem will run => map() ani yo map() chai each cart ma
-    //     // gayara check garxa if item.id ra product.id chai match bhayo bhane
-    //     // productExit product chai display garxa
-    //     // ani increase  exits product QTY by 1
-    //     // if item and product doesnt match then will add new items
-    //     if (productExit) {
-    //         setCartItem(
-    //             CartItem.map((item) =>
-    //                 item.id === product.id
-    //                     ? { ...productExit, qty: productExit.qty + 1 }
-    //                     : item,
-    //             ),
-    //         );
-    //     } else {
-    //         // but if the product doesnt exit in the cart that mean if card is empty
-    //         // then new product is added in cart  and its qty is initalize to 1
-    //         setCartItem([...CartItem, { ...product, qty: 1 }]);
-    //     }
-    // };
-
     const roleOfUser = (accessToken) => {
         if (!accessToken) {
             return false;
@@ -103,17 +74,17 @@ function App() {
                         role: roleOfUser(access_token),
                     },
                 });
-                console.log('auth; ', auth);
-                if (!auth.isAuthenticated) {
-                    console.log('load cart from server');
-                    dispatch(authenticateCart(true));
-                    console.log('cart state in App.js', cart);
-                } else {
-                    console.log('set user cart');
-                    dispatch(authenticateCart(false));
-                    console.log('user cart state in App.js', cart);
-                }
-                dispatch(fetchCartFromSever());
+                
+                // if (!auth.isAuthenticated) {
+                //     console.log('load cart from server');
+                //     dispatch(authenticateCart(true));
+                //     console.log('cart state in App.js', cart);
+                // } else {
+                //     console.log('set user cart');
+                //     dispatch(authenticateCart(false));
+                //     console.log('user cart state in App.js', cart);
+                // }
+                // dispatch(fetchCartFromSever());
             })
             .catch((e) => {
                 console.log('auth: ', auth);
@@ -129,7 +100,19 @@ function App() {
             });
         // console.log('ending...effect');
     }, []);
-    useEffect(() => {}, [auth.isAuthenticated]);
+    useEffect(() => {
+        console.log('auth; ', auth);
+        if (!auth.isAuthenticated) {
+            console.log('load cart from server');
+            dispatch(authenticateCart(true));
+            console.log('cart state in App.js', cart);
+        } else {
+            console.log('set user cart');
+            dispatch(authenticateCart(false));
+            console.log('user cart state in App.js', cart);
+        }
+        dispatch(fetchCartFromSever());
+    }, [auth.isAuthenticated]);
     return (
         <>
             <Wrapper>
