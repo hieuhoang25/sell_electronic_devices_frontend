@@ -543,10 +543,40 @@ header .ant-dropdown::before {
     padding-left: 0.5rem;
 }
 
+#demo-popup-popover .cart-row.out-stock {
+    background-color: gainsboro;
+}
+
+#demo-popup-popover .cart-row.out-stock {
+    background-color: gainsboro;
+}
+#demo-popup-popover .cart-row.out-stock .product-name a{
+  color: #3a3b3c;
+}
+
+#demo-popup-popover .cart-row.out-stock .price {
+    color: #3a3b3c !important;
+}
 .dark .search {
     background-color: #242526;
 }
+#demo-popup-popover .cart-row.out-stock .img-container {
+    filter: grayscale(1);
+}
 
+#demo-popup-popover .cart-row.out-stock .promo-badge .MuiBadge-badge {
+    background-color: rgb(85, 78, 80);
+}
+
+#demo-popup-popover .cart-row.out-stock .total-section {
+    display: none;
+}
 .dark .my_icon a {
     color: #e4e6eb;
+}
+
+#demo-popup-popover .cart-row.out-stock .out-stock-notif {
+    color: crimson;
+    font-weight: bold;
+    font-size: 12px;
 }
