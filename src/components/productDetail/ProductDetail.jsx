@@ -1,18 +1,6 @@
 import { React, useState, memo, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    Col,
-    Row,
-    Card,
-    Button,
-    Checkbox,
-    Space,
-    Radio,
-    Form,
-    Alert,
-    Spin,
-    Tooltip,
-} from 'antd';
+import { Col, Row, Card, Button, Checkbox, Space, Radio, Form, Alert, Spin, Tooltip } from 'antd';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import HalfRatingRead from '../../common/rating/HalfRatingRead';
 import CustomizedNotification from '../../common/notification/Notification';
@@ -26,39 +14,14 @@ import CartNotification from '../../common/notification/CartNotification';
 import CartNotification_TYPE from '../../common/notification/CartNotification';
 import { getCurrencyFormatComp } from '../../common/Cart/CartUtil';
 import { Helmet } from 'react-helmet';
-import {
-    addItemToCart,
-    updateCart,
-    updateGuestCartState,
-    incrementItemQuantity,
-    decrementItemQuantity,
-} from '../../services/cartService.js';
+import { addItemToCart, updateCart, updateGuestCartState, incrementItemQuantity, decrementItemQuantity } from '../../services/cartService.js';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import './style.css';
-import {
-    QTY_MAX,
-    QTY_MIN,
-    getCartDetailRequest,
-    CartRequestTYPE,
-} from '../../common/Cart/CartUtil';
+import { QTY_MAX, QTY_MIN, getCartDetailRequest, CartRequestTYPE } from '../../common/Cart/CartUtil';
 
-import {
-    FETCH_PRODUCTS_PENDING,
-    FETCH_PRODUCTS_SUCCESS,
-    FETCH_PRODUCTS_ERROR,
-    fetchProductsPending,
-    fetchProductsSuccess,
-    fetchProductsError,
-} from '../../common/action/action';
+import { FETCH_PRODUCTS_PENDING, FETCH_PRODUCTS_SUCCESS, FETCH_PRODUCTS_ERROR, fetchProductsPending, fetchProductsSuccess, fetchProductsError } from '../../common/action/action';
 // import "./components/axios/author"
-import {
-    BASE,
-    PRODUCT,
-    PRODUCT_COLOR,
-    PRODUCT_DETAIL,
-    PRODUCT_STORAGE,
-    PRODUCT_INVENTORY,
-} from '../../constants/index';
+import { BASE, PRODUCT, PRODUCT_COLOR, PRODUCT_DETAIL, PRODUCT_STORAGE, PRODUCT_INVENTORY } from '../../constants/index';
 import { getImage } from '../../common/img';
 import { NumericFormat } from 'react-number-format';
 import { USER, WISHLISTS } from '../../constants/user';
@@ -262,9 +225,7 @@ const ProductDetail = ({ isAuth }) => {
             // setIsChanged((prev) => inventory.need_changed);
             if (checkCart) {
                 console.log('checkcart true');
-                let quantity = findCartItemQuantity(
-                    findIndexOfCurrentProductInCart(),
-                );
+                let quantity = findCartItemQuantity(findIndexOfCurrentProductInCart());
 
                 let index = findIndexOfCurrentProductInCart();
                 let max = inventory.max_quantity;
@@ -298,9 +259,7 @@ const ProductDetail = ({ isAuth }) => {
 
         // refresh cart when inventory back
         if (checkCart) {
-            let quantity = findCartItemQuantity(
-                findIndexOfCurrentProductInCart(),
-            );
+            let quantity = findCartItemQuantity(findIndexOfCurrentProductInCart());
             if (quantity === 0 && !inventory.outOfStock) {
                 dispatch(updateGuestCartState());
             }
@@ -337,12 +296,7 @@ const ProductDetail = ({ isAuth }) => {
             const { items } = Cart;
 
             console.log('%cITEMS: ', 'color:red', items);
-            let {
-                current_inventory: currentInv,
-                need_changed,
-                outOfStock,
-                max_quantity: MAX_QTY,
-            } = res;
+            let { current_inventory: currentInv, need_changed, outOfStock, max_quantity: MAX_QTY } = res;
             const request = {
                 cart_id: Cart.id,
                 id: item_id,
@@ -350,9 +304,7 @@ const ProductDetail = ({ isAuth }) => {
                 quantity: cartQty,
             };
             // console.log('items: ', items);
-            let cartIndex = items.findIndex(
-                (item) => item.productVariant.id === item_id,
-            );
+            let cartIndex = items.findIndex((item) => item.productVariant.id === item_id);
             // console.log('cartIndex', cartIndex);
             // console.log('san pham trong gio? ', cartIndex);
             // sản phẩm có trong giỏ
@@ -381,13 +333,9 @@ const ProductDetail = ({ isAuth }) => {
                     });
                 } else {
                     const currentItem = items.find;
-                    let fixedQty =
-                        c_qty + cartQty > MAX_QTY ? MAX_QTY - c_qty : cartQty;
+                    let fixedQty = c_qty + cartQty > MAX_QTY ? MAX_QTY - c_qty : cartQty;
 
-                    const requestItem = getCartDetailRequest(
-                        { ...request, quantity: fixedQty },
-                        CartRequestTYPE.ADD,
-                    );
+                    const requestItem = getCartDetailRequest({ ...request, quantity: fixedQty }, CartRequestTYPE.ADD);
                     console.log(' requestItem', requestItem);
                     setCartAddedNotif((prev) => {
                         return {
@@ -400,10 +348,7 @@ const ProductDetail = ({ isAuth }) => {
                     dispatch(addItemToCart(requestItem));
                 }
             } else {
-                const requestItem = getCartDetailRequest(
-                    request,
-                    CartRequestTYPE.ADD,
-                );
+                const requestItem = getCartDetailRequest(request, CartRequestTYPE.ADD);
                 console.log(' requestItem', requestItem);
                 dispatch(addItemToCart(requestItem));
                 setCartAddedNotif((prev) => {
@@ -523,11 +468,7 @@ const ProductDetail = ({ isAuth }) => {
                             }}
                         >
                             <Spin tip="Loading">
-                                <Alert
-                                    message="Alert message title"
-                                    description="Further details about the context of this alert."
-                                    type="info"
-                                />
+                                <Alert message="Alert message title" description="Further details about the context of this alert." type="info" />
                             </Spin>
                         </Space>
                     </div>
@@ -573,14 +514,7 @@ const ProductDetail = ({ isAuth }) => {
                                                 display: 'inline-block',
                                             }}
                                         >
-                                            <img
-                                                width="300"
-                                                height="300"
-                                                alt="example"
-                                                src={getImage(
-                                                    productDetail.image,
-                                                )}
-                                            />
+                                            <img width="300" height="300" alt="example" src={getImage(productDetail.image)} />
                                             <div
                                                 style={{
                                                     position: 'absolute',
@@ -588,22 +522,12 @@ const ProductDetail = ({ isAuth }) => {
                                                     borderRadius: '50%',
                                                     right: '20rem',
                                                     top: '-1rem',
-                                                    transform:
-                                                        'translateY(50%)',
+                                                    transform: 'translateY(50%)',
                                                 }}
                                             >
-                                                <Tooltip
-                                                    placement="top"
-                                                    title={
-                                                        isFavorite
-                                                            ? 'Xoá khỏi yêu thích'
-                                                            : 'Thêm vào yêu thích'
-                                                    }
-                                                >
+                                                <Tooltip placement="top" title={isFavorite ? 'Xoá khỏi yêu thích' : 'Thêm vào yêu thích'}>
                                                     <Button
-                                                        onClick={
-                                                            handleFavoriteClick
-                                                        }
+                                                        onClick={handleFavoriteClick}
                                                         shape="circle"
                                                         icon={
                                                             isFavorite ? (
@@ -627,48 +551,31 @@ const ProductDetail = ({ isAuth }) => {
                                                 <h4>
                                                     {' '}
                                                     {productDetail.display_name}
-                                                    {productDetail.discount !=
-                                                        0 && (
+                                                    {productDetail.discount != 0 && (
                                                         <span
                                                             style={{
                                                                 color: 'red',
-                                                                marginLeft:
-                                                                    '5px',
-                                                                fontSize:
-                                                                    '15px',
+                                                                marginLeft: '5px',
+                                                                fontSize: '15px',
                                                             }}
                                                         >
-                                                            -
-                                                            {
-                                                                productDetail.discount
-                                                            }
-                                                            % off
+                                                            -{productDetail.discount}% off
                                                         </span>
                                                     )}
                                                 </h4>
-                                                <HalfRatingRead
-                                                    value={
-                                                        productDetail.product_averagePoint
-                                                    }
-                                                />
+                                                <HalfRatingRead value={productDetail.product_averagePoint} />
                                             </div>
                                             {/*Gia san pham*/}
                                             <div className="product_price">
                                                 <div>
-                                                    {productDetail.discount !=
-                                                    0 ? (
+                                                    {productDetail.discount != 0 ? (
                                                         <span
                                                             style={{
                                                                 color: 'red',
-                                                                marginRight:
-                                                                    '5px',
+                                                                marginRight: '5px',
                                                             }}
                                                         >
-                                                            {getCurrencyFormatComp(
-                                                                productDetail.discount_price,
-                                                                true,
-                                                                'price discount-price',
-                                                            )}
+                                                            {getCurrencyFormatComp(productDetail.discount_price, true, 'price discount-price')}
                                                             {/* <NumericFormat
                                                         value={
                                                             productDetail.discount_price
@@ -682,15 +589,10 @@ const ProductDetail = ({ isAuth }) => {
                                                         <span
                                                             style={{
                                                                 color: 'red',
-                                                                marginRight:
-                                                                    '5px',
+                                                                marginRight: '5px',
                                                             }}
                                                         >
-                                                            {getCurrencyFormatComp(
-                                                                productDetail.price,
-                                                                true,
-                                                                'price price-detail',
-                                                            )}
+                                                            {getCurrencyFormatComp(productDetail.price, true, 'price price-detail')}
                                                             {/* <NumericFormat
                                                         value={
                                                             productDetail.price
@@ -702,19 +604,13 @@ const ProductDetail = ({ isAuth }) => {
                                                         </span>
                                                     )}
 
-                                                    {productDetail.discount !=
-                                                        0 && (
+                                                    {productDetail.discount != 0 && (
                                                         <span
                                                             style={{
-                                                                textDecoration:
-                                                                    'line-through',
+                                                                textDecoration: 'line-through',
                                                             }}
                                                         >
-                                                            {getCurrencyFormatComp(
-                                                                productDetail.price,
-                                                                false,
-                                                                'price old-price',
-                                                            )}
+                                                            {getCurrencyFormatComp(productDetail.price, false, 'price old-price')}
                                                             {/* <NumericFormat
                                                         value={
                                                             productDetail.price
@@ -739,25 +635,16 @@ const ProductDetail = ({ isAuth }) => {
                                             )} */}
                                             </div>
                                             {/*Phần ram và dung lượng*/}
-                                            <Form
-                                                name="validate_other"
-                                                style={{ margin: '1rem 0' }}
-                                            >
+                                            <Form name="validate_other" style={{ margin: '1rem 0' }}>
                                                 <Form.Item
                                                     rules={[
                                                         {
                                                             required: true,
-                                                            message:
-                                                                'Please pick an item!',
+                                                            message: 'Please pick an item!',
                                                         },
                                                     ]}
                                                 >
-                                                    <Radio.Group
-                                                        onChange={
-                                                            handleStorageChange
-                                                        }
-                                                        value={selectedStorage}
-                                                    >
+                                                    <Radio.Group onChange={handleStorageChange} value={selectedStorage}>
                                                         <Space
                                                             wrap
                                                             size={[5, 12]}
@@ -765,53 +652,32 @@ const ProductDetail = ({ isAuth }) => {
                                                                 width: '400px',
                                                             }}
                                                         >
-                                                            {storage.map(
-                                                                (item) => (
-                                                                    <Radio.Button
-                                                                        key={
-                                                                            item.id
-                                                                        }
-                                                                        value={
-                                                                            item.id
-                                                                        }
+                                                            {storage.map((item) => (
+                                                                <Radio.Button key={item.id} value={item.id}>
+                                                                    <div
+                                                                        style={{
+                                                                            textAlign: 'center',
+                                                                        }}
                                                                     >
-                                                                        <div
-                                                                            style={{
-                                                                                textAlign:
-                                                                                    'center',
-                                                                            }}
-                                                                        >
-                                                                            <div>
-                                                                                {
-                                                                                    item.storage_name
-                                                                                }
-                                                                            </div>
-                                                                        </div>
-                                                                    </Radio.Button>
-                                                                ),
-                                                            )}
+                                                                        <div>{item.storage_name}</div>
+                                                                    </div>
+                                                                </Radio.Button>
+                                                            ))}
                                                         </Space>
                                                     </Radio.Group>
                                                     {/*Phần màu sản phẩm nếu có*/}
                                                 </Form.Item>
                                             </Form>
-                                            <Form
-                                                name="validate_other"
-                                                style={{ margin: '1rem 0' }}
-                                            >
+                                            <Form name="validate_other" style={{ margin: '1rem 0' }}>
                                                 <Form.Item
                                                     rules={[
                                                         {
                                                             required: true,
-                                                            message:
-                                                                'Please pick an item!',
+                                                            message: 'Please pick an item!',
                                                         },
                                                     ]}
                                                 >
-                                                    <Radio.Group
-                                                        onChange={onChangeColor}
-                                                        value={selectedColor}
-                                                    >
+                                                    <Radio.Group onChange={onChangeColor} value={selectedColor}>
                                                         <Space
                                                             wrap
                                                             size={[1, 1]}
@@ -822,14 +688,11 @@ const ProductDetail = ({ isAuth }) => {
                                                             <div
                                                                 className="text"
                                                                 style={{
-                                                                    padding:
-                                                                        '1px',
-                                                                    marginBottom:
-                                                                        '0.5rem',
+                                                                    padding: '1px',
+                                                                    marginBottom: '0.5rem',
                                                                 }}
                                                             >
-                                                                Chọn màu để xem
-                                                                giá
+                                                                Chọn màu để xem giá
                                                             </div>
                                                             <Space
                                                                 wrap
@@ -838,31 +701,17 @@ const ProductDetail = ({ isAuth }) => {
                                                                     width: '400px',
                                                                 }}
                                                             >
-                                                                {color.map(
-                                                                    (item) => (
-                                                                        <Radio.Button
-                                                                            key={
-                                                                                item.id
-                                                                            }
-                                                                            value={
-                                                                                item.id
-                                                                            }
+                                                                {color.map((item) => (
+                                                                    <Radio.Button key={item.id} value={item.id}>
+                                                                        <div
+                                                                            style={{
+                                                                                textAlign: 'center',
+                                                                            }}
                                                                         >
-                                                                            <div
-                                                                                style={{
-                                                                                    textAlign:
-                                                                                        'center',
-                                                                                }}
-                                                                            >
-                                                                                <div>
-                                                                                    {
-                                                                                        item.color_name
-                                                                                    }
-                                                                                </div>
-                                                                            </div>
-                                                                        </Radio.Button>
-                                                                    ),
-                                                                )}
+                                                                            <div>{item.color_name}</div>
+                                                                        </div>
+                                                                    </Radio.Button>
+                                                                ))}
                                                             </Space>
                                                         </Space>
                                                     </Radio.Group>
@@ -872,14 +721,10 @@ const ProductDetail = ({ isAuth }) => {
 
                                             <ProductDetailQuantityCounter
                                                 cartQty={cartQty}
-                                                cartQtyOnChangeHandler={
-                                                    cartQtyOnChangeHandler
-                                                }
+                                                cartQtyOnChangeHandler={cartQtyOnChangeHandler}
                                                 fetchInventory={fetchInventory}
                                                 inventory={inventory}
-                                                isButtonDisabled={
-                                                    cartButtonDisabled
-                                                }
+                                                isButtonDisabled={cartButtonDisabled}
                                                 // setCartbuttonDisabled={setCartbuttonDisabled}
                                             ></ProductDetailQuantityCounter>
 
@@ -888,27 +733,13 @@ const ProductDetail = ({ isAuth }) => {
                                                 <div className="btn">
                                                     <CartNotification
                                                         key={cartAddedNotif}
-                                                        isButtonDisabled={
-                                                            cartButtonDisabled
-                                                        }
-                                                        title={
-                                                            cartAddedNotif.title
-                                                        }
-                                                        type={
-                                                            cartAddedNotif.type
-                                                        }
-                                                        message={
-                                                            cartAddedNotif.message
-                                                        }
-                                                        handleClick={
-                                                            handleAddToCart
-                                                        }
-                                                        isSuccess={
-                                                            cartAddedNotif.isSuccess
-                                                        }
-                                                        setSuccessNull={
-                                                            setSuccessNull
-                                                        }
+                                                        isButtonDisabled={cartButtonDisabled}
+                                                        title={cartAddedNotif.title}
+                                                        type={cartAddedNotif.type}
+                                                        message={cartAddedNotif.message}
+                                                        handleClick={handleAddToCart}
+                                                        isSuccess={cartAddedNotif.isSuccess}
+                                                        setSuccessNull={setSuccessNull}
                                                     ></CartNotification>
                                                     {/* <CustomizedNotification
                                     buttonContent="Thêm vào giỏ"
@@ -919,46 +750,23 @@ const ProductDetail = ({ isAuth }) => {
                                     style={{ width: '90%' }}
                                 /> */}
                                                 </div>
-                                                <div
-                                                    className="btn_buy"
-                                                    onClick={handleBuy}
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        onClick={
-                                                            handleAddToCart
-                                                        }
-                                                    >
-                                                        Mua Ngay
-                                                    </button>
-                                                </div>
+                                                {!isButtonDisabled && (
+                                                    <div className="btn_buy" onClick={handleBuy}>
+                                                        <button type="button" onClick={handleAddToCart}>
+                                                            Mua Ngay
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
                                     {/*Thông số kỹ thuật*/}
-                                    <div
-                                        className="product_tskt"
-                                        style={{ width: '30%' }}
-                                    >
-                                        {specificationTable.current && (
-                                            <ListSpecification
-                                                data={
-                                                    specificationTable.current
-                                                }
-                                            />
-                                        )}
+                                    <div className="product_tskt" style={{ width: '30%' }}>
+                                        {specificationTable.current && <ListSpecification data={specificationTable.current} />}
                                     </div>
                                     {/*Đánh giá và mô tả*/}
                                 </div>
-                                <TabReviewAndDescription
-                                    listReview={productDetail.rating}
-                                    description={
-                                        productDetail.product_description
-                                            ? productDetail.product_description
-                                            : 'chưa có mô tả'
-                                    }
-                                    loading={isLoading}
-                                />
+                                <TabReviewAndDescription listReview={productDetail.rating} description={productDetail.product_description ? productDetail.product_description : 'chưa có mô tả'} loading={isLoading} />
                             </div>
                         </div>
                     </div>
