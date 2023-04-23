@@ -121,7 +121,7 @@ const Cart = () => {
                     const res = await fe(item);
                     return { id: item.id, index: index, ...res };
                 });
-              
+
                 return Promise.all(f).then(function (results) {
                     console.log(results);
                     setInventory((prev) => results);
@@ -165,7 +165,7 @@ const Cart = () => {
     function incrementQty(item) {
         let newQty = item.quantity + 1;
         const fetched = async (item, newQty) => fetchInventory(item, newQty);
-  
+
         fetchAllItemInventory()
             .then((res) => {
                 // setIsLoading(false);
@@ -217,7 +217,6 @@ const Cart = () => {
                 );
                 console.log('decrement request:', request);
                 dispatch(decrementItemQuantity(request));
-                
             })
 
             .catch((e) => console.log(e.message));
@@ -346,10 +345,9 @@ const Cart = () => {
         return inventory[index];
     };
     const getMaxQtyOfItem = (index) => {
- 
         let findIndx = findInventoryByIndex(index);
 
-        return  findIndx.max_quantity;
+        return findIndx.max_quantity;
     };
     const getCurrentQtyOfItem = (index) => {
         return findInventoryByIndex(index).current_inventory;
@@ -371,16 +369,12 @@ const Cart = () => {
         console.log('...load first');
         setIsLoading(true);
         // await fetchAllItemInventory();
-        dispatch(updateGuestCartState()).then((res) => {
-       
-            
-        });
+        dispatch(updateGuestCartState()).then((res) => {});
 
-     
         setIsLoading(false);
 
         return () => {
-            // setInventory((prev) => []);
+            setInventory((prev) => []);
             setWishLists((prev) => []);
         };
     }, []);
@@ -400,7 +394,7 @@ const Cart = () => {
                 // alert('need_dhn')
                 openNotificationWithIcon('info', 'Số lượng giỏ hàng thay đổi', '', 3);
                 dispatch(updateGuestCartState());
-                fetchAllItemInventory().catch(e => console.log(e.message))
+                fetchAllItemInventory().catch((e) => console.log(e.message));
                 setIsLoading(false);
             }
         }
@@ -416,7 +410,6 @@ const Cart = () => {
         if (Cart.isAnonymous) {
             console.log('updateCart()');
             dispatch(updateCart(Cart));
-           
         }
         fetchAllItemInventory().catch((e) => console.log(e.message));
         fetchAllWihshList().catch((e) => console.log(e.message));
