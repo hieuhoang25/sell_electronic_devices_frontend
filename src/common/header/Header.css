@@ -550,3 +550,40 @@ header .ant-dropdown::before {
 .dark .my_icon a {
     color: #e4e6eb;
 }
+.modal_logout {
+    text-align: center;
+}
+.modal_logout h2{
+    color: #e94560;
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+}
+.dark .modal_logout h2{
+    border-bottom: 1px solid #e2e8ec;
+    color: #e2e8ec;
+} 
+.modal_logout p{
+    font-size: 18px;
+    font-weight: 500;
+    padding: 10px 0;
+}
+.dark .modal_logout p{
+    color: #e2e8ec;
+}
+.modal_logout .btn{
+    display:  flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.modal_logout .btn button:first-of-type{
+    color: white;
+    background-color: #e94560;
+    transition: all .5;
+}
+.modal_logout .btn button:first-of-type:hover{
+    background-color: black;
+}
+.dark :where(.css-dev-only-do-not-override-sk7ap8).ant-modal .ant-modal-content{
+    background-color: #3a3b3c;
+}

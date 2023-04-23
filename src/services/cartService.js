@@ -6,17 +6,17 @@ import { addToCart, removeFromCart, getItemsCount, getBaseAmount, getCartFromSev
 
 const ENV_URL = process.env.REACT_APP_URL;
 export const fetchCartFromSever = () => async (dispatch, getState) => {
-    console.log('fetchCartFromSErver,,,,');
+    // console.log('fetchCartFromSErver,,,,');
     try {
         const { isAnonymous } = getState().cart;
-        console.log('isAnnon', isAnonymous);
+        // console.log('isAnnon', isAnonymous);
         const promt_path = !isAnonymous ? CART : null;
         if (!isAnonymous) {
-            console.log('is not annon');
+            // console.log('is not annon');
             await axios
                 .get(ENV_URL + promt_path)
                 .then((response_cart) => {
-                    console.log(response_cart.data);
+                    // console.log(response_cart.data);
                     dispatch(getCartFromSever(response_cart.data));
                 })
                 .catch((error) => {
@@ -26,11 +26,11 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
                 });
         } else {
             const { time } = getState().cart;
-            console.log('get from localstorage');
+            // console.log('get from localstorage');
             const { id: cartId } = getState().cart;
             // console.log('cartId: ', cartId);
             if (!cartId) {
-                console.log('get fresh guest cart...');
+                // console.log('get fresh guest cart...');
                 dispatch(resetToGuestCart());
             }
         }
@@ -41,7 +41,7 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
 };
 
 export const resetToGuestCart = () => async (dispatch, getState) => {
-    console.log('get fresh guest cart...');
+    // console.log('get fresh guest cart...');
     const cart_new = await getFreshCartForGuest();
     dispatch(newCart(cart_new));
     // dispatch(updateCart());
@@ -54,17 +54,17 @@ export const resetToGuestCart = () => async (dispatch, getState) => {
 export const removeItemFromCart = (requestItem) => async (dispatch, getState) => {
     const { isAnonymous } = getState().cart;
     if (!isAnonymous) {
-        console.log('send remove request...');
+        // console.log('send remove request...');
         const { id: cart_id } = getState().cart;
-        console.log(getState());
-        console.log('cartId: ', cart_id);
-        console.log('requestItem: ', requestItem);
+        // console.log(getState());
+        // console.log('cartId: ', cart_id);
+        // console.log('requestItem: ', requestItem);
         await axios
             .delete(`${ENV_URL}${CART}${cart_id}${CART_ITEM}`, {
                 data: { ...requestItem },
             })
             .then((res) => {
-                console.log('removed !');
+                // console.log('removed !');
                 //
                 dispatch(fetchCartFromSever());
             })
@@ -73,8 +73,8 @@ export const removeItemFromCart = (requestItem) => async (dispatch, getState) =>
                 return 0;
             });
     } else {
-        console.log('remove item in localstroge...');
-        console.log('remove_request: ', requestItem);
+        // console.log('remove item in localstroge...');
+        // console.log('remove_request: ', requestItem);
 
         dispatch(removeFromCart(requestItem));
         // dispatch(updateCart());
@@ -90,15 +90,15 @@ export const addItemToCart = (request) => async (dispatch, getState) => {
             .then((res) => {
                 dispatch(fetchCartFromSever());
             });
-        console.log('send add request...');
+        // console.log('send add request...');
     } else {
-        console.log('update state in localStorge...');
+        // console.log('update state in localStorge...');
 
         let requestIndex = checkItemInGuestCart(items, request);
         if (requestIndex >= 0) {
-            console.log('variant already in cart: ');
-            console.log('Move to increase... ');
-            console.log('request: ', request);
+            // console.log('variant already in cart: ');
+            // console.log('Move to increase... ');
+            // console.log('request: ', request);
             // dispatch(incrementItemQuantity({...request, index:requestIndex}));
             dispatch(
                 guestCarIncrementItemQuantity({
@@ -108,7 +108,7 @@ export const addItemToCart = (request) => async (dispatch, getState) => {
             );
         } else {
             let res = await getGuestRequestCartDetail(request);
-            console.log('guest cart detail response: ', res);
+            // console.log('guest cart detail response: ', res);
             dispatch(addToCart(res));
         }
         // dispatch(updateCart());
@@ -117,20 +117,20 @@ export const addItemToCart = (request) => async (dispatch, getState) => {
 
 export const guestCarIncrementItemQuantity = (request) => async (dispatch, getState) => {
     const { items } = getState().cart;
-    console.log('request: ', request);
+    // console.log('request: ', request);
     let { quantity: reQty, index } = request;
     // let itemIndex = items.findIndex(i => i.id === id)
     let item = items[index];
 
-    console.log('item: ', item);
+    // console.log('item: ', item);
     let id = item.id;
     let oldQty = item.quantity;
-    console.log('reQty: ', reQty);
+    // console.log('reQty: ', reQty);
     let newQty = oldQty + reQty;
 
     request = { ...request, quantity: newQty };
-    console.log('increase state in localStorge..');
-    console.log('increase: ', request);
+    // console.log('increase state in localStorge..');
+    // console.log('increase: ', request);
     let req = await getGuestRequestCartDetail(request);
     dispatch(increment({ ...req, index: index, id: id }));
     // dispatch(updateCart());
@@ -146,10 +146,10 @@ export const incrementItemQuantity = (request) => async (dispatch, getState) => 
             .then((res) => {
                 dispatch(fetchCartFromSever());
             });
-        console.log('send add request...');
+        // console.log('send add request...');
     } else {
         let { id } = request;
-        console.log('request_increase: ', request);
+        // console.log('request_increase: ', request);
         let req = await getGuestRequestCartDetail(request);
 
         dispatch(increment({ ...req, id: id }));
@@ -166,10 +166,10 @@ export const decrementItemQuantity = (request) => async (dispatch, getState) => 
             .then((res) => {
                 dispatch(fetchCartFromSever());
             });
-        console.log('send add request...');
+        // console.log('send add request...');
     } else {
-        console.log('decrease state in localStorge..');
-        console.log('request: ', request);
+        // console.log('decrease state in localStorge..');
+        // console.log('request: ', request);
         let req = await getGuestRequestCartDetail(request);
         // let index = checkItemInGuestCart(items,request)
         // console.log('index: ',index);
@@ -199,7 +199,7 @@ const convertUpdateCartRequest = (items, cart_id) => {
     });
 };
 export const mergeAnnonCart = () => async (dispatch, getState) => {
-    console.log('inside merge');
+    // console.log('inside merge');
 
     let { items } = getState().cart;
     let cart_id = await (await (await axios.get(`${ENV_URL}${CART}`)).data).id;
@@ -212,8 +212,8 @@ export const mergeAnnonCart = () => async (dispatch, getState) => {
         await axios
             .post(`${ENV_URL}${MERGE_CART}`, request)
             .then((res) => {
-                console.log('cart: ');
-                console.log(res.data);
+                // console.log('cart: ');
+                // console.log(res.data);
                 return;
             })
             .catch((e) => {
@@ -245,10 +245,10 @@ const getGuestRequestCartDetail = async (request) => {
         };
     };
     try {
-        console.log('reqeustItem for guest: ', request);
-        console.log(`${ENV_URL}${GUEST_CART_DETAIL}`);
+        // console.log('reqeustItem for guest: ', request);
+        // console.log(`${ENV_URL}${GUEST_CART_DETAIL}`);
 
-        console.log('request send: ', convertGuestRequest(request));
+        // console.log('request send: ', convertGuestRequest(request));
         return await (
             await axios.post(`${ENV_URL}${GUEST_CART_DETAIL}`, {
                 ...convertGuestRequest(),
@@ -261,12 +261,12 @@ const getGuestRequestCartDetail = async (request) => {
 
 const checkItemInGuestCart = (items, request) => {
     const { product_variant_id } = request;
-    console.log('request pv id: ', product_variant_id);
+    // console.log('request pv id: ', product_variant_id);
     return items.findIndex((item) => item.productVariant.id === request.product_variant_id);
 };
 
 export const updateCart = () => async (dispatch, getState) => {
-    console.log('%cupdate cart: ', 'font: 20px, color: red', getState().cart);
+    // console.log('%cupdate cart: ', 'font: 20px, color: red', getState().cart);
     dispatch(getItemsCount());
     dispatch(getBaseAmount());
     dispatch(getDiscountAmount());
@@ -281,24 +281,24 @@ export const updateGuestCartState = () => async (dispatch, getState) => {
     if (!isAnonymous) {
         // alert('updated remote cart')
         await axios.get(`${ENV_URL}${UPDATE_AUTH_CART}`).then((res) => {
-            console.log('res: ', res);
+            // console.log('res: ', res);
             if ((res.status = '409')) {
                 dispatch(fetchCartFromSever());
             }
         });
     } else {
         let request = convertUpdateCartRequest(items, cart_id);
-        console.log(request);
+        // console.log(request);
         if (request)
             await axios
                 .post(`${ENV_URL}${UPDATE_GUEST_CART}`, request)
                 .then((res) => {
-                    console.log('cart: ');
-                    console.log(res.data);
+                    // console.log('cart: ');
+                    // console.log(res.data);
                     dispatch(updateGuestCart(res.data));
 
                     dispatch(updateCart);
-                    console.log('finish updated: ', getState().cart);
+                    // console.log('finish updated: ', getState().cart);
 
                     return;
                 })

@@ -9,6 +9,8 @@ import Address from './personal/Address';
 import { useLocation } from 'react-router-dom';
 import './Profile.css';
 import { useSelector } from 'react-redux';
+import Wrapper from '../../Wrapper';
+import { Helmet } from 'react-helmet';
 const Profile = () => {
     // const dispatch = useDispatch();
     // useEffect(()=>{
@@ -65,12 +67,18 @@ const Profile = () => {
     ];
     return (
         <>
-            <Tabs
+        <Wrapper>
+        <Helmet>
+                <title>Tài khoản</title>
+            </Helmet>
+        <Tabs
                 className='profile-tabs'
                 defaultActiveKey={!profileId ? '2' : profileId}
                 tabPosition="left"
                 items={items}
             />
+        </Wrapper>
+           
         </>
     );
 };

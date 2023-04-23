@@ -60,7 +60,7 @@ const FavoriteProductCard = ({
                     <Button
                         style={{
                             // backgroundColor: 'orangered',
-                            color: 'white',
+                            // color: 'white',
                         }}
                         onClick={() => {
                             navigate(

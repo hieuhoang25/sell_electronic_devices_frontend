@@ -3,6 +3,8 @@ import './contact.css';
 import Swal from 'sweetalert2';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import Wrapper from '../../Wrapper';
+import {Helmet} from 'react-helmet'
 const Contact = () => {
     const formRef = useRef(null);
     const vailidationConact = Yup.object().shape({
@@ -34,7 +36,11 @@ const Contact = () => {
         },
     });
     return (
-        <div className='contact'>
+        <Wrapper>
+            <Helmet>
+                <title>Liên hệ</title>
+            </Helmet>
+             <div className='contact'>
             <div className="banner_contact">
                 <div className="banner_contact_content">
                     <h2>
@@ -102,7 +108,7 @@ const Contact = () => {
                         width="720"
                         height="450"
                         style={{ border: 0, borderRadius: 10 }}
-                        allowfullscreen=""
+                        // allowfullscreen=""
                         loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"
                     ></iframe>
@@ -124,6 +130,8 @@ const Contact = () => {
                 </div>
             </div>
         </div>
+        </Wrapper>
+       
     );
 };
 

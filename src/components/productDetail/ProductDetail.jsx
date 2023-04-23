@@ -23,6 +23,7 @@ import axios from '../../services/axios';
 import ProductDetailQuantityCounter from '../counterInc/ProductDetailQuantityCounter';
 import CartNotification from '../../common/notification/CartNotification';
 import CartNotification_TYPE from '../../common/notification/CartNotification';
+import { Helmet } from 'react-helmet';
 import {
     addItemToCart,
     updateCart,
@@ -60,6 +61,7 @@ import { getImage } from '../../common/img';
 import { NumericFormat } from 'react-number-format';
 import { USER, WISHLISTS } from '../../constants/user';
 import { useNavigate } from 'react-router-dom';
+import Wrapper from '../../Wrapper';
 
 const ProductDetail = ({ isAuth }) => {
     let navigate = useNavigate();
@@ -102,7 +104,7 @@ const ProductDetail = ({ isAuth }) => {
     const specificationTable = useRef([]);
     // console.log(productId);
     function fetchColor(id) {
-        console.log('fetchColor: ', id);
+        // console.log('fetchColor: ', id);
         return axios({
             method: 'get',
             url: `${BASE}${PRODUCT_COLOR}/${id}`,
@@ -131,7 +133,7 @@ const ProductDetail = ({ isAuth }) => {
     }
 
     function fetchProductDetail() {
-        console.log('productBody.current', productBody.current);
+        // console.log('productBody.current', productBody.current);
         return axios({
             method: 'post',
             url: `${BASE}${PRODUCT_DETAIL}`,
@@ -164,7 +166,7 @@ const ProductDetail = ({ isAuth }) => {
     async function fetchInventory() {
         const reQty = cartQty;
         const variantId = productDetail.id;
-        console.log('variant id: ', variantId);
+        // console.log('variant id: ', variantId);
         const request = {
             product_variant_id: variantId,
             request_quantity: cartQty,
@@ -580,7 +582,11 @@ const ProductDetail = ({ isAuth }) => {
     });
 
     return (
-        <>
+        <Wrapper>
+             <Helmet>
+                <title>Chi tiết sản phẩm</title>
+            </Helmet>
+             <>
             {isLoading ? (
                 <div ref={myRef} id="top-product-page">
                     <Space
@@ -943,6 +949,8 @@ const ProductDetail = ({ isAuth }) => {
                 </div>
             )}
         </>
+        </Wrapper>
+       
     );
 };
 export default memo(ProductDetail);

@@ -5,7 +5,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -19,8 +18,11 @@ import { signUp } from './thunk';
 import { useNavigate } from 'react-router-dom';
 import { signUpSchema } from './signUpSchema';
 import './signUp.css';
+import { Link } from 'react-router-dom';
 import Loading from '../../common/Loading/Loading';
 import { GOOGLE_AUTH_URL } from '../../constants/index';
+import Wrapper from '../../Wrapper';
+import { Helmet } from 'react-helmet';
 function Copyright(props) {
     return (
         <Typography
@@ -69,7 +71,11 @@ export default function SignUp() {
     // };
 
     return (
-        <ThemeProvider theme={theme}>
+            <>
+             <Helmet>
+                <title>Đăng kí</title>
+            </Helmet>
+            <Wrapper>
             <div className="container_signUp">
                 <div className="background_signUp">
                     <Container
@@ -287,6 +293,11 @@ export default function SignUp() {
             <div className="test_signUp">
                 <Loading />
             </div>
-        </ThemeProvider>
+            </Wrapper>
+            
+            </>
+           
+
+        
     );
 }

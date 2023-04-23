@@ -1,4 +1,4 @@
-import React, { memo, useState, useReducer, useContext } from 'react';
+import React, { memo, useState, useReducer } from 'react';
 import { Col, Row, Form } from 'antd';
 import CheckoutForm from './CheckoutForm';
 import OrderList from './OrderList';
@@ -9,9 +9,10 @@ import axios from '../../services/axios';
 import { CHECKOUT } from '../../constants/user';
 import { ENV_URL } from '../../constants/index';
 import { clearAfterCheckOut } from '../../services/cartService';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
-
+import Wrapper from '../../Wrapper';
+import { Helmet } from 'react-helmet';
 const paymentData = [{ p_id: 1, name: 'VISA/MASTER Card' }];
 
 export const CHECKOUT_TYPE = {
@@ -116,6 +117,9 @@ const checkoutReducer = (state = initialState, action) => {
     }
 };
 export const CheckoutContext = React.createContext(null);
+
+
+
 const Checkout = () => {
     const { PROMO } = CHECKOUT_TYPE;
     const [form] = Form.useForm();
@@ -173,7 +177,11 @@ const Checkout = () => {
     };
 
     return (
-        <CheckoutContext.Provider value={{ CheckoutReducer, dispatch }}>
+        <Wrapper>
+             <Helmet>
+                <title>Thanh Toán</title>
+            </Helmet>
+              <CheckoutContext.Provider value={{ CheckoutReducer, dispatch }}>
             <section className="main-section">
                 <Row justify="center" gutter={16}>
                     <Col className="gutter-row" span={12}>
@@ -192,6 +200,8 @@ const Checkout = () => {
                 </Row>
             </section>
         </CheckoutContext.Provider>
+        </Wrapper>
+      
     );
 };
 export default memo(Checkout);

@@ -16,6 +16,7 @@ import { BASE, PRODUCT_INVENTORY } from '../../constants/index';
 import { removeItemFromCart, incrementItemQuantity, decrementItemQuantity, updateCart, mergeAnnonCart, updateGuestCartState } from '../../services/cartService.js';
 import Moment from 'react-moment';
 import { getImage } from '../../common/img';
+import { Helmet } from 'react-helmet';
 import {
     getVariantDetail,
     getColorOfCartItem,
@@ -32,6 +33,7 @@ import {
     getDiscountAmount,
 } from './CartUtil';
 import moment from 'moment';
+import Wrapper from '../../Wrapper';
 export const QTY_MAX = 5;
 export const QTY_MIN = 1;
 
@@ -215,14 +217,18 @@ const Cart = () => {
         let time = new Date(Cart.time);
         let now = new Date();
         moment(time).add(30, 'minutes');
-        console.log('time: ', time);
-        console.log(moment(time).add(30, 'minutes')._d);
-        console.log(moment(time).add(30, 'minutes'));
-        console.log(now);
+        // console.log('time: ', time);
+        // console.log(moment(time).add(30, 'minutes')._d);
+        // console.log(moment(time).add(30, 'minutes'));
+        // console.log(now);
     };
     // prodcut qty total
     return (
-        <>
+        <Wrapper>
+             <Helmet>
+                <title>Giỏ hàng</title>
+            </Helmet>
+             <>
             {!isLoading && (
                 <section className="cart-items">
                     <div className="container d_flex">
@@ -391,6 +397,8 @@ const Cart = () => {
                 </section>
             )}
         </>
+        </Wrapper>
+       
     );
 };
 export const formatFixedFloat = (num, toFixed) => {

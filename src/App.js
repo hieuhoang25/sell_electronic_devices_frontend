@@ -25,6 +25,7 @@ import ButtonDarkMode from './common/drakMode/ButtonDarkMode';
 import Verification from './components/SignUpPage/Verification';
 import Contact from './components/contact/Contact';
 import NotFoundPage from './common/Notfound/NotFoundPage';
+import RouteComponent from './HOCs/AppRoute';
 const LoginPage = Loadable(lazy(() => import('./components/LoginPage/LoginPage')));
 const Profile = Loadable(lazy(() => import('./components/userProfile/Profile')));
 function App() {
@@ -87,13 +88,13 @@ function App() {
     };
 
     useEffect(async () => {
-        console.log('App useEffect loading..');
+        // console.log('App useEffect loading..');
 
         // try {
         await axios
             .get(process.env.REACT_APP_URL + 'un/refresh-token')
             .then((rs) => {
-                console.log('get accesstoken...');
+                // console.log('get accesstoken...');
                 const access_token = rs.data.access_token;
                 dispatch({
                     type: INIT,
@@ -103,27 +104,27 @@ function App() {
                         role: roleOfUser(access_token),
                     },
                 });
-                console.log('auth; ', auth);
+                // console.log('auth; ', auth);
                 if (!auth.isAuthenticated) {
-                    console.log('load cart from server');
+                    // console.log('load cart from server');
                     dispatch(authenticateCart(true));
-                    console.log('cart state in App.js', cart);
+                    // console.log('cart state in App.js', cart);
                 } else {
-                    console.log('set user cart');
+                    // console.log('set user cart');
                     dispatch(authenticateCart(false));
-                    console.log('user cart state in App.js', cart);
+                    // console.log('user cart state in App.js', cart);
                 }
                 dispatch(fetchCartFromSever());
             })
             .catch((e) => {
-                console.log('auth: ', auth);
+                // console.log('auth: ', auth);
                 if (!auth.isAuthenticated) {
-                    console.log('set to cart guest -> set annon true');
+                    // console.log('set to cart guest -> set annon true');
                     // dispatch(resetToGuestCart());
                     dispatch(authenticateCart(true));
                 }
-                console.log('cart before fectch error: ', cart);
-                console.log('fetch cart with refresh token false: ');
+                // console.log('cart before fectch error: ', cart);
+                // console.log('fetch cart with refresh token false: ');
                 dispatch(fetchCartFromSever());
                 return;
             });
@@ -132,7 +133,7 @@ function App() {
     useEffect(() => {}, [auth.isAuthenticated]);
     return (
         <>
-            <Wrapper>
+
                 <Routes>
                     <Route
                         path="/"
@@ -167,12 +168,11 @@ function App() {
                             </Protected>
                         }
                     ></Route>
-                    <Route path="/signUp" element={<SignUp />}></Route>
+                    <Route path="/signUp" element={<RouteComponent isPrivate={true} Component={SignUp} redirectPath={"/"}/>}></Route>
                     <Route path="/signUp/Verification/:userName" element={<Verification />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path='/*' element={<NotFoundPage/>} />
                 </Routes>
-            </Wrapper>
             <BackToTop />
             <ButtonDarkMode />
         </>

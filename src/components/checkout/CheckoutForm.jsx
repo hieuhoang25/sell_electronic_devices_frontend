@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback, memo, useContext } from 'react';
+import React, { useState, useEffect, memo, useContext } from 'react';
 import { Col, Row, Space } from 'antd';
-import { Button, Checkbox, Form, Input, Radio, Select } from 'antd';
+import { Button,  Form, Radio,  } from 'antd';
 import { PAYMETHOD, ENV_URL } from '../../constants/index';
-import { USER_INFOS, USER_ADDRESS_LIST, USER_ADDRESS_DEFAULT } from '../../constants/user';
+import { USER_INFOS, USER_ADDRESS_LIST } from '../../constants/user';
 import axios from '../../services/axios';
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 import { Collapse } from 'antd';
 import AddressForm from './AddressForm';
 
@@ -111,16 +111,16 @@ const CheckoutForm = ({ form, onFinish }) => {
         // await fetchData();
         setLoading(true);
         const fetch = async () => {
-            console.log('getPayMethod....');
+            // console.log('getPayMethod....');
             await getPayMethods();
-            console.log('finish getPayMethod....');
-            console.log('');
-            console.log('getUserInfo....');
+            // console.log('finish getPayMethod....');
+            // console.log('');
+            // console.log('getUserInfo....');
             await getUserInfo();
-            console.log('finish getUserInfo....', userInfo);
+            // console.log('finish getUserInfo....', userInfo);
 
-            console.log('');
-            console.log('getAddress....');
+            // console.log('');
+            // console.log('getAddress....');
             await getAddresses();
             form.setFieldsValue({ payment: undefined });
             // console.log('finish Address....');
@@ -128,8 +128,8 @@ const CheckoutForm = ({ form, onFinish }) => {
         fetch();
 
         setLoading(false);
-        console.log('after fetch userInfo....', userInfo);
-        console.log('finish getInfo....', getInfo());
+        // console.log('after fetch userInfo....', userInfo);
+        // console.log('finish getInfo....', getInfo());
         // getAddresses();
     }, []);
     useEffect(() => {
@@ -142,12 +142,12 @@ const CheckoutForm = ({ form, onFinish }) => {
     useEffect(() => {
         setLoading(true);
         let index = userAddresses.findIndex((a) => a.id === getDefaultAddress().id);
-        console.log('index: ', index);
+        // console.log('index: ', index);
         // getInfo();
         // getAddresses();
         setSelectedAddress(index);
 
-        console.log('usserAddresses: ', userAddresses);
+        // console.log('usserAddresses: ', userAddresses);
 
         if (userAddresses.length === 0) {
             setOtherAddress(true);
@@ -196,18 +196,24 @@ const CheckoutForm = ({ form, onFinish }) => {
     }, [inputProvince]);
     useEffect(() => {
         const timeOutId = setTimeout(() => {
+            // console.log('1');
             setInputAddress((prev) => {
                 return { ...prev, wards: inputWard };
+                
             });
         }, 200);
         return () => clearTimeout(timeOutId);
     }, [inputWard]);
 
     useEffect(() => {
-        const timeOutId = setTimeout(() => {
-            dispatch({ type: ACTION_OTHER_ADDR, payload: inputAddress });
-        }, 300);
-        return () => clearTimeout(timeOutId);
+        dispatch({ type: ACTION_OTHER_ADDR, payload: inputAddress });
+        console.log(inputAddress);
+        // const timeOutId = setTimeout(() => {
+        //     console.log(inputAddress);
+        //     dispatch({ type: ACTION_OTHER_ADDR, payload: inputAddress });
+        // },500);
+        
+        // return () => clearTimeout(timeOutId);
     }, [inputAddress]);
 
     const getSelectedAddress = (ADDRESS_FIELD) => {
@@ -221,7 +227,7 @@ const CheckoutForm = ({ form, onFinish }) => {
         return f;
     };
 
-    const getInputAddress = () => {};
+    // const getInputAddress = () => {};
     const getPayMethods = async () => {
         try {
             let methods = await (await fetchPaymentMethod()).data;
@@ -233,7 +239,7 @@ const CheckoutForm = ({ form, onFinish }) => {
     const getUserInfo = async () => {
         try {
             let user_info = await (await fetchUserInfo()).data;
-            console.log('user info; ', user_info);
+            // console.log('user info; ', user_info);
             // setUserInfo((prev) =>{ return {...prev,...user_info}} );
             setUserInfo(user_info);
         } catch (e) {
@@ -247,9 +253,9 @@ const CheckoutForm = ({ form, onFinish }) => {
     };
 
     const getAddresses = async () => {
-        console.log(' inside getAddress...');
+        // console.log(' inside getAddress...');
         const { addresses } = getInfo();
-        console.log('userInfo addresses: ', addresses);
+        // console.log('userInfo addresses: ', addresses);
 
         const inital = [
             {
@@ -262,7 +268,7 @@ const CheckoutForm = ({ form, onFinish }) => {
             },
         ];
         try {
-            console.log('fetch address----------');
+            // console.log('fetch address----------');
             await fetchUserAddress().then((res) => {
                 console.log('fetch data: ');
                 console.log(res.data);
@@ -290,7 +296,7 @@ const CheckoutForm = ({ form, onFinish }) => {
 
     const methodOnChangeHandler = (target) => {
         let value = target.target.value;
-        console.log('radio checked', value);
+        // console.log('radio checked', value);
         form.setFieldsValue({ payment: value });
         // let value =  e.target.value;
         // let selected = payMethods.findIndex((i) => i.id === value);
@@ -301,7 +307,7 @@ const CheckoutForm = ({ form, onFinish }) => {
     };
 
     useEffect(() => {
-        console.log('call dispatch');
+        // console.log('call dispatch');
         const timeOutId = setTimeout(() => {
             dispatch({ type: ACTION_PAY, payload: selectedMethod });
         }, 200);
@@ -309,13 +315,13 @@ const CheckoutForm = ({ form, onFinish }) => {
     }, [selectedMethod]);
 
     const onChangeUsingAddressHandler = () => {
-        console.log('other address failed');
+        // console.log('other address failed');
         setOtherAddress(false);
         if (userAddresses !== undefined && userAddresses.length > 0) {
-            console.log('selected addreess: ', selectedAddress);
-            console.log('sele');
+            // console.log('selected addreess: ', selectedAddress);
+            // console.log('sele');
             let index = selectedAddress;
-            console.log(userAddresses[selectedAddress]);
+            // console.log(userAddresses[selectedAddress]);
             setSelectedAddress((prev) => {
                 return prev;
             });
@@ -324,7 +330,7 @@ const CheckoutForm = ({ form, onFinish }) => {
     const onChangeUsingOtherAddressHandler = () => {
         if (otherAddress) return;
 
-        console.log('other address true');
+        // console.log('other address true');
         setOtherAddress(true);
         form.setFieldsValue({ input_addressline: undefined });
         form.setFieldsValue({ input_province: undefined });
@@ -333,7 +339,7 @@ const CheckoutForm = ({ form, onFinish }) => {
     };
 
     useEffect(() => {
-        console.log('otherAddress state: ', otherAddress);
+        // console.log('otherAddress state: ', otherAddress);
         let key = otherAddress ? [1] : [];
         setActiveKey((prev) => key);
     }, [otherAddress]);
@@ -425,7 +431,7 @@ const CheckoutForm = ({ form, onFinish }) => {
                                                     {getDefaultAddress().id >= 0 && (
                                                         <Row className="default-area" align="middle" justify="space-around">
                                                             <Button className="default-btn" disabled={!otherAddress} onClick={onChangeUsingAddressHandler}>
-                                                                Sử dụng địa chỉ mặc định
+                                                                Sử dụng địa chỉ mặc  định
                                                             </Button>
                                                             <Form.Item
                                                                 {...{
