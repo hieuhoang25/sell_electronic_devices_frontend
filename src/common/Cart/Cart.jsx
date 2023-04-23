@@ -3,7 +3,7 @@ import './style.css';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { Button, Modal, Space, notification,Spin,Tooltip } from 'antd';
+import { Button, Modal, Space, notification, Spin, Tooltip } from 'antd';
 import { Button as MUIButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { HeartOutlined, HeartFilled, FrownOutlined } from '@ant-design/icons';
@@ -47,7 +47,7 @@ const Cart = () => {
     const { confirm } = Modal;
     const [isLoading, setIsLoading] = useState(true);
     const [disableCheckoutBtn, setDisableCheckoutBtn] = useState(false);
-    const [wishlists,setWishLists] = useState([]);
+    const [wishlists, setWishLists] = useState([]);
     let history = useNavigate();
 
     const [api, contextHolder] = notification.useNotification();
@@ -56,7 +56,7 @@ const Cart = () => {
             message: message,
             placement: placements,
             description: description,
-            duration: duration
+            duration: duration,
         });
     };
 
@@ -91,14 +91,13 @@ const Cart = () => {
 
     function onCheckoutHandler() {
         if (Cart.isAnonymous) {
-           
         } else {
             dispatch(updateGuestCartState()).then((r) => {
                 console.log('return: ', r);
                 let { status } = r;
                 if (r === 409) {
                     openNotificationWithIcon('info', 'Giỏ hàng có thay đổi', 'top', 2);
-                }else {
+                } else {
                     history('/checkout');
                 }
             });
@@ -110,6 +109,7 @@ const Cart = () => {
         dispatch(updateGuestCartState());
     }
     const fetchAllItemInventory = useCallback(async () => {
+        setIsLoading(true);
         if (items.length !== 0) {
             try {
                 const f = items.map(async (item, index) => {
@@ -119,6 +119,7 @@ const Cart = () => {
                     const res = await fe(item);
                     return { id: item.id, index: index, ...res };
                 });
+                setIsLoading(false);
                 return Promise.all(f).then(function (results) {
                     console.log(results);
                     setInventory((prev) => results);
@@ -126,7 +127,7 @@ const Cart = () => {
                 });
             } catch (e) {
                 console.log(e.message);
-                setIsLoading(true);
+                setIsLoading(false);
             }
         } else {
             console.log('items empty');
@@ -165,8 +166,6 @@ const Cart = () => {
 
         fetchAllItemInventory()
             .then((res) => {
-                console.log('invetoris: ', inventory);
-                console.log('res', res);
                 let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
@@ -198,8 +197,6 @@ const Cart = () => {
 
         fetchAllItemInventory()
             .then((res) => {
-                console.log('invetoris: ', inventory);
-                console.log('res', res);
                 let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
@@ -224,22 +221,21 @@ const Cart = () => {
     async function fetchIsWishlist(item) {
         let { productVariant } = item;
         let { product_id: productId } = productVariant;
-       return await axios({
+        return await axios({
             method: 'get',
             url: `${ENV_URL}${USER}${WISHLISTS}/${productId}`,
         })
             .then((res) => {
-               return res.data;
+                return res.data;
             })
             .catch((error) => {
-              return false;
+                return false;
             });
     }
 
-    const fetchAllWihshList = useCallback(async() =>  {
-
+    const fetchAllWihshList = useCallback(async () => {
         if (items.length !== 0) {
-            if(!Cart.isAnonymous) {
+            if (!Cart.isAnonymous) {
                 try {
                     const f = items.map(async (item, index) => {
                         const fe = async (item) => {
@@ -247,9 +243,14 @@ const Cart = () => {
                         };
                         const res = await fe(item);
                         console.log('fav res: ', res);
-                        let {productVariant:variant} = item;
-                       
-                        return { id: item.id, index: index, is_favorite: res, product_id: variant.product_id};
+                        let { productVariant: variant } = item;
+
+                        return {
+                            id: item.id,
+                            index: index,
+                            is_favorite: res,
+                            product_id: variant.product_id,
+                        };
                     });
                     return Promise.all(f).then(function (results) {
                         console.log(results);
@@ -260,49 +261,38 @@ const Cart = () => {
                     console.log(e.message);
                     setIsLoading(true);
                 }
-            }else {
+            } else {
                 const annon_wishlist = items.map((item, index) => {
-                    let {productVariant:variant} = item;
-                    return { id: item.id, index: index, is_favorite: false,product_id: variant.product_id};
-                })
+                    let { productVariant: variant } = item;
+                    return {
+                        id: item.id,
+                        index: index,
+                        is_favorite: false,
+                        product_id: variant.product_id,
+                    };
+                });
                 setWishLists((prev) => [...annon_wishlist]);
             }
-            
         } else {
             console.log('wishlist empty');
         }
-    })
+    });
 
     const handleFavoriteClick = useCallback((index) => {
-            // alert("call wishlit" + index)
-            if(Cart.isAnonymous) {
-                openNotificationWithIcon('info','Bạn cần đăng nhập để có thể thêm sản phẩm vào yêu thích')
-            }else {
-                let itemIndexInWishlist = wishlists.findIndex(w => w.index === index);
-                console.log("w index: ", wishlists[itemIndexInWishlist]);
-                if(itemIndexInWishlist !== -1) {
+        // alert("call wishlit" + index)
+        if (Cart.isAnonymous) {
+            openNotificationWithIcon('info', 'Bạn cần đăng nhập để có thể thêm sản phẩm vào yêu thích');
+        } else {
+            let itemIndexInWishlist = wishlists.findIndex((w) => w.index === index);
+            console.log('w index: ', wishlists[itemIndexInWishlist]);
+            if (itemIndexInWishlist !== -1) {
+                let { is_favorite: wishlistItemState, product_id: productId } = wishlists[itemIndexInWishlist];
 
-                    let{ is_favorite: wishlistItemState, product_id: productId} = wishlists[itemIndexInWishlist];
-
-                    if(!wishlistItemState)  addWishlists(productId)
-                    else  removeWishlists(productId);
-                }else openNotificationWithIcon('error',"Có lỗi xảy ra, vui lòng thử lại sau")
-            }
-    })
-
-
-
-    // const handleFavoriteClick = () => {
-    //     if (isAuth) {
-    //         if (isFavorite) {
-    //             removeWishlists(productId);
-    //             setFavorite(false);
-    //         } else {
-    //             addWishlists(productId);
-    //             setFavorite(true);
-    //         }
-    //     } else return history('/login');
-    // };
+                if (!wishlistItemState) addWishlists(productId);
+                else removeWishlists(productId);
+            } else openNotificationWithIcon('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+        }
+    });
 
     //add wishlist
     function addWishlists(product_id) {
@@ -310,13 +300,14 @@ const Cart = () => {
             method: 'post',
             url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}`,
             data: [{ product_id: product_id }],
-        }).then(res => {
-            openNotificationWithIcon('success',"Đã thêm sản phẩm vào yêu thích",'','top',1)
-            fetchAllWihshList().catch(e => console.log(e))
         })
-        .catch((error) => {
-            console.log(error);
-        });
+            .then((res) => {
+                openNotificationWithIcon('success', 'Đã thêm sản phẩm vào yêu thích', '', 'top', 1);
+                fetchAllWihshList().catch((e) => console.log(e));
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
     //remove wishlist
     function removeWishlists(product_id) {
@@ -324,13 +315,14 @@ const Cart = () => {
             method: 'delete',
             url: `${process.env.REACT_APP_URL}${USER}${WISHLISTS}`,
             data: [{ product_id: product_id }],
-        }).then(res => {
-            openNotificationWithIcon('success',"Đã xoá sản phẩm khỏi yêu thích",'','top',1)
-            fetchAllWihshList().catch(e => console.log(e))
         })
-        .catch((error) => {
-            console.log(error);
-        });
+            .then((res) => {
+                openNotificationWithIcon('success', 'Đã xoá sản phẩm khỏi yêu thích', '', 'top', 1);
+                fetchAllWihshList().catch((e) => console.log(e));
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     const findInventoryByIndex = (index) => {
@@ -343,18 +335,17 @@ const Cart = () => {
         return findInventoryByIndex(index).current_inventory;
     };
     const getCurrentIsInWishList = (index) => {
-        if(wishlists.length !== 0) {
+        if (wishlists.length !== 0) {
             return wishlists[index].is_favorite;
-        } 
-        else return false; 
-    }
+        } else return false;
+    };
     const getTotalItemCountExcludeOutStock = () => {
-        let cartcount = items.reduce((total, item)  => {
-            if(item.quantity > 0)return  total + item.quantity;
+        let cartcount = items.reduce((total, item) => {
+            if (item.quantity > 0) return total + item.quantity;
             else return total;
-        },0)
+        }, 0);
         return cartcount;
-    }
+    };
 
     useEffect(() => {
         console.log('...load first');
@@ -363,12 +354,12 @@ const Cart = () => {
         dispatch(updateGuestCartState()).then((res) => console.log('res: ', res));
 
         fetchAllItemInventory().catch((e) => console.log(e.message));
-        fetchAllWihshList().catch(e => console.log(e.message))
+        fetchAllWihshList().catch((e) => console.log(e.message));
         setIsLoading(false);
 
         return () => {
             setInventory((prev) => []);
-            setWishLists(prev => [])
+            setWishLists((prev) => []);
         };
     }, []);
 
@@ -391,8 +382,7 @@ const Cart = () => {
     }, [inventory]);
 
     useEffect(() => {
-        console.log('%cwishlist list: ',"color: red", wishlists);
-        
+        console.log('%cwishlist list: ', 'color: red', wishlists);
     }, [wishlists]);
 
     useEffect(() => {
@@ -417,15 +407,15 @@ const Cart = () => {
         dispatch(mergeAnnonCart());
     };
     const onCompare = () => {
-        let time =moment(new Date(Cart.time));
+        let time = moment(new Date(Cart.time));
         let now = moment(new Date());
-        let mock = moment('22 04 2023 09:17:00', "DD MM YYYY hh:mm:ss");
-        
+        let mock = moment('22 04 2023 09:17:00', 'DD MM YYYY hh:mm:ss');
+
         let dueTime = moment(mock).add(30, 'minutes');
         // console.log('mock: ',mock);
         // console.log('time: ', time._d);
         // console.log('dueTime: ', dueTime._d);
-       
+
         // console.log('now: ', now._d);
 
         // console.log(now >= dueTime)
@@ -434,18 +424,20 @@ const Cart = () => {
     // prodcut qty total
     return (
         <>
-        {isLoading && <div style={{minHeight: "500px"}} className='container d_flex_jus_center algin-center'>
-        <Spin />
-        </div>}
+            {isLoading && (
+                <div style={{ minHeight: '500px' }} className="container d_flex_jus_center algin-center">
+                    <Spin />
+                </div>
+            )}
             {contextHolder}
             {!isLoading && (
                 <section className="cart-items">
                     <div className="cart-container container d_flex">
                         {/* if hamro cart ma kunai pani item xaina bhane no diplay */}
-                        <div className='top'>
-                        <div className='d_flex'>
-                            <h3 style={{padding: "10px"}} >Giỏ hàng của bạn ({totalCount} sản phẩm) </h3>
-                        </div>
+                        <div className="top">
+                            <div className="d_flex">
+                                <h3 style={{ padding: '10px' }}>Giỏ hàng của bạn ({totalCount} sản phẩm) </h3>
+                            </div>
                         </div>
                         <div className={`detail cart-details ${items.length === 0 ? 'w-100-im' : ''} `}>
                             {items.length === 0 && (
@@ -462,9 +454,6 @@ const Cart = () => {
                                 </div>
                             )}
                             {items.map((item, index) => {
-                                {
-                                    /* const productQty = item.price * item.qty; */
-                                }
                                 return (
                                     <div className={`cart-list product d_flex ${item.quantity === 0 ? 'out-stock' : ''}`} key={item.id}>
                                         {item.quantity > 0 && (
@@ -498,10 +487,14 @@ const Cart = () => {
                                                     <span>{getStorageOfCartItem(item)}</span>
                                                 </li>
                                                 <li className="single-price">
-                                                Đơn giá: {getCurrencyFormatComp(getVariantDetail(item).price, false, 'atr-price')}
-                                                {!getPromotion(item) && item.quantity > 0 && (
-                                                     <span> {` x `} {item.quantity}{' '} </span>) } 
-                                                </li>              
+                                                    Đơn giá: {getCurrencyFormatComp(getVariantDetail(item).price, false, 'atr-price')}
+                                                    {!getPromotion(item) && item.quantity > 0 && (
+                                                        <span>
+                                                            {' '}
+                                                            {` x `} {item.quantity}{' '}
+                                                        </span>
+                                                    )}
+                                                </li>
                                                 {getPromotion(item) && item.quantity > 0 && (
                                                     <li>
                                                         Giảm giá:
@@ -547,22 +540,24 @@ const Cart = () => {
                                                 )}
                                             </ul>
                                             <div className="cart-detail-action-cotainer">
-                                                <Stack className="action-buttons" direction="row" spacing={2}>  
-                                                <div>
-                                                </div>                   
-                                                     {wishlists.length > 0 && getCurrentIsInWishList(index) && 
-                                                     ( <Tooltip  placement="top" title={'Xoá khỏi yêu thích'} >
-                                                     <MUIButton  onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteIcon />}>Yêu thích</MUIButton> 
-                                                     </Tooltip>)   
-                                                       }   
-                                                    
-                                                     {wishlists.length > 0 && !getCurrentIsInWishList(index) && (
-                                                        <Tooltip  placement="top" title={'Thêm vào yêu thích'} >
-                                                        <MUIButton  onClick={() => handleFavoriteClick(index)}  startIcon={<FavoriteBorderIcon />}>Yêu thích</MUIButton>
-                                                          </Tooltip>
-                                                     )  }   
-                                                   
-                                                
+                                                <Stack className="action-buttons" direction="row" spacing={2}>
+                                                    <div></div>
+                                                    {wishlists.length > 0 && getCurrentIsInWishList(index) && (
+                                                        <Tooltip placement="top" title={'Xoá khỏi yêu thích'}>
+                                                            <MUIButton onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteIcon />}>
+                                                                Yêu thích
+                                                            </MUIButton>
+                                                        </Tooltip>
+                                                    )}
+
+                                                    {wishlists.length > 0 && !getCurrentIsInWishList(index) && (
+                                                        <Tooltip placement="top" title={'Thêm vào yêu thích'}>
+                                                            <MUIButton onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteBorderIcon />}>
+                                                                Yêu thích
+                                                            </MUIButton>
+                                                        </Tooltip>
+                                                    )}
+
                                                     <MUIButton className="remove-cart-btn" startIcon={<DeleteIcon />} onClick={() => showPromiseConfirm(`Bạn có muốn xoá ${getProductVariantName(item)} khỏi giỏ hàng?`, item.id)}>
                                                         Xoá
                                                     </MUIButton>
@@ -629,12 +624,12 @@ const Cart = () => {
                         {items.length !== 0 && (
                             <div className="cart-total fix product">
                                 {checkAllOutOfStock(items) ? (
-                                   <div className='out-stock d_flex_col'>
-                                   <h5>Không có sản phẩm nào để thanh toán</h5>
-                                    <Link to={'/product/1'} className="shop-btn">
-                                        <i class="fa-solid fa-cart-shopping"></i>
-                                        {`   `} Tiếp tục mua sắm
-                                    </Link>
+                                    <div className="out-stock d_flex_col">
+                                        <h5>Không có sản phẩm nào để thanh toán</h5>
+                                        <Link to={'/product/1'} className="shop-btn">
+                                            <i class="fa-solid fa-cart-shopping"></i>
+                                            {`   `} Tiếp tục mua sắm
+                                        </Link>
                                     </div>
                                 ) : (
                                     <div>
@@ -643,10 +638,7 @@ const Cart = () => {
                                         <div className=" d_flex">
                                             <h4>Số lượng :</h4>
                                             {/* {totalCount} */}
-                                            <span>
-                                            {getTotalItemCountExcludeOutStock()}
-                                            </span>
-                                         
+                                            <span>{getTotalItemCountExcludeOutStock()}</span>
                                         </div>
                                         <div className=" d_flex">
                                             <h4>Tạm tính :</h4>

@@ -115,7 +115,7 @@ const Search = () => {
                                 }
                             }}
                         />
-                        <span>All Category</span>
+                        {/* <span>All Category</span> */}
                     </div>
 
                     {/* <CartPopover></CartPopover> */}
