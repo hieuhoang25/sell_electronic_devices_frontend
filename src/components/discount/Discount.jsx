@@ -12,8 +12,8 @@ const Discount = () => {
                             <h2>Khuyến mãi lớn</h2>
                         </div>
                         <div className="heading-right row ">
-                            <span>Tất cả</span>
-                            <i className="fa-solid fa-caret-right"></i>
+                            {/* <span>Tất cả</span>
+                            <i className="fa-solid fa-caret-right"></i> */}
                         </div>
                     </div>
                     <Dcard />

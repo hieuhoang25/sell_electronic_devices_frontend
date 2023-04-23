@@ -1,9 +1,9 @@
-import React, { memo, useState, useReducer, useContext} from 'react';
-import { Col, Row, Form, notification} from 'antd';
+import React, { memo, useState, useReducer, useContext } from 'react';
+import { Col, Row, Form, notification } from 'antd';
 
 import CheckoutForm from './CheckoutForm';
 import OrderList from './OrderList';
-import { useNavigate ,Link} from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './style.css';
 import { ADDRESS_FIELD } from './CheckoutForm';
 import axios from '../../services/axios';
@@ -12,8 +12,10 @@ import { ENV_URL } from '../../constants/index';
 import { clearAfterCheckOut } from '../../services/cartService';
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
-import {checkAllOutOfStock} from '../../common/Cart/CartUtil'
+import { checkAllOutOfStock } from '../../common/Cart/CartUtil';
 
+import Wrapper from '../../Wrapper';
+import { Helmet } from 'react-helmet';
 const paymentData = [{ p_id: 1, name: 'VISA/MASTER Card' }];
 
 export const CHECKOUT_TYPE = {
@@ -44,23 +46,9 @@ const initialState = {
 
 const checkoutReducer = (state = initialState, action) => {
     const { ADDRESS, PROMO, CHECKOUT, PAYMENT, OTHER_ADDRESS } = CHECKOUT_TYPE;
-    const {
-        DISTR,
-        METHOD,
-        POSTID,
-        PROMO: PROMO_REQ,
-        PROVINCE,
-        LINE,
-        WARDS,
-    } = REQUEST;
+    const { DISTR, METHOD, POSTID, PROMO: PROMO_REQ, PROVINCE, LINE, WARDS } = REQUEST;
 
-    const {
-        PROVINCE: PAY_PROVINCE,
-        POSTID: PAY_POSTID,
-        WARDS: PAY_WARDS,
-        LINE: PAY_LINE,
-        DISTR: PAY_DISTR,
-    } = ADDRESS_FIELD;
+    const { PROVINCE: PAY_PROVINCE, POSTID: PAY_POSTID, WARDS: PAY_WARDS, LINE: PAY_LINE, DISTR: PAY_DISTR } = ADDRESS_FIELD;
     console.log('inside reducer');
     switch (action.type) {
         case 'checkout':
@@ -73,13 +61,7 @@ const checkoutReducer = (state = initialState, action) => {
         case OTHER_ADDRESS: {
             console.log('call dispatch other address...');
             let addressFull = action.payload;
-            const {
-                district: dis,
-                address_line: line,
-                province: prov,
-                wards: wards,
-                postal_id: postId,
-            } = action.payload;
+            const { district: dis, address_line: line, province: prov, wards: wards, postal_id: postId } = action.payload;
             console.log('address full', addressFull);
             return {
                 ...state,
@@ -92,13 +74,7 @@ const checkoutReducer = (state = initialState, action) => {
         case ADDRESS: {
             console.log('call dispatch address...');
             let addressFull = action.payload;
-            const {
-                district: dis,
-                address_line: line,
-                province: prov,
-                wards: wards,
-                postal_id: postId,
-            } = action.payload;
+            const { district: dis, address_line: line, province: prov, wards: wards, postal_id: postId } = action.payload;
             console.log('address full', addressFull);
             return {
                 ...state,
@@ -118,6 +94,7 @@ const checkoutReducer = (state = initialState, action) => {
     }
 };
 export const CheckoutContext = React.createContext(null);
+
 const Checkout = () => {
     const [api, contextHolder] = notification.useNotification();
     const openNotificationWithIcon = (type, message, description = '', placements = 'top', duration = '2') => {
@@ -125,21 +102,17 @@ const Checkout = () => {
             message: message,
             placement: placements,
             description: description,
-            duration: duration
+            duration: duration,
         });
     };
     const Cart = useSelector((state) => {
         return state.cart;
     });
-    const {items} = Cart;
-
+    const { items } = Cart;
 
     const { PROMO } = CHECKOUT_TYPE;
     const [form] = Form.useForm();
-    const [CheckoutReducer, dispatch] = useReducer(
-        checkoutReducer,
-        initialState,
-    );
+    const [CheckoutReducer, dispatch] = useReducer(checkoutReducer, initialState);
     const [disableCheckoutBtn, setDisableCheckoutBtn] = useState(false);
     const serviceDispatch = useDispatch();
     const navigate = useNavigate();
@@ -175,14 +148,12 @@ const Checkout = () => {
                         }, 1400);
                     })
                     .catch((e) => {
-                      
                         console.log(e.message);
-                        openNotificationWithIcon('error','Có lỗi xảy ra')
+                        openNotificationWithIcon('error', 'Có lỗi xảy ra');
                         setDisableCheckoutBtn((prev) => true);
                         setTimeout(() => {
                             navigate('/cart');
-                        },2000)
-                        
+                        }, 2000);
                     });
             })
             .catch((e) => {
@@ -192,40 +163,37 @@ const Checkout = () => {
     };
 
     return (
-        <CheckoutContext.Provider value={{ CheckoutReducer, dispatch }}>
-         {contextHolder}
-         {checkAllOutOfStock(items) && 
-                                   (
-                                    <div style={{minHeight:"500px"}}  className="main-section d_flex_jus_center algin-center">
-                                    <div className='out-stock d_flex_col'>
-                                   <h5>Không có sản phẩm nào để thanh toán</h5>
-                                    <Link to={'/product/1'} className="shop-btn">
-                                        <i class="fa-solid fa-cart-shopping"></i>
-                                        {`   `} Tiếp tục mua sắm
-                                    </Link>
-                                    </div>
-                                    </div>) 
-                                    }
-          {!checkAllOutOfStock(items) && 
-            <section className="main-section">  
-                <Row justify="center" gutter={16}>
-                    <Col className="gutter-row" span={12}>
-                        <CheckoutForm
-                            onFinish={onClickOrder}
-                            form={form}
-                        ></CheckoutForm>
-                    </Col>
-                    <Col className="gutter-row" span={8}>
-                        <OrderList
-                            disableCheckoutBtn={disableCheckoutBtn}
-                            onAddPromotion={onAddPromotion}
-                            onClickOrder={onClickOrder}
-                        ></OrderList>
-                    </Col>
-                </Row>
-            </section>
-            }
-        </CheckoutContext.Provider>
+        <Wrapper>
+            <Helmet>
+                <title>Thanh Toán</title>
+            </Helmet>
+            <CheckoutContext.Provider value={{ CheckoutReducer, dispatch }}>
+                {contextHolder}
+                {checkAllOutOfStock(items) && (
+                    <div style={{ minHeight: '500px' }} className="main-section d_flex_jus_center algin-center">
+                        <div className="out-stock d_flex_col">
+                            <h5>Không có sản phẩm nào để thanh toán</h5>
+                            <Link to={'/product/1'} className="shop-btn">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                {`   `} Tiếp tục mua sắm
+                            </Link>
+                        </div>
+                    </div>
+                )}
+                {!checkAllOutOfStock(items) && (
+                    <section className="main-section">
+                        <Row justify="center" gutter={16}>
+                            <Col className="gutter-row" span={12}>
+                                <CheckoutForm onFinish={onClickOrder} form={form}></CheckoutForm>
+                            </Col>
+                            <Col className="gutter-row" span={8}>
+                                <OrderList disableCheckoutBtn={disableCheckoutBtn} onAddPromotion={onAddPromotion} onClickOrder={onClickOrder}></OrderList>
+                            </Col>
+                        </Row>
+                    </section>
+                )}
+            </CheckoutContext.Provider>
+        </Wrapper>
     );
 };
 export default memo(Checkout);

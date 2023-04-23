@@ -37,9 +37,9 @@ const OrderList = ({ disableCheckoutBtn, onClickOrder, onAddPromotion }) => {
         axios
             .post(`${ENV_URL}${USER_PROMO_ORDER}`, { ...request })
             .then((res) => {
-                console.log('res data: ');
-                console.log(res.data);
-                if (res.data == undefined || res.data.length === 0) return;
+                // console.log('res data: ');
+                // console.log(res.data);
+                if (res.data === undefined || res.data.length === 0) return;
 
                 const options = res.data.map((p) => {
                     return { ...p, label: p.promotion_code, value: p.id };
@@ -69,7 +69,7 @@ const OrderList = ({ disableCheckoutBtn, onClickOrder, onAddPromotion }) => {
     };
 
     useEffect(() => {
-        console.log('useEffec selec promo');
+        // console.log('useEffec selec promo');
         const timeout = setTimeout(() => {
             getSelectedCode();
             description();
@@ -111,8 +111,8 @@ const OrderList = ({ disableCheckoutBtn, onClickOrder, onAddPromotion }) => {
         );
     };
     const changeDescription = ({ target }) => {
-        console.log('hover value: ');
-        console.log(target);
+        // console.log('hover value: ');
+        // console.log(target);
     };
     const onOrderHandler = () => {
         onClickOrder();
@@ -126,12 +126,12 @@ const OrderList = ({ disableCheckoutBtn, onClickOrder, onAddPromotion }) => {
         return promoOptions[index].label;
     };
     const onChange = (value) => {
-        console.log(value);
+        // console.log(value);
         PromoForm.setFieldsValue({ promo_code: value });
-        console.log(promoCode);
+        // console.log(promoCode);
     };
     const addPromoCode = () => {
-        console.log('add promo');
+        // console.log('add promo');
         PromoForm.validateFields()
             .then((res) => {
                 console.log('valued ');
@@ -256,7 +256,7 @@ const OrderList = ({ disableCheckoutBtn, onClickOrder, onAddPromotion }) => {
 };
 
 const OrderListItem = ({ product }) => {
-    console.log('orderItem:', product);
+    // console.log('orderItem:', product);
     const variant_detail = getVariantDetail(product);
 
     const { productVariant: detail, price_detail, discount_amount, quantity } = product;

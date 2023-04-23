@@ -1,4 +1,11 @@
-import React, { lazy, useEffect, useState, useRef, useContext, useMemo } from 'react';
+import React, {
+    lazy,
+    useEffect,
+    useState,
+    useRef,
+    useContext,
+    useMemo,
+} from 'react';
 import './App.css';
 import jwtDecode from 'jwt-decode';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -25,8 +32,13 @@ import ButtonDarkMode from './common/drakMode/ButtonDarkMode';
 import Verification from './components/SignUpPage/Verification';
 import Contact from './components/contact/Contact';
 import NotFoundPage from './common/Notfound/NotFoundPage';
-const LoginPage = Loadable(lazy(() => import('./components/LoginPage/LoginPage')));
-const Profile = Loadable(lazy(() => import('./components/userProfile/Profile')));
+import RouteComponent from './HOCs/AppRoute';
+const LoginPage = Loadable(
+    lazy(() => import('./components/LoginPage/LoginPage')),
+);
+const Profile = Loadable(
+    lazy(() => import('./components/userProfile/Profile')),
+);
 function App() {
     // const auth = JSON.parse(localStorage.auth);
 
@@ -36,7 +48,9 @@ function App() {
 
     // const auth = useSelector((state) => state.auth);
 
-    const localStorage = JSON.parse(window.localStorage.getItem('persist:root'));
+    const localStorage = JSON.parse(
+        window.localStorage.getItem('persist:root'),
+    );
     const authRedux = useSelector((state) => state.auth);
 
     var auth = '';
@@ -58,13 +72,13 @@ function App() {
     };
 
     useEffect(async () => {
-        console.log('App useEffect loading..');
+        // console.log('App useEffect loading..');
 
         // try {
         await axios
             .get(process.env.REACT_APP_URL + 'un/refresh-token')
             .then((rs) => {
-                console.log('get accesstoken...');
+                // console.log('get accesstoken...');
                 const access_token = rs.data.access_token;
                 dispatch({
                     type: INIT,
@@ -74,27 +88,27 @@ function App() {
                         role: roleOfUser(access_token),
                     },
                 });
-                
-                // if (!auth.isAuthenticated) {
-                //     console.log('load cart from server');
-                //     dispatch(authenticateCart(true));
-                //     console.log('cart state in App.js', cart);
-                // } else {
-                //     console.log('set user cart');
-                //     dispatch(authenticateCart(false));
-                //     console.log('user cart state in App.js', cart);
-                // }
-                // dispatch(fetchCartFromSever());
+                // console.log('auth; ', auth);
+                if (!auth.isAuthenticated) {
+                    // console.log('load cart from server');
+                    dispatch(authenticateCart(true));
+                    // console.log('cart state in App.js', cart);
+                } else {
+                    // console.log('set user cart');
+                    dispatch(authenticateCart(false));
+                    // console.log('user cart state in App.js', cart);
+                }
+                dispatch(fetchCartFromSever());
             })
             .catch((e) => {
-                console.log('auth: ', auth);
+                // console.log('auth: ', auth);
                 if (!auth.isAuthenticated) {
-                    console.log('set to cart guest -> set annon true');
+                    // console.log('set to cart guest -> set annon true');
                     // dispatch(resetToGuestCart());
                     dispatch(authenticateCart(true));
                 }
-                console.log('cart before fectch error: ', cart);
-                console.log('fetch cart with refresh token false: ');
+                // console.log('cart before fectch error: ', cart);
+                // console.log('fetch cart with refresh token false: ');
                 dispatch(fetchCartFromSever());
                 return;
             });
@@ -115,47 +129,75 @@ function App() {
     }, [auth.isAuthenticated]);
     return (
         <>
-            <Wrapper>
-                <Routes>
-                    <Route
-                        path="/"
-                        element={
-                            <Pages
-                                // productItems={productItems}
-                                // addToCart={addToCart}
-                                // shopItems={productItems}
-                                isAuth={auth.isAuthenticated}
-                            />
-                        }
-                    ></Route>
-                    <Route path="/product/:categoryId" element={<Product isAuth={auth.isAuthenticated} />}></Route>
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <Pages
+                            // productItems={productItems}
+                            // addToCart={addToCart}
+                            // shopItems={productItems}
+                            isAuth={auth.isAuthenticated}
+                        />
+                    }
+                ></Route>
+                <Route
+                    path="/product/:categoryId"
+                    element={<Product isAuth={auth.isAuthenticated} />}
+                ></Route>
 
-                    <Route path="/cart" element={<Cart />}></Route>
-                    <Route path="/product" element={<Product isAuth={auth.isAuthenticated} />}></Route>
-                    <Route path="/login" element={auth.isAuthenticated ? <Navigate to="/" /> : <LoginPage />}></Route>
-                    <Route
-                        path="/profile"
-                        element={
-                            <Protected isSignedIn={auth.isAuthenticated}>
-                                <Profile />
-                            </Protected>
-                        }
-                    ></Route>
-                    <Route path="/product-detail/:productId" element={<ProductDetail isAuth={auth.isAuthenticated} />}></Route>
-                    <Route
-                        path="/checkout"
-                        element={
-                            <Protected isSignedIn={auth.isAuthenticated}>
-                                <Checkout />
-                            </Protected>
-                        }
-                    ></Route>
-                    <Route path="/signUp" element={<SignUp />}></Route>
-                    <Route path="/signUp/Verification/:userName" element={<Verification />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path='/*' element={<NotFoundPage/>} />
-                </Routes>
-            </Wrapper>
+                <Route path="/cart" element={<Cart />}></Route>
+                <Route
+                    path="/product"
+                    element={<Product isAuth={auth.isAuthenticated} />}
+                ></Route>
+                <Route
+                    path="/login"
+                    element={
+                        auth.isAuthenticated ? (
+                            <Navigate to="/" />
+                        ) : (
+                            <LoginPage />
+                        )
+                    }
+                ></Route>
+                <Route
+                    path="/profile"
+                    element={
+                        <Protected isSignedIn={auth.isAuthenticated}>
+                            <Profile />
+                        </Protected>
+                    }
+                ></Route>
+                <Route
+                    path="/product-detail/:productId"
+                    element={<ProductDetail isAuth={auth.isAuthenticated} />}
+                ></Route>
+                <Route
+                    path="/checkout"
+                    element={
+                        <Protected isSignedIn={auth.isAuthenticated}>
+                            <Checkout />
+                        </Protected>
+                    }
+                ></Route>
+                <Route
+                    path="/signUp"
+                    element={
+                        <RouteComponent
+                            isPrivate={true}
+                            Component={SignUp}
+                            redirectPath={'/'}
+                        />
+                    }
+                ></Route>
+                <Route
+                    path="/signUp/Verification/:userName"
+                    element={<Verification />}
+                />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/*" element={<NotFoundPage />} />
+            </Routes>
             <BackToTop />
             <ButtonDarkMode />
         </>

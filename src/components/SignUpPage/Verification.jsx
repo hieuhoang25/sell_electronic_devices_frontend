@@ -6,6 +6,8 @@ import { Block } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { postResendOtp, postVerification } from './thunk';
 import Loading from '../../common/Loading/Loading';
+import Wrapper from '../../Wrapper';
+import { Helmet } from 'react-helmet';
 const Verification = () => {
     const { infoSignUP } = useSelector((state) => state.userReducer);
     const [valueBtn, setValueBtn] = useState(true);
@@ -44,7 +46,11 @@ const Verification = () => {
         dispatch(postVerification(value, Navigate));
     };
     return (
-        <div className='container_signUp'>
+        <Wrapper>
+             <Helmet>
+                <title>Xác Minh</title>
+            </Helmet>
+             <div className='container_signUp'>
             <div className='background_signUp'>
             <div className='Verification_form_signUp'>
                 <form>
@@ -135,6 +141,8 @@ const Verification = () => {
                 <Loading/>
             </div>
         </div>
+        </Wrapper>
+       
     );
 };
 

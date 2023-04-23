@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { reset } from '../../redux/slices/CartSlice';
-import { Badge, List } from 'antd';
+import { Badge, Button, List, Modal } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import './Header.css';
 
@@ -17,18 +17,21 @@ const Search = () => {
         const search = document.querySelector('.search');
         search.classList.toggle('active', window.scrollY > 100);
     });
+    const [openModalLongOut,setOpenModalLogOut] =useState(false)
     const auth = useSelector((state) => state.auth);
     const Cart = useSelector((state) => state.cart);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    const  handleCancel =()=>{
+        setOpenModalLogOut(false)
+    }
     const handleLogout = async () => {
-        console.log('logout...');
+        // console.log('logout...');
         await axiosInstance
             .post(process.env.REACT_APP_URL + 'un/logout')
             .catch((error) => console.log(error));
-
+            setOpenModalLogOut(false)
         dispatch(reset());
         window.localStorage.removeItem('cart');
         // dispatch(resetToGuestCart());
@@ -115,7 +118,7 @@ const Search = () => {
                                 }
                             }}
                         />
-                        <span>All Category</span>
+                        {/* <span>All Category</span> */}
                     </div>
 
                     {/* <CartPopover></CartPopover> */}
@@ -172,7 +175,8 @@ const Search = () => {
                                 <Link
                                     className="popup-link"
                                     data-popup="Đăng xuất"
-                                    onClick={handleLogout}
+                                    // onClick={handleLogout}
+                                    onClick={()=>{setOpenModalLogOut(true)}}
                                 >
                                     <i className="fa fa-sign-out icon-circle"></i>
                                 </Link>
@@ -238,6 +242,16 @@ const Search = () => {
                     ''
                 )}
             </section>
+            <Modal footer={false} onCancel={handleCancel} open={openModalLongOut}>
+                <div className='modal_logout' >
+                    <h2><i class="fa fa-exclamation-circle"></i> Đăng xuất</h2>
+                    <p>Bạn thực sự có muốn đăng xuất !</p>
+                    <div className='btn'>
+                        <Button onClick={handleLogout}>Đăng xuất</Button>
+                        <Button onClick={handleCancel}>Hủy bỏ</Button>
+                    </div>
+                </div>
+            </Modal>
         </>
     );
 };
