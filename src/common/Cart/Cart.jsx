@@ -224,11 +224,11 @@ const Cart = () => {
     };
     // prodcut qty total
     return (
-        <Wrapper>
-             <Helmet>
+           
+             <>
+               <Helmet>
                 <title>Giỏ hàng</title>
             </Helmet>
-             <>
             {!isLoading && (
                 <section className="cart-items">
                     <div className="container d_flex">
@@ -397,7 +397,6 @@ const Cart = () => {
                 </section>
             )}
         </>
-        </Wrapper>
        
     );
 };

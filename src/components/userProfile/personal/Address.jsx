@@ -899,7 +899,7 @@ const ModalNewAddress = memo(({ open, handleOk, handleCancel, addressForm }) => 
                         <Button key="back" onClick={handleCancel}>
                             Trở lại
                         </Button>,
-                        <Button key="submit" type="primary" onClick={handleOk}>
+                        <Button key="submit" type="primary"  onClick={handleOk}>
                             Thêm địa chỉ mới
                         </Button>,
                     ]}
@@ -1095,7 +1095,7 @@ const NewAddressForm = memo(({  form, handleOk }) => {
     const onResetDefault = () => {
 
     };
-
+    
     const onSetDefaultAddress = () => {
         if (districtOptions.length !== 0 && provinceOptions.length !== 0 && wardOptions.length !== 0) {
             let foundD = districtOptions[0];
@@ -1212,11 +1212,14 @@ const NewAddressForm = memo(({  form, handleOk }) => {
                                     >
                                         <TextArea value={''} maxLength={100} style={{ height: 120, marginBottom: 10, resize: 'none' }} placeholder="Địa chỉ cụ thể"  />
                                     </Form.Item>
+
+                                    
+          
                                 </>
                             );
                         }}
                     </Form>
-          
+                
                 </>
             )}
         </>

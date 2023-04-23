@@ -46,7 +46,7 @@ const Verification = () => {
         dispatch(postVerification(value, Navigate));
     };
     return (
-        <Wrapper>
+        <>
              <Helmet>
                 <title>Xác Minh</title>
             </Helmet>
@@ -141,7 +141,7 @@ const Verification = () => {
                 <Loading/>
             </div>
         </div>
-        </Wrapper>
+        </>
        
     );
 };

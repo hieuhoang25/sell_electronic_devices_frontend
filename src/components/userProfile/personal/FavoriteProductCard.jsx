@@ -17,19 +17,19 @@ const FavoriteProductCard = ({
     wishlistItemDetail,
     handleFavoriteClick,
 }) => {
-    console.log('object');
+    // console.log('object');
     const navigate = useNavigate();
     const [isRemoved, setIsRemoved] = useState(false);
 
     useEffect(() => {
-        console.log('isREmove: ', wishlistItemDetail(value).isRemoved);
+        // console.log('isREmove: ', wishlistItemDetail(value).isRemoved);
         setIsRemoved(wishlistItemDetail(value).isRemoved);
     }, []);
-    console.log('value: ', value);
+    // console.log('value: ', value);
     //    console.log('isRemove: ',wishlistItemDetail(value).isRemoved);
 
     const favoriteClickHandler = () => {
-        console.log('set  to true');
+        // console.log('set  to true');
         // set to true not reset;
         setIsRemoved((prev) => {
             return true;

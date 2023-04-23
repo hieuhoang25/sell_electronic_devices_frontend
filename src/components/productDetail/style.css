@@ -32,8 +32,10 @@ padding: 100px 0;
 .productDetail .product_tskt .technical_content ul{
     border: 1px solid #e5e7eb;
     border-radius: 10px;
-    height: 85%;
+    /* height: 85%; */
     overflow: hidden;
+    overflow-y: auto;
+    height: 300px;
 }
 .dark .productDetail .product_tskt .technical_content ul{
     border: 1px solid #949494;

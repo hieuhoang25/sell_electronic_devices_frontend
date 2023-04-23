@@ -1,4 +1,4 @@
-    import { React, useState, memo, useEffect, useRef, useCallback } from 'react';
+import { React, useState, memo, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Col,
@@ -79,8 +79,8 @@ const ProductDetail = ({ isAuth }) => {
     const [inventory, setInventory] = useState({});
     const [isChanged, setIsChanged] = useState(false);
     const myRef = useRef(null);
-    const  Navigate = useNavigate();
-    const  {isAuthenticated}  = useSelector(state => state.auth)
+    const Navigate = useNavigate();
+    const { isAuthenticated } = useSelector((state) => state.auth);
     const [cartAddedNotif, setCartAddedNotif] = useState({
         title: 'Thêm vào giỏ hàng',
         message: '',
@@ -88,14 +88,14 @@ const ProductDetail = ({ isAuth }) => {
         content: null,
         isSuccess: null,
     });
-    const  handleBuy = async () =>{
-        if( isAuthenticated){
-           await handleAddToCart()
-            navigate('/cart')
-        }else{
-            Navigate('/login')
+    const handleBuy = async () => {
+        if (isAuthenticated) {
+            await handleAddToCart();
+            navigate('/cart');
+        } else {
+            Navigate('/login');
         }
-    }
+    };
     const productBody = useRef({
         productId: productId,
         colorId: null,
@@ -406,7 +406,7 @@ const ProductDetail = ({ isAuth }) => {
         //         });
         //     }
         // });
-        
+
         const mess_message = productDetail.display_name;
 
         const mess_title = 'Thêm vào giỏ hàng';
@@ -557,8 +557,8 @@ const ProductDetail = ({ isAuth }) => {
             return value;
         });
         productBody.current.colorId = value;
-        console.log('prodcut body: ', productBody.current);
-        console.log('selectedColor id: ', selectedColor);
+        // console.log('prodcut body: ', productBody.current);
+        // console.log('selectedColor id: ', selectedColor);
 
         fetchProductDetailByColor(value);
     });
@@ -582,11 +582,10 @@ const ProductDetail = ({ isAuth }) => {
     });
 
     return (
-        <Wrapper>
-             <Helmet>
+        <>
+            <Helmet>
                 <title>Chi tiết sản phẩm</title>
             </Helmet>
-             <>
             {isLoading ? (
                 <div ref={myRef} id="top-product-page">
                     <Space
@@ -611,7 +610,7 @@ const ProductDetail = ({ isAuth }) => {
                     style={{
                         scrollMarginBotom: '8vh',
                     }}
-                    className='top-product-page-v2'
+                    className="top-product-page-v2"
                 >
                     <div className="productDetail">
                         <div>
@@ -640,12 +639,11 @@ const ProductDetail = ({ isAuth }) => {
                                     }}
                                 >
                                     <div
-                                    className='img'
+                                        className="img"
                                         style={{
                                             position: 'relative',
                                             display: 'inline-block',
                                         }}
-                                    
                                     >
                                         <img
                                             width="300"
@@ -826,7 +824,7 @@ const ProductDetail = ({ isAuth }) => {
                                                         }}
                                                     >
                                                         <div
-                                                            className='text'
+                                                            className="text"
                                                             style={{
                                                                 padding: '1px',
                                                             }}
@@ -886,23 +884,29 @@ const ProductDetail = ({ isAuth }) => {
                                         ></ProductDetailQuantityCounter>
 
                                         {/*Them vaoo gio*/}
-                                        <div className='btn_flex'>
-                                        <div className='btn' >
-                                            <CartNotification
-                                                key={cartAddedNotif}
-                                                isButtonDisabled={
-                                                    cartButtonDisabled
-                                                }
-                                                title={cartAddedNotif.title}
-                                                type={cartAddedNotif.type}
-                                                message={cartAddedNotif.message}
-                                                handleClick={handleAddToCart}
-                                                isSuccess={
-                                                    cartAddedNotif.isSuccess
-                                                }
-                                                setSuccessNull={setSuccessNull}
-                                            ></CartNotification>
-                                            {/* <CustomizedNotification
+                                        <div className="btn_flex">
+                                            <div className="btn">
+                                                <CartNotification
+                                                    key={cartAddedNotif}
+                                                    isButtonDisabled={
+                                                        cartButtonDisabled
+                                                    }
+                                                    title={cartAddedNotif.title}
+                                                    type={cartAddedNotif.type}
+                                                    message={
+                                                        cartAddedNotif.message
+                                                    }
+                                                    handleClick={
+                                                        handleAddToCart
+                                                    }
+                                                    isSuccess={
+                                                        cartAddedNotif.isSuccess
+                                                    }
+                                                    setSuccessNull={
+                                                        setSuccessNull
+                                                    }
+                                                ></CartNotification>
+                                                {/* <CustomizedNotification
                                     buttonContent="Thêm vào giỏ"
                                     handleClick={handleAddToCart}
                                     type="success"
@@ -910,15 +914,19 @@ const ProductDetail = ({ isAuth }) => {
                                     message="Đã thêm vào giỏ"
                                     style={{ width: '90%' }}
                                 /> */}
+                                            </div>
+                                            <div
+                                                className="btn_buy"
+                                                onClick={handleBuy}
+                                            >
+                                                <button
+                                                    type="button"
+                                                    onClick={handleAddToCart}
+                                                >
+                                                    Mua Ngay
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div className='btn_buy' onClick={handleBuy}>
-                                            <button type='button' onClick={
-                                                handleAddToCart
-                                                }>Mua Ngay</button>
-                                        </div>
-                                        </div>
-                                        
-                                        
                                     </div>
                                 </div>
 
@@ -949,8 +957,6 @@ const ProductDetail = ({ isAuth }) => {
                 </div>
             )}
         </>
-        </Wrapper>
-       
     );
 };
 export default memo(ProductDetail);

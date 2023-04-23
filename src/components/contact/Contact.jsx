@@ -36,7 +36,7 @@ const Contact = () => {
         },
     });
     return (
-        <Wrapper>
+        <>
             <Helmet>
                 <title>Liên hệ</title>
             </Helmet>
@@ -130,7 +130,7 @@ const Contact = () => {
                 </div>
             </div>
         </div>
-        </Wrapper>
+        </>
        
     );
 };

@@ -104,6 +104,7 @@ const FlashCard = () => {
                     flashDeal.length !== 0 &&
                     flashDeal.map((value, index) => {
                         return value.products.map((product, index) => {
+
                             if (value.start)
                                 return (
                                     <Link

@@ -192,10 +192,12 @@ button {
 }
 .discount {
     position: absolute;
-    top: 0;
-    left: 0;
+    bottom: 20px;
+    left: 138px;
+    /* top: 0; */
+    /* left: 0; */
     background: #e94560;
-    padding: 0px 7px;
+    padding: 0px 5px;
     font-size: 12px;
     border-radius: 10px;
     color: #fff;

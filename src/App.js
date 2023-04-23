@@ -133,8 +133,8 @@ function App() {
     useEffect(() => {}, [auth.isAuthenticated]);
     return (
         <>
-
-                <Routes>
+            <Wrapper>
+            <Routes>
                     <Route
                         path="/"
                         element={
@@ -170,9 +170,10 @@ function App() {
                     ></Route>
                     <Route path="/signUp" element={<RouteComponent isPrivate={true} Component={SignUp} redirectPath={"/"}/>}></Route>
                     <Route path="/signUp/Verification/:userName" element={<Verification />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path='/*' element={<NotFoundPage/>} />
+                    <Route path="/contact" element={<Contact />} />                    
+                    <Route path='*' element={<NotFoundPage/>} />
                 </Routes>
+            </Wrapper>
             <BackToTop />
             <ButtonDarkMode />
         </>

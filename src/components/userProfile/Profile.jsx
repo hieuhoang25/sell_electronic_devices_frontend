@@ -67,7 +67,7 @@ const Profile = () => {
     ];
     return (
         <>
-        <Wrapper>
+        
         <Helmet>
                 <title>Tài khoản</title>
             </Helmet>
@@ -77,7 +77,7 @@ const Profile = () => {
                 tabPosition="left"
                 items={items}
             />
-        </Wrapper>
+       
            
         </>
     );

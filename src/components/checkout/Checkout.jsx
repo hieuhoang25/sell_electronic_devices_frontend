@@ -177,7 +177,7 @@ const Checkout = () => {
     };
 
     return (
-        <Wrapper>
+        <>
              <Helmet>
                 <title>Thanh Toán</title>
             </Helmet>
@@ -200,7 +200,7 @@ const Checkout = () => {
                 </Row>
             </section>
         </CheckoutContext.Provider>
-        </Wrapper>
+        </>
       
     );
 };

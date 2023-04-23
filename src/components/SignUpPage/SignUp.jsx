@@ -75,7 +75,7 @@ export default function SignUp() {
              <Helmet>
                 <title>Đăng kí</title>
             </Helmet>
-            <Wrapper>
+       
             <div className="container_signUp">
                 <div className="background_signUp">
                     <Container
@@ -293,7 +293,7 @@ export default function SignUp() {
             <div className="test_signUp">
                 <Loading />
             </div>
-            </Wrapper>
+           
             
             </>
            

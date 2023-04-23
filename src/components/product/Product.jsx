@@ -267,7 +267,7 @@ function Product({ isAuth }) {
     return (
         
              <>
-             <Wrapper>
+             
              <Helmet>
                 <title>Sản phẩm</title>
             </Helmet>
@@ -291,7 +291,7 @@ function Product({ isAuth }) {
                     categoryLoading={categoryLoading}
                 />
             </div>
-            </Wrapper>
+           
         </>
        
        
