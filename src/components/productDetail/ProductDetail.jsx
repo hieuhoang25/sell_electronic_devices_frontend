@@ -750,7 +750,7 @@ const ProductDetail = ({ isAuth }) => {
                                     style={{ width: '90%' }}
                                 /> */}
                                                 </div>
-                                                {!isButtonDisabled && (
+                                                {!cartButtonDisabled && (
                                                     <div className="btn_buy" onClick={handleBuy}>
                                                         <button type="button" onClick={handleAddToCart}>
                                                             Mua Ngay
