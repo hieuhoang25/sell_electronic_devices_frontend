@@ -10,8 +10,10 @@ import axios from '../../services/axios';
 import { CHECKOUT } from '../../constants/user';
 import { ENV_URL } from '../../constants/index';
 import { clearAfterCheckOut } from '../../services/cartService';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
+import { Helmet } from 'react-helmet';
+import Wrapper from '../../Wrapper';
 import { checkAllOutOfStock } from '../../common/Cart/CartUtil';
 
 import Wrapper from '../../Wrapper';

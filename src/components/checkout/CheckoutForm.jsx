@@ -270,7 +270,7 @@ const CheckoutForm = ({ form, onFinish }) => {
         try {
             // console.log('fetch address----------');
             await fetchUserAddress().then((res) => {
-                console.log('fetch data: ');
+                // console.log('fetch data: ');
                 console.log(res.data);
                 setUserAddresses((prev) => {
                     return res.data;
