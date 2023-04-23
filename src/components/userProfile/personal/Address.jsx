@@ -275,13 +275,14 @@ const onDeleteAddressHandler = (addressId) => {
                     }}
                 >
                     <div
+                    className='address_personal'
                         style={{
                             margin: 'auto',
                             width: 800,
                             // height: 400,
                             boxShadow: '0 1px 2px 0 rgb(0 0 0 / 13%)',
                             boxSizing: 'border-box',
-                            backgroundColor: '#fff',
+                            // backgroundColor: '#fff',
                             padding: '50px',
                             marginTop: '50px',
                         }}

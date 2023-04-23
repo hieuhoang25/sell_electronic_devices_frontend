@@ -18,6 +18,7 @@ import { USER, WISHLISTS } from '../../constants/user';
 import { removeItemFromCart, incrementItemQuantity, decrementItemQuantity, updateCart, mergeAnnonCart, updateGuestCartState } from '../../services/cartService.js';
 import Moment from 'react-moment';
 import { getImage } from '../../common/img';
+import { Helmet } from 'react-helmet';
 import {
     getVariantDetail,
     getColorOfCartItem,
@@ -35,6 +36,7 @@ import {
     getProductVariantName,
 } from './CartUtil';
 import moment from 'moment';
+import Wrapper from '../../Wrapper';
 export const QTY_MAX = 5;
 export const QTY_MIN = 1;
 
@@ -417,6 +419,7 @@ const Cart = () => {
         dispatch(mergeAnnonCart());
     };
     const onCompare = () => {
+
         let time =moment(new Date(Cart.time));
         let now = moment(new Date());
         let mock = moment('22 04 2023 09:17:00', "DD MM YYYY hh:mm:ss");
@@ -432,12 +435,13 @@ const Cart = () => {
         return now >= dueTime;
     };
     // prodcut qty total
+   
     return (
-        <>
-        {isLoading && <div style={{minHeight: "500px"}} className='container d_flex_jus_center algin-center'>
-        <Spin />
-        </div>}
-            {contextHolder}
+        <Wrapper>
+             <Helmet>
+                <title>Giỏ hàng</title>
+            </Helmet>
+             <>
             {!isLoading && (
                 <section className="cart-items">
                     <div className="cart-container container d_flex">
@@ -680,6 +684,8 @@ const Cart = () => {
                 </section>
             )}
         </>
+        </Wrapper>
+       
     );
 };
 export const formatFixedFloat = (num, toFixed) => {

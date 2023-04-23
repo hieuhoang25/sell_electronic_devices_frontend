@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from '../../services/axios';
+import { Helmet } from 'react-helmet';
 import {
     FETCH_PRODUCTS_PENDING,
     FETCH_PRODUCTS_SUCCESS,
@@ -27,6 +28,7 @@ import {
     STORAGE,
 } from '../../constants/index';
 import { useLocation } from 'react-router-dom';
+import Wrapper from '../../Wrapper';
 const initialState = {
     pending: false,
     products: [],
@@ -263,7 +265,12 @@ function Product({ isAuth }) {
         );
     });
     return (
-        <>
+        
+             <>
+             <Wrapper>
+             <Helmet>
+                <title>Sản phẩm</title>
+            </Helmet>
             <div className="product_style_v1">
                 <Shop
                     shopItems={productsFilter.products}
@@ -284,7 +291,10 @@ function Product({ isAuth }) {
                     categoryLoading={categoryLoading}
                 />
             </div>
+            </Wrapper>
         </>
+       
+       
     );
 }
 
