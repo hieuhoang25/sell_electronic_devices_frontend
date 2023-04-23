@@ -5,7 +5,7 @@ import TopCate from '../components/top/TopCate';
 import NewArrivals from '../components/newarrivals/NewArrivals';
 import Discount from '../components/discount/Discount';
 import Annocument from '../components/annocument/Annocument';
-import Wrapper from '../components/wrapper/Wrapper';
+import Wrappers from '../components/wrapper/Wrappers';
 import ShopHome from '../components/shops/ShopHome';
 import TopSales from '../components/topsales/TopSales';
 import CategorySlider from '../components/categoryslider/CategorySlider';
@@ -18,6 +18,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { mergeAnnonCart } from '../services/cartService';
 import { INIT, LOGIN } from '../redux/actions/AuthAction';
 import { Modal, Button, Input } from 'antd';
+import Wrapper from '../Wrapper';
+import { Helmet } from 'react-helmet';
 const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
     const size = 10;
     const navigate = useNavigate();
@@ -148,7 +150,12 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
         }
     }, []);
     return (
-        <>
+        <Wrapper>
+             <Helmet>
+                <title>Trang chủ</title>
+            </Helmet>
+            <>
+           
             <Modal
                 title="Vui lòng điền đầy đủ thông tin dưới đây để tiếp tục đăng nhập!"
                 open={open}
@@ -191,8 +198,10 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
             )}
 
             <Annocument />
-            <Wrapper />
+            <Wrappers />
         </>
+        </Wrapper>
+        
     );
 };
 

@@ -21,3 +21,6 @@ input[type='number']::-webkit-outer-spin-button {
   color: #e2e8ec;
   background-color: #3a3b3c;
 }
+.dark .address_personal{
+  background-color: #3a3b3c;
+}

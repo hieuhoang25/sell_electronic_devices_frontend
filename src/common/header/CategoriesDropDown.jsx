@@ -14,6 +14,7 @@ function CategoriesDropDown() {
     useEffect(() => {
         getCategories().then((res) => {
             setCategories((prev) => res.data);
+            // console.log(categories);
         });
     }, []);
     const menuI = categories.map((value, index) => {
