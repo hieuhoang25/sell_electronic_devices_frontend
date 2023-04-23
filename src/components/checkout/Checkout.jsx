@@ -15,9 +15,6 @@ import Swal from 'sweetalert2';
 import { Helmet } from 'react-helmet';
 import Wrapper from '../../Wrapper';
 import { checkAllOutOfStock } from '../../common/Cart/CartUtil';
-
-import Wrapper from '../../Wrapper';
-import { Helmet } from 'react-helmet';
 const paymentData = [{ p_id: 1, name: 'VISA/MASTER Card' }];
 
 export const CHECKOUT_TYPE = {
