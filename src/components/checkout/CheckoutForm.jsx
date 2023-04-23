@@ -1,6 +1,6 @@
 import React, { useState, useEffect, memo, useContext } from 'react';
 import { Col, Row, Space } from 'antd';
-import { Button,  Form, Radio,  } from 'antd';
+import { Button, Form, Radio } from 'antd';
 import { PAYMETHOD, ENV_URL } from '../../constants/index';
 import { USER_INFOS, USER_ADDRESS_LIST } from '../../constants/user';
 import axios from '../../services/axios';
@@ -199,7 +199,6 @@ const CheckoutForm = ({ form, onFinish }) => {
             // console.log('1');
             setInputAddress((prev) => {
                 return { ...prev, wards: inputWard };
-                
             });
         }, 200);
         return () => clearTimeout(timeOutId);
@@ -212,7 +211,7 @@ const CheckoutForm = ({ form, onFinish }) => {
         //     console.log(inputAddress);
         //     dispatch({ type: ACTION_OTHER_ADDR, payload: inputAddress });
         // },500);
-        
+
         // return () => clearTimeout(timeOutId);
     }, [inputAddress]);
 
@@ -431,7 +430,7 @@ const CheckoutForm = ({ form, onFinish }) => {
                                                     {getDefaultAddress().id >= 0 && (
                                                         <Row className="default-area" align="middle" justify="space-around">
                                                             <Button className="default-btn" disabled={!otherAddress} onClick={onChangeUsingAddressHandler}>
-                                                                Sử dụng địa chỉ mặc  định
+                                                                Sử dụng địa chỉ mặc định
                                                             </Button>
                                                             <Form.Item
                                                                 {...{
