@@ -28,9 +28,12 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
             const { time } = getState().cart;
             console.log('get from localstorage');
             const { id: cartId } = getState().cart;
+            const {items,total,baseAmount } = getState().cart;
             // console.log('cartId: ', cartId);
             if (!cartId) {
                 console.log('get fresh guest cart...');
+                dispatch(resetToGuestCart());
+            }else if(items.length > 0 && Object.keys(items[0]).length === 1 && (total === null|| baseAmount === null)) {
                 dispatch(resetToGuestCart());
             }
         }
@@ -279,12 +282,17 @@ export const updateGuestCartState = () => async (dispatch, getState) => {
     // let cart_id = await (await (await axios.get(`${ENV_URL}${CART}`)).data).id;
 
     if (!isAnonymous) {
+        console.log('server cart')
         // alert('updated remote cart')
-        await axios.get(`${ENV_URL}${UPDATE_AUTH_CART}`).then((res) => {
+        return await axios.get(`${ENV_URL}${UPDATE_AUTH_CART}`).then((res) => {
             console.log('res: ', res);
-            if ((res.status = '409')) {
+            return res;
+        }).catch(e => {
+            let {response} =e;
+            if(response.status === 409) {
                 dispatch(fetchCartFromSever());
             }
+            return response;
         });
     } else {
         let request = convertUpdateCartRequest(items, cart_id);

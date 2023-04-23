@@ -36,7 +36,7 @@ export const ORDER_STATUS = '/order-status';
 export const CART = '/cart';
 export const PAYMETHOD = `${API_UNAUTH_BASE}/paymethod`;
 
-export const CURRENCY_SUFFIX = 'VNĐ';
+export const CURRENCY_SUFFIX = 'đ';
 
 export const PRODUCT_TOP_SALES = '/product-top-sales';
 export const PRODUCT_BIG_DISCOUNT = '/product-big-discount';

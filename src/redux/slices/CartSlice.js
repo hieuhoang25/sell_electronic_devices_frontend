@@ -56,10 +56,15 @@ export const CartSlice =  createSlice({
             reducer: (state, action) => {
                 console.log('action in addToCart', action.payload);
                 let id = generateAutoIncrId(state.items);
-                let cart_item = { ...action.payload, id: id };
-                console.log('cart_item: ', cart_item);
-                // state.items.push(cart_item);
-                state.items.unshift(cart_item);
+                if(action.payload === undefined || Object.keys(action.payload).length === 0 ) {
+                    return {...state};
+                }else {
+                    let cart_item = { ...action.payload, id: id };
+                    console.log('cart_item: ', cart_item);
+                    // state.items.push(cart_item);
+                    state.items.unshift(cart_item);
+                }
+               
             },
         },
         newCart: (state, action) => {
@@ -108,7 +113,8 @@ export const CartSlice =  createSlice({
             console.log('getItemsCount');
             if (state.items.length !== 0) {
                 let cartCount = state.items.reduce((total, item) => {
-                    return item.quantity + total;
+                    if(item.quantity == 0) return 1 + total;
+                    else return item.quantity + total;
                 }, 0);
                 console.log('cartCount', cartCount);
                 state.totalCount = cartCount;
@@ -121,7 +127,10 @@ export const CartSlice =  createSlice({
             console.log('update..base ammount');
             if (state.items.length !== 0) {
                 state.baseAmount = state.items.reduce(
-                    (sub, item) => sub + item.price_detail,
+                    (sub, item) => { 
+                        if(item.quantity === 0) return  sub
+                        else  return sub + item.price_detail
+                    },
                     0,
                 );
             } else {
@@ -143,7 +152,8 @@ export const CartSlice =  createSlice({
             console.log('get discount: ');
             if (state.items.length !== 0) {
                 let discount = state.items.reduce((d, item) => {
-                    return d + item.discount_amount * item.quantity;
+                    if(item.quantity == 0) return d;
+                    else return d + item.discount_amount * item.quantity;
                 }, 0);
                 state.discount = discount;
             } else {
@@ -159,7 +169,8 @@ export const CartSlice =  createSlice({
             state.baseAmount = action.payload.price_sum;
             let cartCount = state.items.reduce((total, item) => {
                 // console.log(item);
-                return item.quantity + total;
+                if(item.quantity === 0) return 1 + total;
+                else return item.quantity + total;
             }, 0);
             state.totalCount = cartCount;
             const discountAmount = state.items.reduce((d, i) => {

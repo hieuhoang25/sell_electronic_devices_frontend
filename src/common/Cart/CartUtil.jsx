@@ -24,7 +24,7 @@ export function getProductName(cartItem) {
 }
 
 export function getProductVariantName(cartItem) {
-    let fullName = getProductName(cartItem) + ' ' + getColorOfCartItem(cartItem) + getStorageOfCartItem(cartItem);
+    let fullName = getProductName(cartItem) + ' '  + getStorageOfCartItem(cartItem);
     return fullName;
 }
 export function getColorOfCartItem(cartItem) {
@@ -68,6 +68,14 @@ export function getDiscountAmountOfItem(item) {
     let discountOfItem = item.price_detail - item.discount_amount * item.quantity;
     return discountOfItem <= 0 ? 0.0 : discountOfItem;
 }
+
+export function checkAllOutOfStock(items) {
+    if (items.length > 0) {
+        let filterd = items.filter((i) => i.quantity > 0);
+        return filterd.length === 0;
+    }
+    return false;
+};
 
 export const CartRequestTYPE = {
     UPDATE: Symbol('update'),

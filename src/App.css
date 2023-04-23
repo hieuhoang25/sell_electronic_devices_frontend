@@ -29,6 +29,9 @@ body {
     display: flex;
     justify-content: space-between;
 }
+.algin-center {
+    align-items: center
+}
 .d_flex_jus_center {
     display: flex;
     justify-content: center;

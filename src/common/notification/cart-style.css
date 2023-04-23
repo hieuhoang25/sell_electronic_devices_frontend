@@ -39,12 +39,17 @@
 }
 
 .add-cart-btn.hvr-sweep-to-right:hover {
-    color: white;
+    /* background: #9fdefb;
+    color: rgb(38, 37, 37);
+    cursor: pointer; */
+    background: #83b9e973;
+    color: rgb(38, 37, 37);
     cursor: pointer;
+    border: 1px solid #80808063;
 }
 
 .add-cart-btn.hvr-sweep-to-right:hover:before {
-    transform: scaleX(1);
+    transform: scaleX(0);
 }
 
 .add-cart-btn.hvr-sweep-to-right:disabled {
@@ -55,20 +60,16 @@
 .add-cart-btn.hvr-sweep-to-right:disabled:hover {
     background-color: #b0afaf30;
     cursor: no-drop;
-    /* color:rgb(104, 104, 104); */
     transform: scaleX(1);
-    /* color: white; */
 }
 
 .add-cart-btn.hvr-sweep-to-right:disabled:before {
-    /* /* content: ""; */
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: -1;
-    /* color:rgb(104, 104, 104); */
     transform: scaleX(1);
     background-color: #b0afaf30;
 }

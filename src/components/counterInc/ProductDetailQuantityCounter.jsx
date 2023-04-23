@@ -8,28 +8,29 @@ function ProductDetailQuantityCounter({
     fetchInventory
     // setCartbuttonDisabled,
 }) {
-    console.log(inventory);
+    // console.log(inventory);
     const {max_quantity : MAXQTY, current_inventory: CUR_INVENTORY,  outOfStock: OUTOFSTOCK } = inventory;
     // let [num, setNum] = useState(1);
     let incNum = () => {
         if (cartQty < MAXQTY) {
+            
             // console.log('pass value:', Number(cartQty) + 1);
             cartQtyOnChangeHandler(Number(cartQty) + 1);
-
+            handleChange();
             // setNum(Number(cartQty) + 1);
         }
-        handleChange();
+       
     };
-    const checkInventory = () => {
-        
-    }
+
     let decNum = () => {
         if (cartQty > QTY_MIN) {
             cartQtyOnChangeHandler(Number(cartQty) - 1);
+            handleChange();
         }
-        handleChange();
+      
     };
     useEffect(() => {
+        console.log('call in effect cartQty');
         handleChange();
     }, [cartQty]);
 

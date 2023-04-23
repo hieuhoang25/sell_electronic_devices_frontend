@@ -18,6 +18,21 @@ import Badge from '@mui/material/Badge';
 export default function HoverCartPopover({ Cart }) {
     const id = 'ouse-over-popover';
     const items = Cart.items;
+    
+    const sortList = [...items];
+    sortList.sort((a,b) => b.quantity - a.quantity);
+   
+    const  list = sortList.map((value, index) => {
+        return <MediaCard key={index} Item={value}></MediaCard>;
+    });
+    const checkAllOutOfStock = (items) => {
+        if (items.length > 0) {
+            let filterd = items.filter((i) => i.quantity > 0);
+            return filterd.length === 0;
+        }
+        return false;
+    };
+    
     return (
         <PopupState variant="popover" popupId="demo-popup-popover">
             {(popupState) => (
@@ -70,10 +85,13 @@ export default function HoverCartPopover({ Cart }) {
                                     </div>
                                 </Box>
                             )}
-                            {Cart.totalCount !== 0 &&
-                                items.map((value, index) => {
+                            {Cart.totalCount !== 0 && list}
+                                    
+                                {/* items.map((value, index) => {
                                     return <MediaCard key={index} Item={value}></MediaCard>;
-                                })}
+                                })} */}
+                            
+                         
                         </Typography>
                         <Box
                             sx={{
@@ -91,8 +109,15 @@ export default function HoverCartPopover({ Cart }) {
                                     }}
                                 >
                                     <Typography className="total-section" component="div">
-                                        <span> Tổng tiền </span>
-                                        {getCurrencyFormatComp(Cart.total, false, 'popover-total')}
+                                    {checkAllOutOfStock(sortList)? (<></> ) :
+                                         (
+                                            <>
+                                            <span> Tổng tiền </span>
+                                             {getCurrencyFormatComp(Cart.total, false, 'popover-total')}
+                                             </>
+                                        )  
+                                    }
+                                     
                                     </Typography>
                                     <Button variant="outlined" className="popover-footer-button" fullWidth href="/cart">
                                         Xem toàn bộ giỏ hàng
@@ -111,6 +136,7 @@ function MediaCard({ Item }) {
     const cartItem = new CartItemUtilClass(Item);
     return (
         <Card
+        className={`cart-row ${cartItem.quantity === 0? 'out-stock' : ''}`}
             sx={{
                 maxWidth: 320,
                 marginBottom: '1rem',
@@ -125,9 +151,10 @@ function MediaCard({ Item }) {
                         alignItems: 'center',
                     }}
                 >
-                    <CardMedia sx={{ height: 100, width: 200, flex: '1' }} square image={`${getImage(cartItem.ItemImage)}`} title="green iguana" />
+                    <CardMedia className='img-container' sx={{ height: 100, width: 200, flex: '1' }} square={true} image={`${getImage(cartItem.ItemImage)}`} title="green iguana" />
 
                     <div className="card-content" style={{ paddingLeft: '1rem', flex: '2' }}>
+                         {cartItem.quantity === 0 &&  <div className='out-stock-notif'>Hết hàng</div>}
                         {cartItem.promotion ? (
                             <Badge
                                 className="promo-badge"
@@ -155,11 +182,29 @@ function MediaCard({ Item }) {
                                 <span className="varaint-attr color">
                                     <span className="title">Màu</span> {cartItem.colorOfCartItem}
                                 </span>
-                                <span className="varaint-attr storage">
+                                {/* <span className="varaint-attr storage">
                                     <span className="title"></span> {cartItem.storageOfCartItem}
-                                </span>
+                                </span> */}
                             </div>
-                            <div className="info-row">
+                            {cartItem.quantity === 0 && (
+                                <div className="info-row">
+                                {/* <span className="quantity">{cartItem.quantity} </span>
+                                <span> x </span> */}
+
+                                {cartItem.promotion ? (
+                                    <>
+                                        {getCurrencyFormatComp(cartItem.priceDiscountForPerItem, false, ' price dicount-price')}
+                                        {` (`}
+                                        {getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price old')}
+                                        {`)`}
+                                    </>
+                                ) : (
+                                    getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price')
+                                )}
+                                   
+                            </div>
+                            )}
+                            {cartItem.quantity > 0 && ( <div className="info-row">
                                 <span className="quantity">{cartItem.quantity} </span>
                                 <span> x </span>
 
@@ -173,7 +218,7 @@ function MediaCard({ Item }) {
                                 ) : (
                                     getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price')
                                 )}
-                            </div>
+                            </div>)}
                         </Box>
                     </div>
                 </Box>

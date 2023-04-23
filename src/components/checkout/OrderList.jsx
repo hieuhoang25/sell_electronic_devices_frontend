@@ -21,7 +21,9 @@ const OrderList = ({ disableCheckoutBtn, onClickOrder, onAddPromotion }) => {
         return state.cart;
     });
     const { items } = Cart;
-    const list = items.map((item, index) => {
+    const cartItmes = [...items];
+    const filtered =  cartItmes.filter(c => c.quantity > 0);
+    const list = filtered.map((item, index) => {
         return <OrderListItem key={index} product={item}></OrderListItem>;
     });
     useEffect(() => {
@@ -144,10 +146,17 @@ const OrderList = ({ disableCheckoutBtn, onClickOrder, onAddPromotion }) => {
         PromoForm.setFieldsValue({ promo_code: undefined });
         PromoForm.resetFields();
     };
+    const getTotalItemCountExcludeOutStock = () => {
+        let cartcount = items.reduce((total, item)  => {
+            if(item.quantity > 0)return  total + item.quantity;
+            else return total;
+        },0)
+        return cartcount;
+    }
     return (
         <section className="order-list">
             <h4>
-                Đơn hàng{`  `} (<span>{Cart.totalCount}</span>)
+                Đơn hàng{`  `} (<span>{getTotalItemCountExcludeOutStock()}</span>)
             </h4>
             <ul className="order-list-container">{list}</ul>
 
@@ -201,7 +210,7 @@ const OrderList = ({ disableCheckoutBtn, onClickOrder, onAddPromotion }) => {
             <div className="order-total">
                 <div className="box box-quantity">
                     <h3>Số lượng</h3>
-                    <div className="quantity">{Cart.totalCount}</div>
+                    <div className="quantity">{getTotalItemCountExcludeOutStock()}</div>
                 </div>
                 <div className="box base">
                     <h3>Tạm tính: </h3>
