@@ -898,19 +898,21 @@ const ProductDetail = ({ isAuth }) => {
                                     style={{ width: '90%' }}
                                 /> */}
                                                 </div>
-                                                <div
-                                                    className="btn_buy"
-                                                    onClick={handleBuy}
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        onClick={
-                                                            handleAddToCart
-                                                        }
+                                                {!cartButtonDisabled && (
+                                                    <div
+                                                        className="btn_buy"
+                                                        onClick={handleBuy}
                                                     >
-                                                        Mua Ngay
-                                                    </button>
-                                                </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={
+                                                                handleAddToCart
+                                                            }
+                                                        >
+                                                            Mua Ngay
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
