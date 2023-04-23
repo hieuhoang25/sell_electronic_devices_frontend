@@ -111,7 +111,7 @@ const Cart = () => {
         dispatch(updateGuestCartState());
     }
     const fetchAllItemInventory = useCallback(async () => {
-        setIsLoading(true);
+        // setIsLoading(true);
         if (items.length !== 0) {
             try {
                 const f = items.map(async (item, index) => {
@@ -121,7 +121,7 @@ const Cart = () => {
                     const res = await fe(item);
                     return { id: item.id, index: index, ...res };
                 });
-                setIsLoading(false);
+
                 return Promise.all(f).then(function (results) {
                     console.log(results);
                     setInventory((prev) => results);
@@ -168,6 +168,7 @@ const Cart = () => {
 
         fetchAllItemInventory()
             .then((res) => {
+                // setIsLoading(false);
                 let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
@@ -199,6 +200,7 @@ const Cart = () => {
 
         fetchAllItemInventory()
             .then((res) => {
+                // setIsLoading(false);
                 let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
@@ -247,7 +249,12 @@ const Cart = () => {
                         console.log('fav res: ', res);
                         let { productVariant: variant } = item;
 
-                        return { id: item.id, index: index, is_favorite: res, product_id: variant.product_id };
+                        return {
+                            id: item.id,
+                            index: index,
+                            is_favorite: res,
+                            product_id: variant.product_id,
+                        };
                     });
                     return Promise.all(f).then(function (results) {
                         console.log(results);
@@ -261,7 +268,12 @@ const Cart = () => {
             } else {
                 const annon_wishlist = items.map((item, index) => {
                     let { productVariant: variant } = item;
-                    return { id: item.id, index: index, is_favorite: false, product_id: variant.product_id };
+                    return {
+                        id: item.id,
+                        index: index,
+                        is_favorite: false,
+                        product_id: variant.product_id,
+                    };
                 });
                 setWishLists((prev) => [...annon_wishlist]);
             }
@@ -333,7 +345,9 @@ const Cart = () => {
         return inventory[index];
     };
     const getMaxQtyOfItem = (index) => {
-        return findInventoryByIndex(index).max_quantity;
+        let findIndx = findInventoryByIndex(index);
+
+        return findIndx.max_quantity;
     };
     const getCurrentQtyOfItem = (index) => {
         return findInventoryByIndex(index).current_inventory;
@@ -355,10 +369,8 @@ const Cart = () => {
         console.log('...load first');
         setIsLoading(true);
         // await fetchAllItemInventory();
-        dispatch(updateGuestCartState()).then((res) => console.log('res: ', res));
+        dispatch(updateGuestCartState()).then((res) => {});
 
-        fetchAllItemInventory().catch((e) => console.log(e.message));
-        fetchAllWihshList().catch((e) => console.log(e.message));
         setIsLoading(false);
 
         return () => {
@@ -368,6 +380,7 @@ const Cart = () => {
     }, []);
 
     useEffect(() => {
+        setIsLoading(true);
         console.log('list iven: ', inventory);
         if (inventory.length !== 0) {
             console.log('indes if');
@@ -381,8 +394,11 @@ const Cart = () => {
                 // alert('need_dhn')
                 openNotificationWithIcon('info', 'Số lượng giỏ hàng thay đổi', '', 3);
                 dispatch(updateGuestCartState());
+                fetchAllItemInventory().catch((e) => console.log(e.message));
+                setIsLoading(false);
             }
         }
+        setIsLoading(false);
     }, [inventory]);
 
     useEffect(() => {
@@ -395,6 +411,8 @@ const Cart = () => {
             console.log('updateCart()');
             dispatch(updateCart(Cart));
         }
+        fetchAllItemInventory().catch((e) => console.log(e.message));
+        fetchAllWihshList().catch((e) => console.log(e.message));
         let d = checkAllOutOfStock(Cart.items);
 
         if (d) setDisableCheckoutBtn((prev) => true);
@@ -457,9 +475,6 @@ const Cart = () => {
                                     </div>
                                 )}
                                 {items.map((item, index) => {
-                                    {
-                                        /* const productQty = item.price * item.qty; */
-                                    }
                                     return (
                                         <div className={`cart-list product d_flex ${item.quantity === 0 ? 'out-stock' : ''}`} key={item.id}>
                                             {item.quantity > 0 && (
