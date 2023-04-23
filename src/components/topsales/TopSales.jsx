@@ -36,8 +36,8 @@ const TopSales = ({ isAuth }) => {
                             <h2>Bán chạy </h2>
                         </div>
                         <div className="heading-right row ">
-                            <span className="expand-link">Tất cả</span>
-                            <i className="fa-solid fa-caret-right"></i>
+                            {/* <span className="expand-link">Tất cả</span>
+                            <i className="fa-solid fa-caret-right"></i> */}
                         </div>
                     </div>
                     <section className="shop">

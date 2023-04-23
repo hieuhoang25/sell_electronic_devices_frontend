@@ -12,8 +12,8 @@ const NewArrivals = () => {
                             <h2>Sản phẩm mới </h2>
                         </div>
                         <div className="heading-right row ">
-                            <span>Tất cả</span>
-                            <i className="fa-solid fa-caret-right"></i>
+                            {/* <span>Tất cả</span>
+                            <i className="fa-solid fa-caret-right"></i> */}
                         </div>
                     </div>
                     <Cart />

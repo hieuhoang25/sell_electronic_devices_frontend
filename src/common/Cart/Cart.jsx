@@ -111,6 +111,7 @@ const Cart = () => {
         dispatch(updateGuestCartState());
     }
     const fetchAllItemInventory = useCallback(async () => {
+        setIsLoading(true);
         if (items.length !== 0) {
             try {
                 const f = items.map(async (item, index) => {
@@ -120,6 +121,7 @@ const Cart = () => {
                     const res = await fe(item);
                     return { id: item.id, index: index, ...res };
                 });
+                setIsLoading(false);
                 return Promise.all(f).then(function (results) {
                     console.log(results);
                     setInventory((prev) => results);
@@ -127,7 +129,7 @@ const Cart = () => {
                 });
             } catch (e) {
                 console.log(e.message);
-                setIsLoading(true);
+                setIsLoading(false);
             }
         } else {
             console.log('items empty');
@@ -166,8 +168,6 @@ const Cart = () => {
 
         fetchAllItemInventory()
             .then((res) => {
-                console.log('invetoris: ', inventory);
-                console.log('res', res);
                 let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
@@ -199,8 +199,6 @@ const Cart = () => {
 
         fetchAllItemInventory()
             .then((res) => {
-                console.log('invetoris: ', inventory);
-                console.log('res', res);
                 let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
