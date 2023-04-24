@@ -1,13 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons';
-import React, { useState, memo, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, memo, useEffect, useCallback } from 'react';
 import { Button, Modal, Input, Form, Select, Radio, notification, Spin } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import  { getProvince, getSearchProvince, getDistrict, getSearchDistrict, getSearchWard } from '../../../services/addressService';
+import  { getProvince, getSearchProvince,  getSearchDistrict, getSearchWard } from '../../../services/addressService';
 import axios from '../../../services/axios';
 import { ENV_URL } from '../../../constants/index';
-import { USER_INFOS, USER_ADDRESS_LIST, USER_ADDRESS_DEFAULT,CRUD_USER_ADDRESS } from '../../../constants/user';
-import { OpenInNewOffRounded } from '@mui/icons-material';
-import { clear } from '@testing-library/user-event/dist/clear';
+import { USER_INFOS, USER_ADDRESS_LIST, CRUD_USER_ADDRESS } from '../../../constants/user';
 const fetchUserAddress = async () => {
     return axios.get(`${ENV_URL}${USER_ADDRESS_LIST}`);
 };
@@ -74,7 +72,7 @@ function Address() {
     const getUserInfo = useCallback(async () => {
         const userInfo = await (await fetchUserInfo()).data;
         setInfoUser((prev) => userInfo);
-    });
+    },[infoUser]);
 
     // const showModal = ({ target }) => {
     //     let { parentElement } = target;
@@ -654,13 +652,9 @@ const AddressForm = memo(({ selectedAddress, addressList, form, handleOk }) => {
 
     const onResetDefault = () => {
         console.log('call reset', address);
-        // form.resetFields();
-        // console.log('pass seet');
         setIsEdited((prev) => {
             return false;
         });
-        // alert('set true');
-        // onSetDefaultAddress();
     };
 
     useEffect(() => {

@@ -472,9 +472,9 @@ const Cart = () => {
                                     return (
                                         <div className={`cart-list product d_flex ${item.quantity === 0 ? 'out-stock' : ''}`} key={item.id}>
                                             {item.quantity > 0 && (
-                                                <div className="img">
+                                                <Link to={`/product-detail/${getProductId(item)}`} className="img">
                                                     <img src={getImage(getVariantDetail(item).image)} alt="" />
-                                                </div>
+                                                </Link>
                                             )}
                                             {item.quantity === 0 && (
                                                 <div className="img">
@@ -558,21 +558,21 @@ const Cart = () => {
                                                     <Stack className="action-buttons" direction="row" spacing={2}>
                                                         <div></div>
                                                         {wishlists.length > 0 && getCurrentIsInWishList(index) && (
-                                                            <Tooltip placement="top" title={'Xoá khỏi yêu thích'}>
-                                                                <MUIButton onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteIcon />}>
+                                                            <Tooltip placement="bottom" title={'Xoá khỏi yêu thích'}>
+                                                                <MUIButton style={{color:"black"}} onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteIcon style={{color:"red"}} />}>
                                                                     Yêu thích
                                                                 </MUIButton>
                                                             </Tooltip>
                                                         )}
 
                                                         {wishlists.length > 0 && !getCurrentIsInWishList(index) && (
-                                                            <Tooltip placement="top" title={'Thêm vào yêu thích'}>
-                                                                <MUIButton onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteBorderIcon />}>
+                                                            <Tooltip placement="bottom" title={'Thêm vào yêu thích'}>
+                                                                <MUIButton style={{color:"black"}}  onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteBorderIcon  />}>
                                                                     Yêu thích
                                                                 </MUIButton>
                                                             </Tooltip>
                                                         )}
-
+                                                        <Tooltip placement="bottom" title={'Xoá khỏi giỏ hàng'}>
                                                         <MUIButton
                                                             className="remove-cart-btn"
                                                             startIcon={<DeleteIcon />}
@@ -580,6 +580,7 @@ const Cart = () => {
                                                         >
                                                             Xoá
                                                         </MUIButton>
+                                                        </Tooltip>
                                                     </Stack>
                                                 </div>
                                             </div>

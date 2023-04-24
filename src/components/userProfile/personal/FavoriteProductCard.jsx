@@ -37,8 +37,19 @@ const FavoriteProductCard = ({
         handleFavoriteClick(wishlistItemDetail(value));
     };
 
+    const onClickMoveToDetailPage = () => {
+
+    }
+
     return (
         <Card
+             onClick={() => {
+                            navigate(
+                                `/product-detail/${
+                                    wishlistItemDetail(value).id
+                                }`,
+                            );
+                        }}
             className="wishlist-card"
             hoverable
             style={{}}

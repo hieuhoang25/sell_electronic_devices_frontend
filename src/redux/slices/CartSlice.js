@@ -1,6 +1,4 @@
-import { RssFeed } from '@mui/icons-material';
 import { createSlice } from '@reduxjs/toolkit';
-import axios from '../../services/axios';
 import {
     fetchCartFromSever,
     getGuestRequestCartDetail,
@@ -113,7 +111,7 @@ export const CartSlice =  createSlice({
             console.log('getItemsCount');
             if (state.items.length !== 0) {
                 let cartCount = state.items.reduce((total, item) => {
-                    if(item.quantity == 0) return 1 + total;
+                    if(item.quantity === 0) return 1 + total;
                     else return item.quantity + total;
                 }, 0);
                 console.log('cartCount', cartCount);
@@ -141,7 +139,6 @@ export const CartSlice =  createSlice({
         },
         getTotal: (state, action) => {
             if (state.items.length !== 0) {
-                let { items } = state;
                 state.total = state.baseAmount - state.discount;
             } else {
                 state.total = 0;
@@ -152,7 +149,7 @@ export const CartSlice =  createSlice({
             console.log('get discount: ');
             if (state.items.length !== 0) {
                 let discount = state.items.reduce((d, item) => {
-                    if(item.quantity == 0) return d;
+                    if(item.quantity === 0) return d;
                     else return d + item.discount_amount * item.quantity;
                 }, 0);
                 state.discount = discount;

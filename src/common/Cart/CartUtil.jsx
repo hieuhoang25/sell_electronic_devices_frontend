@@ -161,6 +161,10 @@ export default class CartItemUtilClass {
         return this.getVariantDetail().storage_name;
     }
 
+    get id() {
+        return this.cartItem.id;
+    }
+
     get promotion() {
         if (this.cartItem.discount_amount === 0) return false;
         return this.getVariantDetail().product_promotion == null ? false : true;
