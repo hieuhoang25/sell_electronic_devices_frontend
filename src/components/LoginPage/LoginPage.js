@@ -93,7 +93,7 @@ const LoginPage = () => {
         navigate('/');
     };
     const handleChangePassword = (e) => {
-        console.log(e.target.value);
+        // console.log(e.target.value);
         setFormLogin((pre) => {
             return {
                 ...pre,
@@ -110,7 +110,7 @@ const LoginPage = () => {
         });
     };
     return (
-        <Wrapper>
+        <>
              <Helmet>
                 <title>Đăng nhập</title>
             </Helmet>
@@ -304,7 +304,7 @@ const LoginPage = () => {
             </Grid>
             <Loading />
         </ThemeProvider>
-        </Wrapper>
+        </>
        
     );
 };

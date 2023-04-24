@@ -163,7 +163,8 @@ const Checkout = () => {
     };
 
     return (
-        <Wrapper>
+        // <Wrapper>
+        <>
             <Helmet>
                 <title>Thanh Toán</title>
             </Helmet>
@@ -193,7 +194,7 @@ const Checkout = () => {
                     </section>
                 )}
             </CheckoutContext.Provider>
-        </Wrapper>
+     </>
     );
 };
 export default memo(Checkout);

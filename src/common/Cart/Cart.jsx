@@ -434,23 +434,17 @@ const Cart = () => {
         let mock = moment('22 04 2023 09:17:00', 'DD MM YYYY hh:mm:ss');
 
         let dueTime = moment(mock).add(30, 'minutes');
-        // console.log('mock: ',mock);
-        // console.log('time: ', time._d);
-        // console.log('dueTime: ', dueTime._d);
-
-        // console.log('now: ', now._d);
-
-        // console.log(now >= dueTime)
         return now >= dueTime;
     };
     // prodcut qty total
 
     return (
-        <Wrapper>
+        // <Wrapper>
+        <>
             <Helmet>
                 <title>Giỏ hàng</title>
             </Helmet>
-            <>
+            
                 {!isLoading && (
                     <section className="cart-items">
                         <div className="cart-container container d_flex">
@@ -697,7 +691,7 @@ const Cart = () => {
                     </section>
                 )}
             </>
-        </Wrapper>
+        // </Wrapper>
     );
 };
 export const formatFixedFloat = (num, toFixed) => {

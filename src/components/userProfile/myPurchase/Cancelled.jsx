@@ -8,6 +8,7 @@ import './Purchase.css';
 import { BASE_USER, ORDER_TRACKING } from '../../../constants/user';
 import { getImage } from '../../../common/img';
 import { NumericFormat } from 'react-number-format';
+import { Link } from 'react-router-dom';
 const Cancelled = ({ status }) => {
     //End
     const [loading, setLoading] = useState(true);
@@ -85,6 +86,7 @@ const Cancelled = ({ status }) => {
                                                         }}
                                                     >
                                                         {/*Hình sản phẩm*/}
+                                                        <Link to={'/product-detail/' + product.product_id}  >
                                                         <div
                                                             style={{
                                                                 width: '80px',
@@ -123,6 +125,8 @@ const Cancelled = ({ status }) => {
                                                                 ></div>
                                                             </div>
                                                         </div>
+                                                        </Link>
+                                                       
                                                         {/*End Hình sản phẩm*/}
 
                                                         {/*Tên số lượng và variation*/}
@@ -147,7 +151,8 @@ const Cancelled = ({ status }) => {
                                                                         margin: '0 0 5px',
                                                                     }}
                                                                 >
-                                                                    <span
+                                                                     <Link to={'/product-detail/' + product.product_id}  >
+                                                                     <span
                                                                         style={{
                                                                             verticalAlign:
                                                                                 'middle',
@@ -157,6 +162,8 @@ const Cancelled = ({ status }) => {
                                                                             product.productVariant_displayName
                                                                         }
                                                                     </span>
+                                                        </Link>
+                                                                   
                                                                 </div>
                                                                 <div
                                                                     style={{
