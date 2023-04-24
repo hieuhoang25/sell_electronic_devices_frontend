@@ -26,6 +26,7 @@ import {
     IS_RATING,
     CANCEL_ORDER,
 } from '../../../constants/user';
+import { Link } from 'react-router-dom';
 const ToPay = ({ status }) => {
     const [api, contextHolder] = notification.useNotification();
     const openNotificationWithIcon = (type, message) => {
@@ -181,6 +182,7 @@ const ToPay = ({ status }) => {
                                                         }}
                                                     >
                                                         {/*Hình sản phẩm*/}
+                                                        <Link  to={'/product-detail/' + product.product_id}>
                                                         <div
                                                             style={{
                                                                 width: '80px',
@@ -219,6 +221,8 @@ const ToPay = ({ status }) => {
                                                                 ></div>
                                                             </div>
                                                         </div>
+                                                        </Link>
+                                                        
                                                         {/*End Hình sản phẩm*/}
 
                                                         {/*Tên số lượng và variation*/}
@@ -243,6 +247,7 @@ const ToPay = ({ status }) => {
                                                                         margin: '0 0 5px',
                                                                     }}
                                                                 >
+                                                                    <Link to={'/product-detail/' + product.product_id}>
                                                                     <span
                                                                         style={{
                                                                             verticalAlign:
@@ -253,6 +258,8 @@ const ToPay = ({ status }) => {
                                                                             product.productVariant_displayName
                                                                         }
                                                                     </span>
+                                                                    </Link>
+                                                                   
                                                                 </div>
                                                                 <div
                                                                     style={{

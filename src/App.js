@@ -129,75 +129,79 @@ function App() {
     }, [auth.isAuthenticated]);
     return (
         <>
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <Pages
-                            // productItems={productItems}
-                            // addToCart={addToCart}
-                            // shopItems={productItems}
-                            isAuth={auth.isAuthenticated}
-                        />
-                    }
-                ></Route>
-                <Route
-                    path="/product/:categoryId"
-                    element={<Product isAuth={auth.isAuthenticated} />}
-                ></Route>
+            <Wrapper>
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <Pages
+                                // productItems={productItems}
+                                // addToCart={addToCart}
+                                // shopItems={productItems}
+                                isAuth={auth.isAuthenticated}
+                            />
+                        }
+                    ></Route>
+                    <Route
+                        path="/product/:categoryId"
+                        element={<Product isAuth={auth.isAuthenticated} />}
+                    ></Route>
 
-                <Route path="/cart" element={<Cart />}></Route>
-                <Route
-                    path="/product"
-                    element={<Product isAuth={auth.isAuthenticated} />}
-                ></Route>
-                <Route
-                    path="/login"
-                    element={
-                        auth.isAuthenticated ? (
-                            <Navigate to="/" />
-                        ) : (
-                            <LoginPage />
-                        )
-                    }
-                ></Route>
-                <Route
-                    path="/profile"
-                    element={
-                        <Protected isSignedIn={auth.isAuthenticated}>
-                            <Profile />
-                        </Protected>
-                    }
-                ></Route>
-                <Route
-                    path="/product-detail/:productId"
-                    element={<ProductDetail isAuth={auth.isAuthenticated} />}
-                ></Route>
-                <Route
-                    path="/checkout"
-                    element={
-                        <Protected isSignedIn={auth.isAuthenticated}>
-                            <Checkout />
-                        </Protected>
-                    }
-                ></Route>
-                <Route
-                    path="/signUp"
-                    element={
-                        <RouteComponent
-                            isPrivate={true}
-                            Component={SignUp}
-                            redirectPath={'/'}
-                        />
-                    }
-                ></Route>
-                <Route
-                    path="/signUp/Verification/:userName"
-                    element={<Verification />}
-                />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/*" element={<NotFoundPage />} />
-            </Routes>
+                    <Route path="/cart" element={<Cart />}></Route>
+                    <Route
+                        path="/product"
+                        element={<Product isAuth={auth.isAuthenticated} />}
+                    ></Route>
+                    <Route
+                        path="/login"
+                        element={
+                            auth.isAuthenticated ? (
+                                <Navigate to="/" />
+                            ) : (
+                                <LoginPage />
+                            )
+                        }
+                    ></Route>
+                    <Route
+                        path="/profile"
+                        element={
+                            <Protected isSignedIn={auth.isAuthenticated}>
+                                <Profile />
+                            </Protected>
+                        }
+                    ></Route>
+                    <Route
+                        path="/product-detail/:productId"
+                        element={
+                            <ProductDetail isAuth={auth.isAuthenticated} />
+                        }
+                    ></Route>
+                    <Route
+                        path="/checkout"
+                        element={
+                            <Protected isSignedIn={auth.isAuthenticated}>
+                                <Checkout />
+                            </Protected>
+                        }
+                    ></Route>
+                    <Route
+                        path="/signUp"
+                        element={
+                            <RouteComponent
+                                isPrivate={true}
+                                Component={SignUp}
+                                redirectPath={'/'}
+                            />
+                        }
+                    ></Route>
+                    <Route
+                        path="/signUp/Verification/:userName"
+                        element={<Verification />}
+                    />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+            </Wrapper>
             <BackToTop />
             <ButtonDarkMode />
         </>

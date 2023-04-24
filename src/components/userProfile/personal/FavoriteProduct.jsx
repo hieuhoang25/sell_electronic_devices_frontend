@@ -13,7 +13,7 @@ const ITEM_PER_PAGE = 3;
 const SIZE_PARAM = `?size=${ITEM_PER_PAGE}`;
 const PAGE_PARAM = `page=`;
 const FavoriteProduct = () => {
-    console.log('load FavoriteProduct');
+    // console.log('load FavoriteProduct');
     const navigate = useNavigate();
     const [favList, setFavList] = useState({});
     const [favItems, setFaveItems] = useState([]);
@@ -56,7 +56,7 @@ const FavoriteProduct = () => {
         fetchMoreFaveItems();
     };
 
-    console.log('fava', favList);
+    // console.log('fava', favList);
     let { data: favItemsz, totalPage, page: curPage, size } = favList;
 
     if (!favItemsz) favItemsz = [];

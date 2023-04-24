@@ -150,12 +150,12 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
         }
     }, []);
     return (
-        <Wrapper>
-             <Helmet>
+        
+          
+            <>
+              <Helmet>
                 <title>Trang chủ</title>
             </Helmet>
-            <>
-           
             <Modal
                 title="Vui lòng điền đầy đủ thông tin dưới đây để tiếp tục đăng nhập!"
                 open={open}
@@ -200,7 +200,7 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
             <Annocument />
             <Wrappers />
         </>
-        </Wrapper>
+        
         
     );
 };

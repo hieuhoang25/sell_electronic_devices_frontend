@@ -492,8 +492,8 @@ const ProductDetail = ({ isAuth }) => {
             return value;
         });
         productBody.current.colorId = value;
-        console.log('prodcut body: ', productBody.current);
-        console.log('selectedColor id: ', selectedColor);
+        // console.log('prodcut body: ', productBody.current);
+        // console.log('selectedColor id: ', selectedColor);
 
         fetchProductDetailByColor(value);
     });
@@ -509,39 +509,50 @@ const ProductDetail = ({ isAuth }) => {
     });
 
     return (
-        <Wrapper>
+        <>
             <Helmet>
                 <title>Chi tiết sản phẩm</title>
             </Helmet>
-            <>
-                {isLoading ? (
-                    <div ref={myRef} id="top-product-page">
-                        <Space
-                            direction="vertical"
-                            style={{
-                                width: '100%',
-                            }}
-                        >
-                            <Spin tip="Loading">
-                                <Alert
-                                    message="Alert message title"
-                                    description="Further details about the context of this alert."
-                                    type="info"
-                                />
-                            </Spin>
-                        </Space>
-                    </div>
-                ) : (
-                    <div
-                        id="top-product-page"
-                        ref={myRef}
+            {isLoading ? (
+                <div ref={myRef} id="top-product-page">
+                    <Space
+                        direction="vertical"
                         style={{
                             scrollMarginBotom: '8vh',
                         }}
                         className="top-product-page-v2"
                     >
-                        <div className="productDetail">
-                            <div>
+                        <Spin tip="Loading">
+                            <Alert
+                                message="Alert message title"
+                                description="Further details about the context of this alert."
+                                type="info"
+                            />
+                        </Spin>
+                    </Space>
+                </div>
+            ) : (
+                <div
+                    id="top-product-page"
+                    ref={myRef}
+                    style={{
+                        scrollMarginBotom: '8vh',
+                    }}
+                    className="top-product-page-v2"
+                >
+                    <div className="productDetail">
+                        <div>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    p: 1,
+                                    padding: '0px',
+                                    flexDirection: {
+                                        xs: 'column', // mobile
+                                        sm: 'row', // tablet and up
+                                    },
+                                }}
+                            >
                                 <div
                                     style={{
                                         display: 'flex',
@@ -554,7 +565,7 @@ const ProductDetail = ({ isAuth }) => {
                                     }}
                                 >
                                     <div
-                                        className="product_style"
+                                        className="product_style img"
                                         style={{
                                             display: 'flex',
                                             p: 1,
@@ -964,9 +975,9 @@ const ProductDetail = ({ isAuth }) => {
                             </div>
                         </div>
                     </div>
-                )}
-            </>
-        </Wrapper>
+                </div>
+            )}
+        </>
     );
 };
 export default memo(ProductDetail);
