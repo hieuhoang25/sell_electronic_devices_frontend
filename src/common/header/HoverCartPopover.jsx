@@ -11,19 +11,28 @@ import CardMedia from '@mui/material/CardMedia';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import './CartPopover.css';
-import CartItemUtilClass, { getCurrencyFormatComp } from '../Cart/CartUtil';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CartItemUtilClass, { getCurrencyFormatComp,CartRequestTYPE,  getCartDetailRequest } from '../Cart/CartUtil';
 import { getImage } from '../img';
 import Badge from '@mui/material/Badge';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeItemFromCart, incrementItemQuantity, decrementItemQuantity, updateCart, mergeAnnonCart, updateGuestCartState } from '../../services/cartService.js';
+import { Modal } from 'antd';
+import Tooltip from '@mui/material/Tooltip';
 
 export default function HoverCartPopover({ Cart }) {
+    
     const id = 'ouse-over-popover';
     const items = Cart.items;
-    
+
     const sortList = [...items];
-    sortList.sort((a,b) => b.quantity - a.quantity);
-   
-    const  list = sortList.map((value, index) => {
-        return <MediaCard key={index} Item={value}></MediaCard>;
+    // sortList.sort((a, b) => b.quantity - a.quantity);
+
+    const dispatch = useDispatch();
+    const { confirm } = Modal;
+    const list = sortList.map((value, index) => {
+        return <MediaCard confirm={confirm} dispatch={dispatch} Cart={Cart} key={index} Item={value}></MediaCard>;
     });
     const checkAllOutOfStock = (items) => {
         if (items.length > 0) {
@@ -32,7 +41,7 @@ export default function HoverCartPopover({ Cart }) {
         }
         return false;
     };
-    
+
     return (
         <PopupState variant="popover" popupId="demo-popup-popover">
             {(popupState) => (
@@ -64,8 +73,12 @@ export default function HoverCartPopover({ Cart }) {
                             }}
                         >
                             <Box className="popover-title">
-                                {' '}
-                                <h4>Giỏ hàng của bạn ({Cart.totalCount}) </h4>{' '}
+                                {' '}                       
+                                <h4>
+                                <Link to={'/cart'}>
+                                      Giỏ hàng của bạn ({Cart.totalCount}){' '}
+                                </Link>
+                                </h4>
                             </Box>
 
                             {Cart.totalCount === 0 && (
@@ -86,12 +99,10 @@ export default function HoverCartPopover({ Cart }) {
                                 </Box>
                             )}
                             {Cart.totalCount !== 0 && list}
-                                    
-                                {/* items.map((value, index) => {
+
+                            {/* items.map((value, index) => {
                                     return <MediaCard key={index} Item={value}></MediaCard>;
                                 })} */}
-                            
-                         
                         </Typography>
                         <Box
                             sx={{
@@ -109,15 +120,14 @@ export default function HoverCartPopover({ Cart }) {
                                     }}
                                 >
                                     <Typography className="total-section" component="div">
-                                    {checkAllOutOfStock(sortList)? (<></> ) :
-                                         (
+                                        {checkAllOutOfStock(sortList) ? (
+                                            <></>
+                                        ) : (
                                             <>
-                                            <span> Tổng tiền </span>
-                                             {getCurrencyFormatComp(Cart.total, false, 'popover-total')}
-                                             </>
-                                        )  
-                                    }
-                                     
+                                                <span> Tổng tiền </span>
+                                                {getCurrencyFormatComp(Cart.total, false, 'popover-total')}
+                                            </>
+                                        )}
                                     </Typography>
                                     <Button variant="outlined" className="popover-footer-button" fullWidth href="/cart">
                                         Xem toàn bộ giỏ hàng
@@ -132,11 +142,37 @@ export default function HoverCartPopover({ Cart }) {
     );
 }
 
-function MediaCard({ Item }) {
+function MediaCard({ Cart, Item,dispatch,confirm }) {
     const cartItem = new CartItemUtilClass(Item);
+    const showPromiseConfirm = (message, id) => {
+        confirm({
+            title: message,
+            icon: <ExclamationCircleFilled />,
+            content: '',
+            okText: 'Xoá',
+            cancelText: 'Đóng',
+            async onOk() {
+                try {
+                    return await new Promise((resolve, reject) => {
+                        setTimeout(resolve, 100);
+                    }).then((data) => {
+                        const request = getCartDetailRequest({ cart_id: Cart.id, quantity: 1, id: id }, CartRequestTYPE.DELETE);
+                        // request.id = id;
+                        // console.log('call delete ', request);
+                        dispatch(removeItemFromCart(request));
+                        dispatch(updateCart());
+                        // fetchAllItemInventory().catch((e) => console.log(e.message));
+                    });
+                } catch {
+                    return console.log('Oops errors!');
+                }
+            },
+            onCancel() {},
+        });
+    };
     return (
         <Card
-        className={`cart-row ${cartItem.quantity === 0? 'out-stock' : ''}`}
+            className={`cart-row ${cartItem.quantity === 0 ? 'out-stock' : ''}`}
             sx={{
                 maxWidth: 320,
                 marginBottom: '1rem',
@@ -151,10 +187,10 @@ function MediaCard({ Item }) {
                         alignItems: 'center',
                     }}
                 >
-                    <CardMedia className='img-container' sx={{ height: 100, width: 200, flex: '1' }} square={true} image={`${getImage(cartItem.ItemImage)}`} title="green iguana" />
+                    <CardMedia className="img-container" sx={{ height: 100, width: 200, flex: '1' }} square={true} image={`${getImage(cartItem.ItemImage)}`} title="green iguana" />
 
                     <div className="card-content" style={{ paddingLeft: '1rem', flex: '2' }}>
-                         {cartItem.quantity === 0 &&  <div className='out-stock-notif'>Hết hàng</div>}
+                        {cartItem.quantity === 0 && <div className="out-stock-notif">Hết hàng</div>}
                         {cartItem.promotion ? (
                             <Badge
                                 className="promo-badge"
@@ -188,38 +224,46 @@ function MediaCard({ Item }) {
                             </div>
                             {cartItem.quantity === 0 && (
                                 <div className="info-row">
-                                {/* <span className="quantity">{cartItem.quantity} </span>
+                                    {/* <span className="quantity">{cartItem.quantity} </span>
                                 <span> x </span> */}
 
-                                {cartItem.promotion ? (
-                                    <>
-                                        {getCurrencyFormatComp(cartItem.priceDiscountForPerItem, false, ' price dicount-price')}
-                                        {` (`}
-                                        {getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price old')}
-                                        {`)`}
-                                    </>
-                                ) : (
-                                    getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price')
-                                )}
-                                   
-                            </div>
+                                    {cartItem.promotion ? (
+                                        <>
+                                            {getCurrencyFormatComp(cartItem.priceDiscountForPerItem, false, ' price dicount-price')}
+                                            {` (`}
+                                            {getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price old')}
+                                            {`)`}
+                                        </>
+                                    ) : (
+                                        getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price')
+                                    )}
+                                </div>
                             )}
-                            {cartItem.quantity > 0 && ( <div className="info-row">
-                                <span className="quantity">{cartItem.quantity} </span>
-                                <span> x </span>
+                            {cartItem.quantity > 0 && (
+                                <div className="info-row">
+                                    <span className="quantity">{cartItem.quantity} </span>
+                                    <span> x </span>
 
-                                {cartItem.promotion ? (
-                                    <>
-                                        {getCurrencyFormatComp(cartItem.priceDiscountForPerItem, false, ' price dicount-price')}
-                                        {` (`}
-                                        {getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price old')}
-                                        {`)`}
-                                    </>
-                                ) : (
-                                    getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price')
-                                )}
-                            </div>)}
+                                    {cartItem.promotion ? (
+                                        <>
+                                            {getCurrencyFormatComp(cartItem.priceDiscountForPerItem, false, ' price dicount-price')}
+                                            {` (`}
+                                            {getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price old')}
+                                            {`)`}
+                                        </>
+                                    ) : (
+                                        getCurrencyFormatComp(cartItem.variantPrice, false, ' price origin-price')
+                                    )}
+                                </div>
+                            )}
                         </Box>
+                    </div>
+                    <div style={{alignSelf:"flex-end"}}>
+                    <Tooltip title="Xoá khỏi giỏ hàng">
+                        <Button style={{padding:"0",minWidth:"auto"}} className="remove-cart-btn" startIcon={<DeleteIcon />} onClick={() => showPromiseConfirm(`Bạn có muốn xoá ${cartItem.displayName} khỏi giỏ hàng?`, cartItem.id)}>
+                         
+                        </Button>
+                        </Tooltip>
                     </div>
                 </Box>
             </CardContent>

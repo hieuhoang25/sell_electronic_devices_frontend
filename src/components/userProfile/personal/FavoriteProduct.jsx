@@ -1,5 +1,5 @@
 import { React, memo, useEffect, useState, useCallback } from 'react';
-import { Card, Col, Row, Button } from 'antd';
+import {  Col, Row, Button } from 'antd';
 import axios from '../../../services/axios';
 import { USER_WISHLIST, USER, WISHLISTS } from '../../../constants/user';
 import { ENV_URL } from '../../../constants/index';
@@ -13,7 +13,6 @@ const ITEM_PER_PAGE = 3;
 const SIZE_PARAM = `?size=${ITEM_PER_PAGE}`;
 const PAGE_PARAM = `page=`;
 const FavoriteProduct = () => {
-    // console.log('load FavoriteProduct');
     const navigate = useNavigate();
     const [favList, setFavList] = useState({});
     const [favItems, setFaveItems] = useState([]);
@@ -155,17 +154,6 @@ const FavoriteProduct = () => {
                     className="site-card-wrapper wishlist-container"
                     style={{ padding: '2rem .5rem' , margin: '4rem auto' }}
                 >
-                    {/* <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                        }}>
-                        <div></div>
-                        <span>Tổng sản phẩm: {favItems.length}</span>
-                        <span>Tổng trang: {totalPage}</span>
-                        <span>Size: {size}</span>
-                        <span>curreent: {curPage + 1} </span>
-                    </div> */}
                     <div></div>
                     <Row gutter={[16, 24]} justify="center">
                         {favItems.map((value, index) => {

@@ -1,24 +1,21 @@
 import React, { memo, useState, useEffect } from 'react';
 import Home from '../components/MainPage/Home';
 import FlashDeals from '../components/flashDeals/FlashDeals';
-import TopCate from '../components/top/TopCate';
 import NewArrivals from '../components/newarrivals/NewArrivals';
 import Discount from '../components/discount/Discount';
 import Annocument from '../components/annocument/Annocument';
 import Wrappers from '../components/wrapper/Wrappers';
 import ShopHome from '../components/shops/ShopHome';
 import TopSales from '../components/topsales/TopSales';
-import CategorySlider from '../components/categoryslider/CategorySlider';
 import { BASE, PRODUCT, FILTER } from '../constants/index';
 import { BASE_USER, INFO } from '../constants/user';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from '../services/axios';
 import TokenService from '../services/tokenService';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { mergeAnnonCart } from '../services/cartService';
-import { INIT, LOGIN } from '../redux/actions/AuthAction';
+import { LOGIN } from '../redux/actions/AuthAction';
 import { Modal, Button, Input } from 'antd';
-import Wrapper from '../Wrapper';
 import { Helmet } from 'react-helmet';
 const Pages = ({ productItems, addToCart, CartItem, shopItems, isAuth }) => {
     const size = 10;

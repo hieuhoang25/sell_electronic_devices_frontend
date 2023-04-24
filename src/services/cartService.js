@@ -1,6 +1,5 @@
 // import { createSlice } from '@reduxjs/toolkit';
 import axios from './axios';
-import Moment from 'react-moment';
 import {
     CART,
     CART_ITEM,
@@ -46,7 +45,6 @@ export const fetchCartFromSever = () => async (dispatch, getState) => {
                     return;
                 });
         } else {
-            const { time } = getState().cart;
             // console.log('get from localstorage');
             const { id: cartId } = getState().cart;
             const { items, total, baseAmount } = getState().cart;

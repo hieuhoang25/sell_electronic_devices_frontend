@@ -92,10 +92,16 @@ const ProductDetail = ({ isAuth }) => {
     });
     const handleBuy = async () => {
         if (isAuthenticated) {
-            await handleAddToCart();
-            navigate('/cart');
+            await handleAddToCart().then(res => {
+             if(res === 'pass') {
+                Navigate('/cart');
+            }
+        })
         } else {
-            Navigate('/login');
+            await handleAddToCart().then(res => {
+                // Navigate('/login')
+            })
+           
         }
     };
     const productBody = useRef({
@@ -323,8 +329,8 @@ const ProductDetail = ({ isAuth }) => {
         setIsLoading(false);
     };
     //End
-    const handleAddToCart = (callback) => {
-        fetchInventory().then((res) => {
+    const handleAddToCart = async () => {
+         return    fetchInventory().then((res) => {
             const mess_message = productDetail.display_name;
 
             const mess_title = 'Thêm vào giỏ hàng';
@@ -369,6 +375,7 @@ const ProductDetail = ({ isAuth }) => {
                             isSuccess: false,
                         };
                     });
+                    return 'failed'
                 } else if (c_qty >= QTY_MAX) {
                     console.log('failed');
                     setCartAddedNotif((prev) => {
@@ -379,6 +386,7 @@ const ProductDetail = ({ isAuth }) => {
                             isSuccess: false,
                         };
                     });
+                    return 'failed';
                 } else {
                     const currentItem = items.find;
                     let fixedQty =
@@ -398,6 +406,7 @@ const ProductDetail = ({ isAuth }) => {
                         };
                     });
                     dispatch(addItemToCart(requestItem));
+                    return true;
                 }
             } else {
                 const requestItem = getCartDetailRequest(
@@ -414,8 +423,11 @@ const ProductDetail = ({ isAuth }) => {
                         isSuccess: true,
                     };
                 });
+                return true;
             }
-        });
+        }).then(res =>  new Promise((resovle, reject) => {
+            resovle({result: res});
+        }) )
     };
 
     const setSuccessNull = () => {
@@ -545,12 +557,14 @@ const ProductDetail = ({ isAuth }) => {
                             <div
                                 style={{
                                     display: 'flex',
+                                    flexDirection:"column",
                                     p: 1,
                                     padding: '0px',
-                                    flexDirection: {
-                                        xs: 'column', // mobile
-                                        sm: 'row', // tablet and up
-                                    },
+                                    // css 
+                                    // flexDirection: {
+                                    //     xs: 'column', // mobile
+                                    //     sm: 'row', // tablet and up
+                                    // },
                                 }}
                             >
                                 <div
@@ -937,9 +951,9 @@ const ProductDetail = ({ isAuth }) => {
                                                     >
                                                         <button
                                                             type="button"
-                                                            onClick={
-                                                                handleAddToCart
-                                                            }
+                                                            // onClick={
+                                                            //     handleAddToCart
+                                                            // }
                                                         >
                                                             Mua Ngay
                                                         </button>

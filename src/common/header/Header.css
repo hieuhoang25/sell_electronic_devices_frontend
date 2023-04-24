@@ -462,6 +462,10 @@ header .ant-dropdown::before {
     margin-top: -16px;
 }
 
+#demo-popup-popover .popover-title>h4>a {
+    color: #d94e66;
+}
+
 #demo-popup-popover .MuiPopover-paper {
     top: 80px;
 }

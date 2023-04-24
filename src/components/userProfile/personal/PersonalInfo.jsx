@@ -1,8 +1,7 @@
 import React, { useState, memo, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { Button, Form, Input, Radio, Modal, notification, Space } from 'antd';
+import { Button, Form, Input,  Modal, notification } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
-import DatePickerCalendar from './DatePicker';
 import './PersonalInfo.css';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from '../../../services/axios';
