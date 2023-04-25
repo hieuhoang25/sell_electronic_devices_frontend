@@ -283,7 +283,6 @@ const ProductDetail = ({ isAuth }) => {
             }
             if (cartQty >= inventory.max_quantity && !inventory.outOfStock) {
                 console.log('fix counter quantity');
-                alert('reduce');
                 setCartQty((prev) => inventory.max_quantity);
             }
             if (inventory.outOfStock) {

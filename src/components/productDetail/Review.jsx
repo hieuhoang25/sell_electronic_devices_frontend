@@ -5,6 +5,7 @@ import HalfRatingRead from '../../common/rating/HalfRatingRead';
 import Card from 'antd/es/card/Card';
 import Moment from 'react-moment';
 import 'moment-timezone';
+import 'moment/locale/vi';
 const Review = ({ listReview, handleClick, loading }) => {
     return (
         <Card loading={loading}>
@@ -21,7 +22,7 @@ const Review = ({ listReview, handleClick, loading }) => {
                                       <Comment.Metadata>
                                           <div>{item.variant_name}</div>
                                           <div>{item.variant_color}</div>
-                                          <Moment fromNow>
+                                          <Moment fromNow locale="vi">
                                               {item.created_date}
                                           </Moment>
                                       </Comment.Metadata>
