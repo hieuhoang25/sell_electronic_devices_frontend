@@ -444,7 +444,7 @@ const Cart = () => {
             <Helmet>
                 <title>Giỏ hàng</title>
             </Helmet>
-            
+                {contextHolder}
                 {!isLoading && (
                     <section className="cart-items">
                         <div className="cart-container container d_flex">
