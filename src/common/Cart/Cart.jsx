@@ -15,7 +15,14 @@ import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { BASE, PRODUCT_INVENTORY, ENV_URL } from '../../constants/index';
 import { USER, WISHLISTS } from '../../constants/user';
-import { removeItemFromCart, incrementItemQuantity, decrementItemQuantity, updateCart, mergeAnnonCart, updateGuestCartState } from '../../services/cartService.js';
+import {
+    removeItemFromCart,
+    incrementItemQuantity,
+    decrementItemQuantity,
+    updateCart,
+    mergeAnnonCart,
+    updateGuestCartState,
+} from '../../services/cartService.js';
 import Moment from 'react-moment';
 import { getImage } from '../../common/img';
 import { Helmet } from 'react-helmet';
@@ -53,7 +60,13 @@ const Cart = () => {
     let history = useNavigate();
 
     const [api, contextHolder] = notification.useNotification();
-    const openNotificationWithIcon = (type, message, description = '', placements = 'top', duration = '2') => {
+    const openNotificationWithIcon = (
+        type,
+        message,
+        description = '',
+        placements = 'top',
+        duration = '2',
+    ) => {
         api[type]({
             message: message,
             placement: placements,
@@ -74,12 +87,17 @@ const Cart = () => {
                     return await new Promise((resolve, reject) => {
                         setTimeout(resolve, 100);
                     }).then((data) => {
-                        const request = getCartDetailRequest({ cart_id: Cart.id, quantity: 1, id: id }, CartRequestTYPE.DELETE);
+                        const request = getCartDetailRequest(
+                            { cart_id: Cart.id, quantity: 1, id: id },
+                            CartRequestTYPE.DELETE,
+                        );
                         // request.id = id;
                         // console.log('call delete ', request);
                         dispatch(removeItemFromCart(request));
                         dispatch(updateCart());
-                        fetchAllItemInventory().catch((e) => console.log(e.message));
+                        fetchAllItemInventory().catch((e) =>
+                            console.log(e.message),
+                        );
                     });
                 } catch {
                     return console.log('Oops errors!');
@@ -89,16 +107,20 @@ const Cart = () => {
         });
     };
     // showPromiseConfirm('Sản phẩm sẽ bị xoá khỏi giỏ');
-    const removeItemHandler = (id) => {};
 
     function onCheckoutHandler() {
         if (Cart.isAnonymous) {
         } else {
             dispatch(updateGuestCartState()).then((r) => {
-                console.log('return: ', r);
+                // console.log('return: ', r);
                 let { status } = r;
                 if (r === 409) {
-                    openNotificationWithIcon('info', 'Giỏ hàng có thay đổi', 'top', 2);
+                    openNotificationWithIcon(
+                        'info',
+                        'Giỏ hàng có thay đổi',
+                        'top',
+                        2,
+                    );
                 } else {
                     history('/checkout');
                 }
@@ -123,7 +145,7 @@ const Cart = () => {
                 });
 
                 return Promise.all(f).then(function (results) {
-                    console.log(results);
+                    // console.log(results);
                     setInventory((prev) => results);
                     return results;
                 });
@@ -137,10 +159,10 @@ const Cart = () => {
     });
 
     const fetchInventory = useCallback(async (item, qty = -1) => {
-        console.log('fetch inventory of item');
+        // console.log('fetch inventory of item');
         const reQty = qty == -1 ? item.quantity : qty;
         const variantId = item.productVariant.id;
-        console.log('variant id: ', variantId);
+        // console.log('variant id: ', variantId);
         const request = {
             product_variant_id: variantId,
             request_quantity: reQty,
@@ -148,7 +170,7 @@ const Cart = () => {
         return await axios
             .post(`${BASE}${PRODUCT_INVENTORY}`, request)
             .then((res) => {
-                console.log('return current inventory of item:', res.data);
+                // console.log('return current inventory of item:', res.data);
                 return res.data;
                 // setInventory(res.data);
             })
@@ -169,10 +191,12 @@ const Cart = () => {
         fetchAllItemInventory()
             .then((res) => {
                 // setIsLoading(false);
-                let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
+                let inventOfItemIndex = inventory.findIndex(
+                    (i) => i.id === item.id,
+                );
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
-                console.log('cur item invent', inventory[inventOfItemIndex]);
+                // console.log('cur item invent', inventory[inventOfItemIndex]);
                 const request = getCartDetailRequest(
                     {
                         cart_id: Cart.id,
@@ -183,7 +207,7 @@ const Cart = () => {
                     CartRequestTYPE.UPDATE,
                 );
 
-                console.log('increment request:', request);
+                // console.log('increment request:', request);
                 dispatch(incrementItemQuantity(request));
             })
 
@@ -201,11 +225,13 @@ const Cart = () => {
         fetchAllItemInventory()
             .then((res) => {
                 // setIsLoading(false);
-                let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
+                let inventOfItemIndex = inventory.findIndex(
+                    (i) => i.id === item.id,
+                );
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
-                console.log('cur item invent', inventory[inventOfItemIndex]);
-                console.log('needed_change', res.need_changed);
+                // console.log('cur item invent', inventory[inventOfItemIndex]);
+                // console.log('needed_change', res.need_changed);
                 const request = getCartDetailRequest(
                     {
                         cart_id: Cart.id,
@@ -285,31 +311,28 @@ const Cart = () => {
     const handleFavoriteClick = useCallback((index) => {
         // alert("call wishlit" + index)
         if (Cart.isAnonymous) {
-            openNotificationWithIcon('info', 'Bạn cần đăng nhập để có thể thêm sản phẩm vào yêu thích');
+            openNotificationWithIcon(
+                'info',
+                'Bạn cần đăng nhập để có thể thêm sản phẩm vào yêu thích',
+            );
         } else {
-            let itemIndexInWishlist = wishlists.findIndex((w) => w.index === index);
+            let itemIndexInWishlist = wishlists.findIndex(
+                (w) => w.index === index,
+            );
             console.log('w index: ', wishlists[itemIndexInWishlist]);
             if (itemIndexInWishlist !== -1) {
-                let { is_favorite: wishlistItemState, product_id: productId } = wishlists[itemIndexInWishlist];
+                let { is_favorite: wishlistItemState, product_id: productId } =
+                    wishlists[itemIndexInWishlist];
 
                 if (!wishlistItemState) addWishlists(productId);
                 else removeWishlists(productId);
-            } else openNotificationWithIcon('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+            } else
+                openNotificationWithIcon(
+                    'error',
+                    'Có lỗi xảy ra, vui lòng thử lại sau',
+                );
         }
     });
-
-    // const handleFavoriteClick = () => {
-    //     if (isAuth) {
-    //         if (isFavorite) {
-    //             removeWishlists(productId);
-    //             setFavorite(false);
-    //         } else {
-    //             addWishlists(productId);
-    //             setFavorite(true);
-    //         }
-    //     } else return history('/login');
-    // };
-
     //add wishlist
     function addWishlists(product_id) {
         axios({
@@ -318,7 +341,13 @@ const Cart = () => {
             data: [{ product_id: product_id }],
         })
             .then((res) => {
-                openNotificationWithIcon('success', 'Đã thêm sản phẩm vào yêu thích', '', 'top', 1);
+                openNotificationWithIcon(
+                    'success',
+                    'Đã thêm sản phẩm vào yêu thích',
+                    '',
+                    'top',
+                    1,
+                );
                 fetchAllWihshList().catch((e) => console.log(e));
             })
             .catch((error) => {
@@ -333,7 +362,13 @@ const Cart = () => {
             data: [{ product_id: product_id }],
         })
             .then((res) => {
-                openNotificationWithIcon('success', 'Đã xoá sản phẩm khỏi yêu thích', '', 'top', 1);
+                openNotificationWithIcon(
+                    'success',
+                    'Đã xoá sản phẩm khỏi yêu thích',
+                    '',
+                    'top',
+                    1,
+                );
                 fetchAllWihshList().catch((e) => console.log(e));
             })
             .catch((error) => {
@@ -392,7 +427,7 @@ const Cart = () => {
             console.log('index; ', index);
             if (index != -1) {
                 // alert('need_dhn')
-                openNotificationWithIcon('info', 'Số lượng giỏ hàng thay đổi', '', 3);
+                // openNotificationWithIcon('info', 'Số lượng giỏ hàng thay đổi', '', 2);
                 dispatch(updateGuestCartState());
                 fetchAllItemInventory().catch((e) => console.log(e.message));
                 setIsLoading(false);
@@ -444,179 +479,407 @@ const Cart = () => {
             <Helmet>
                 <title>Giỏ hàng</title>
             </Helmet>
-                {contextHolder}
-                {!isLoading && (
-                    <section className="cart-items">
-                        <div className="cart-container container d_flex">
-                            {/* if hamro cart ma kunai pani item xaina bhane no diplay */}
-                            <div className="top">
-                                <div className="d_flex">
-                                    <h3 style={{ padding: '10px' }}>Giỏ hàng của bạn ({totalCount} sản phẩm) </h3>
-                                </div>
+            {contextHolder}
+            {!isLoading && (
+                <section className="cart-items">
+                    <div className="cart-container container d_flex">
+                        {/* if hamro cart ma kunai pani item xaina bhane no diplay */}
+                        <div className="top">
+                            <div className="d_flex">
+                                <h3 style={{ padding: '10px' }}>
+                                    Giỏ hàng của bạn ({totalCount} sản phẩm){' '}
+                                </h3>
                             </div>
-                            <div className={`detail cart-details ${items.length === 0 ? 'w-100-im' : ''} `}>
-                                {items.length === 0 && (
-                                    <div className="no-items product d_flex_jus_center">
-                                        <div>
-                                            Giỏ hàng trống
-                                            {`   `} <FrownOutlined />
-                                        </div>
-
-                                        <Link to={'/product/1'} className="shop-btn">
-                                            <i class="fa-solid fa-cart-shopping"></i>
-                                            {`   `} Tiếp tục mua sắm
-                                        </Link>
+                        </div>
+                        <div
+                            className={`detail cart-details ${
+                                items.length === 0 ? 'w-100-im' : ''
+                            } `}
+                        >
+                            {items.length === 0 && (
+                                <div className="no-items product d_flex_jus_center">
+                                    <div>
+                                        Giỏ hàng trống
+                                        {`   `} <FrownOutlined />
                                     </div>
-                                )}
-                                {items.map((item, index) => {
-                                    return (
-                                        <div className={`cart-list product d_flex ${item.quantity === 0 ? 'out-stock' : ''}`} key={item.id}>
-                                            {item.quantity > 0 && (
-                                                <Link to={`/product-detail/${getProductId(item)}`} className="img">
-                                                    <img src={getImage(getVariantDetail(item).image)} alt="" />
-                                                </Link>
-                                            )}
-                                            {item.quantity === 0 && (
-                                                <div className="img">
-                                                    <span className="out-stock-badge">Sản phẩm hết hàng</span>
-                                                    <img src={getImage(getVariantDetail(item).image)} alt="" />
-                                                </div>
-                                            )}
-                                            <div className="card-cart-details">
-                                                <div className="cart-details-item-title">
-                                                    <h3 className="cart-details-item-name">
-                                                        <Link to={`/product-detail/${getProductId(item)}`}>{getProductVariantName(item)}</Link>
 
-                                                        {inventory.length !== 0 && getMaxQtyOfItem(index) <= 5 && findInventoryByIndex(index).current_inventory <= 5 && (
-                                                            <span className="quanity-notif">Chỉ còn lại {getCurrentQtyOfItem(index)} sản phẩm</span>
+                                    <Link
+                                        to={'/product/1'}
+                                        className="shop-btn"
+                                    >
+                                        <i class="fa-solid fa-cart-shopping"></i>
+                                        {`   `} Tiếp tục mua sắm
+                                    </Link>
+                                </div>
+                            )}
+                            {items.map((item, index) => {
+                                return (
+                                    <div
+                                        className={`cart-list product d_flex ${
+                                            item.quantity === 0
+                                                ? 'out-stock'
+                                                : ''
+                                        }`}
+                                        key={item.id}
+                                    >
+                                        {item.quantity > 0 && (
+                                            <Link
+                                                to={`/product-detail/${getProductId(
+                                                    item,
+                                                )}`}
+                                                className="img"
+                                            >
+                                                <img
+                                                    src={getImage(
+                                                        getVariantDetail(item)
+                                                            .image,
+                                                    )}
+                                                    alt=""
+                                                />
+                                            </Link>
+                                        )}
+                                        {item.quantity === 0 && (
+                                            <div className="img">
+                                                <span className="out-stock-badge">
+                                                    Sản phẩm hết hàng
+                                                </span>
+                                                <img
+                                                    src={getImage(
+                                                        getVariantDetail(item)
+                                                            .image,
+                                                    )}
+                                                    alt=""
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="card-cart-details">
+                                            <div className="cart-details-item-title">
+                                                <h3 className="cart-details-item-name">
+                                                    <Link
+                                                        to={`/product-detail/${getProductId(
+                                                            item,
+                                                        )}`}
+                                                    >
+                                                        {getProductVariantName(
+                                                            item,
                                                         )}
-                                                    </h3>
-                                                </div>
-                                                <ul className="cart-product-atrs">
-                                                    <li>
-                                                        Màu:
-                                                        <span>{' ' + getColorOfCartItem(item)}</span>
-                                                    </li>
-                                                    <li>
-                                                        RAM:
-                                                        <span>{getStorageOfCartItem(item)}</span>
-                                                    </li>
-                                                    <li className="single-price">
-                                                        Đơn giá: {getCurrencyFormatComp(getVariantDetail(item).price, false, 'atr-price')}
-                                                        {!getPromotion(item) && item.quantity > 0 && (
-                                                            <span>
-                                                                {' '}
-                                                                {` x `} {item.quantity}{' '}
+                                                    </Link>
+
+                                                    {inventory.length !== 0 &&
+                                                        getMaxQtyOfItem(
+                                                            index,
+                                                        ) <= 5 &&
+                                                        findInventoryByIndex(
+                                                            index,
+                                                        ).current_inventory <=
+                                                            5 && (
+                                                            <span className="quanity-notif">
+                                                                Chỉ còn lại{' '}
+                                                                {getCurrentQtyOfItem(
+                                                                    index,
+                                                                )}{' '}
+                                                                sản phẩm
                                                             </span>
                                                         )}
-                                                    </li>
-                                                    {getPromotion(item) && item.quantity > 0 && (
+                                                </h3>
+                                            </div>
+                                            <ul className="cart-product-atrs">
+                                                <li>
+                                                    Màu:
+                                                    <span>
+                                                        {' ' +
+                                                            getColorOfCartItem(
+                                                                item,
+                                                            )}
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    RAM:
+                                                    <span>
+                                                        {getStorageOfCartItem(
+                                                            item,
+                                                        )}
+                                                    </span>
+                                                </li>
+                                                <li className="single-price">
+                                                    Đơn giá:{' '}
+                                                    {getCurrencyFormatComp(
+                                                        getVariantDetail(item)
+                                                            .price,
+                                                        false,
+                                                        'atr-price',
+                                                    )}
+                                                    {!getPromotion(item) &&
+                                                        item.quantity > 0 && (
+                                                            <span>
+                                                                {' '}
+                                                                {` x `}{' '}
+                                                                {item.quantity}{' '}
+                                                            </span>
+                                                        )}
+                                                </li>
+                                                {getPromotion(item) &&
+                                                    item.quantity > 0 && (
                                                         <li>
                                                             Giảm giá:
-                                                            {!isPercentDiscount(item) && (
+                                                            {!isPercentDiscount(
+                                                                item,
+                                                            ) && (
                                                                 <span>
-                                                                    {getCurrencyFormatComp(getPromotionValue(item), false, 'discounted-per-item')}
+                                                                    {getCurrencyFormatComp(
+                                                                        getPromotionValue(
+                                                                            item,
+                                                                        ),
+                                                                        false,
+                                                                        'discounted-per-item',
+                                                                    )}
                                                                     <span>
                                                                         {' '}
-                                                                        {` x `} {item.quantity}{' '}
+                                                                        {` x `}{' '}
+                                                                        {
+                                                                            item.quantity
+                                                                        }{' '}
                                                                     </span>
                                                                 </span>
                                                             )}
-                                                            {isPercentDiscount(item) && (
+                                                            {isPercentDiscount(
+                                                                item,
+                                                            ) && (
                                                                 <span className="percent">
-                                                                    {getCurrencyFormatComp(getDiscountAmount(item), false, 'discounted-per-item')}
-                                                                    {` x `} {item.quantity}
-                                                                    {` (${getPromotionValue(item)}) `}
+                                                                    {getCurrencyFormatComp(
+                                                                        getDiscountAmount(
+                                                                            item,
+                                                                        ),
+                                                                        false,
+                                                                        'discounted-per-item',
+                                                                    )}
+                                                                    {` x `}{' '}
+                                                                    {
+                                                                        item.quantity
+                                                                    }
+                                                                    {` (${getPromotionValue(
+                                                                        item,
+                                                                    )}) `}
                                                                 </span>
                                                             )}
                                                         </li>
                                                     )}
 
-                                                    {getPromotion(item) && item.quantity <= 0 && (
+                                                {getPromotion(item) &&
+                                                    item.quantity <= 0 && (
                                                         <li>
                                                             Giảm giá:
-                                                            {!isPercentDiscount(item) && (
+                                                            {!isPercentDiscount(
+                                                                item,
+                                                            ) && (
                                                                 <span>
-                                                                    {getCurrencyFormatComp(getPromotionValue(item), false, 'discounted-per-item')}
+                                                                    {getCurrencyFormatComp(
+                                                                        getPromotionValue(
+                                                                            item,
+                                                                        ),
+                                                                        false,
+                                                                        'discounted-per-item',
+                                                                    )}
                                                                     <span>
                                                                         {' '}
-                                                                        {` x `} {item.quantity}{' '}
+                                                                        {` x `}{' '}
+                                                                        {
+                                                                            item.quantity
+                                                                        }{' '}
                                                                     </span>
                                                                 </span>
                                                             )}
-                                                            {isPercentDiscount(item) && (
+                                                            {isPercentDiscount(
+                                                                item,
+                                                            ) && (
                                                                 <span className="percent">
-                                                                    {getCurrencyFormatComp(getDiscountAmount(item), false, 'discounted-per-item')}
+                                                                    {getCurrencyFormatComp(
+                                                                        getDiscountAmount(
+                                                                            item,
+                                                                        ),
+                                                                        false,
+                                                                        'discounted-per-item',
+                                                                    )}
                                                                     {/* {` x `} {item.quantity} */}
-                                                                    {` (${getPromotionValue(item)}) `}
+                                                                    {` (${getPromotionValue(
+                                                                        item,
+                                                                    )}) `}
                                                                 </span>
                                                             )}
                                                         </li>
                                                     )}
-                                                </ul>
-                                                <div className="cart-detail-action-cotainer">
-                                                    <Stack className="action-buttons" direction="row" spacing={2}>
-                                                        <div></div>
-                                                        {wishlists.length > 0 && getCurrentIsInWishList(index) && (
-                                                            <Tooltip placement="bottom" title={'Xoá khỏi yêu thích'}>
-                                                                <MUIButton style={{color:"black"}} onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteIcon style={{color:"red"}} />}>
+                                            </ul>
+                                            <div className="cart-detail-action-cotainer">
+                                                <Stack
+                                                    className="action-buttons"
+                                                    direction="row"
+                                                    spacing={2}
+                                                >
+                                                    <div></div>
+                                                    {wishlists.length > 0 &&
+                                                        getCurrentIsInWishList(
+                                                            index,
+                                                        ) && (
+                                                            <Tooltip
+                                                                placement="bottom"
+                                                                title={
+                                                                    'Xoá khỏi yêu thích'
+                                                                }
+                                                            >
+                                                                <MUIButton
+                                                                    style={{
+                                                                        color: 'black',
+                                                                    }}
+                                                                    onClick={() =>
+                                                                        handleFavoriteClick(
+                                                                            index,
+                                                                        )
+                                                                    }
+                                                                    startIcon={
+                                                                        <FavoriteIcon
+                                                                            style={{
+                                                                                color: 'red',
+                                                                            }}
+                                                                        />
+                                                                    }
+                                                                >
                                                                     Yêu thích
                                                                 </MUIButton>
                                                             </Tooltip>
                                                         )}
 
-                                                        {wishlists.length > 0 && !getCurrentIsInWishList(index) && (
-                                                            <Tooltip placement="bottom" title={'Thêm vào yêu thích'}>
-                                                                <MUIButton style={{color:"black"}}  onClick={() => handleFavoriteClick(index)} startIcon={<FavoriteBorderIcon  />}>
+                                                    {wishlists.length > 0 &&
+                                                        !getCurrentIsInWishList(
+                                                            index,
+                                                        ) && (
+                                                            <Tooltip
+                                                                placement="bottom"
+                                                                title={
+                                                                    'Thêm vào yêu thích'
+                                                                }
+                                                            >
+                                                                <MUIButton
+                                                                    style={{
+                                                                        color: 'black',
+                                                                    }}
+                                                                    onClick={() =>
+                                                                        handleFavoriteClick(
+                                                                            index,
+                                                                        )
+                                                                    }
+                                                                    startIcon={
+                                                                        <FavoriteBorderIcon />
+                                                                    }
+                                                                >
                                                                     Yêu thích
                                                                 </MUIButton>
                                                             </Tooltip>
                                                         )}
-                                                        <Tooltip placement="bottom" title={'Xoá khỏi giỏ hàng'}>
+                                                    <Tooltip
+                                                        placement="bottom"
+                                                        title={
+                                                            'Xoá khỏi giỏ hàng'
+                                                        }
+                                                    >
                                                         <MUIButton
                                                             className="remove-cart-btn"
-                                                            startIcon={<DeleteIcon />}
-                                                            onClick={() => showPromiseConfirm(`Bạn có muốn xoá ${getProductVariantName(item)} khỏi giỏ hàng?`, item.id)}
+                                                            startIcon={
+                                                                <DeleteIcon />
+                                                            }
+                                                            onClick={() =>
+                                                                showPromiseConfirm(
+                                                                    `Bạn có muốn xoá ${getProductVariantName(
+                                                                        item,
+                                                                    )} khỏi giỏ hàng?`,
+                                                                    item.id,
+                                                                )
+                                                            }
                                                         >
                                                             Xoá
                                                         </MUIButton>
-                                                        </Tooltip>
-                                                    </Stack>
-                                                </div>
+                                                    </Tooltip>
+                                                </Stack>
                                             </div>
-                                            <div className="cart-list-right d_flex_col">
-                                                <div className="cart-item-price">
-                                                    <h3 className="cart-details-total">
-                                                        {/* ${item.price}.00 * {item.qty} */}
-                                                        <span className={`org-price ${getPromotion(item) ? 'discounted' : ''}`}>{getCurrencyFormatComp(item.price_detail, false)}</span>
-                                                        {getPromotion(item) && (
-                                                            <span
-                                                                style={{
-                                                                    display: 'inline-block',
-                                                                    marginLeft: '1rem',
-                                                                }}
-                                                            >
-                                                                {getCurrencyFormatComp(getDiscountAmountOfItem(item), false)}
-                                                            </span>
+                                        </div>
+                                        <div className="cart-list-right d_flex_col">
+                                            <div className="cart-item-price">
+                                                <h3 className="cart-details-total">
+                                                    {/* ${item.price}.00 * {item.qty} */}
+                                                    <span
+                                                        className={`org-price ${
+                                                            getPromotion(item)
+                                                                ? 'discounted'
+                                                                : ''
+                                                        }`}
+                                                    >
+                                                        {getCurrencyFormatComp(
+                                                            item.price_detail,
+                                                            false,
                                                         )}
-                                                    </h3>
-                                                </div>
-                                                {item.quantity === 0 && <div></div>}
-                                                {/* {inventory.length !== 0 && ( */}
-                                                {inventory.length !== 0 && item.quantity > 0 && (
+                                                    </span>
+                                                    {getPromotion(item) && (
+                                                        <span
+                                                            style={{
+                                                                display:
+                                                                    'inline-block',
+                                                                marginLeft:
+                                                                    '1rem',
+                                                            }}
+                                                        >
+                                                            {getCurrencyFormatComp(
+                                                                getDiscountAmountOfItem(
+                                                                    item,
+                                                                ),
+                                                                false,
+                                                            )}
+                                                        </span>
+                                                    )}
+                                                </h3>
+                                            </div>
+                                            {item.quantity === 0 && <div></div>}
+                                            {/* {inventory.length !== 0 && ( */}
+                                            {inventory.length !== 0 &&
+                                                item.quantity > 0 && (
                                                     <div className="cart-items-function">
                                                         <div className="cartControl d_flex">
-                                                            <button disabled={item.quantity <= QTY_MIN} className="desCart" onClick={() => decrementQty(item)}>
+                                                            <button
+                                                                disabled={
+                                                                    item.quantity <=
+                                                                    QTY_MIN
+                                                                }
+                                                                className="desCart"
+                                                                onClick={() =>
+                                                                    decrementQty(
+                                                                        item,
+                                                                    )
+                                                                }
+                                                            >
                                                                 <i className="fa-solid fa-minus"></i>
                                                             </button>
 
-                                                            <div className="quantity">{item.quantity}</div>
+                                                            <div className="quantity">
+                                                                {item.quantity}
+                                                            </div>
                                                             {/* 
                                                         <button disabled={item.quantity >= QTY_MAX} className="incCart" onClick={() => incrementQty(item)}>
                                                             <i className="fa-solid fa-plus"></i>
                                                         </button> */}
 
-                                                            <button disabled={item.quantity >= getMaxQtyOfItem(index)} className="incCart" onClick={() => incrementQty(item, index)}>
+                                                            <button
+                                                                disabled={
+                                                                    item.quantity >=
+                                                                    getMaxQtyOfItem(
+                                                                        index,
+                                                                    )
+                                                                }
+                                                                className="incCart"
+                                                                onClick={() =>
+                                                                    incrementQty(
+                                                                        item,
+                                                                        index,
+                                                                    )
+                                                                }
+                                                            >
                                                                 <i className="fa-solid fa-plus"></i>
                                                             </button>
                                                         </div>
@@ -635,63 +898,82 @@ const Cart = () => {
                                                     </div>
                                                 )}
 
-                                                {/* )} */}
-                                            </div>
+                                            {/* )} */}
                                         </div>
-                                    );
-                                })}
-                            </div>
-                            {items.length !== 0 && (
-                                <div className="cart-total fix product">
-                                    {checkAllOutOfStock(items) ? (
-                                        <div className="out-stock d_flex_col">
-                                            <h5>Không có sản phẩm nào để thanh toán</h5>
-                                            <Link to={'/product/1'} className="shop-btn">
-                                                <i class="fa-solid fa-cart-shopping"></i>
-                                                {`   `} Tiếp tục mua sắm
-                                            </Link>
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <h2>Thông tin đơn hàng</h2>
-
-                                            <div className=" d_flex">
-                                                <h4>Số lượng :</h4>
-                                                {/* {totalCount} */}
-                                                <span>{getTotalItemCountExcludeOutStock()}</span>
-                                            </div>
-                                            <div className=" d_flex">
-                                                <h4>Tạm tính :</h4>
-                                                {getCurrencyFormatComp(baseAmount)}
-                                            </div>
-                                            <div className=" d_flex">
-                                                <h4>Giảm giá : </h4>
-                                                {getCurrencyFormatComp(Cart.discount)}
-                                                {/* <h3>${getBaseAmount}.00</h3> */}
-                                            </div>
-                                            <h3 className="d_flex cart-total-last">
-                                                <span className="cart-total-title">Tổng tiền:</span>
-                                                {getCurrencyFormatComp(Cart.total)}
-                                            </h3>
-                                            {Cart.isAnonymous ? (
-                                                <>
-                                                    <LoginPromptNotification> </LoginPromptNotification>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <button disabled={disableCheckoutBtn} onClick={onCheckoutHandler} className="btn-primary w-100">
-                                                        Thanh toán
-                                                    </button>
-                                                </>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                    </div>
+                                );
+                            })}
                         </div>
-                    </section>
-                )}
-            </>
+                        {items.length !== 0 && (
+                            <div className="cart-total fix product">
+                                {checkAllOutOfStock(items) ? (
+                                    <div className="out-stock d_flex_col">
+                                        <h5>
+                                            Không có sản phẩm nào để thanh toán
+                                        </h5>
+                                        <Link
+                                            to={'/product/1'}
+                                            className="shop-btn"
+                                        >
+                                            <i class="fa-solid fa-cart-shopping"></i>
+                                            {`   `} Tiếp tục mua sắm
+                                        </Link>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <h2>Thông tin đơn hàng</h2>
+
+                                        <div className=" d_flex">
+                                            <h4>Số lượng :</h4>
+                                            {/* {totalCount} */}
+                                            <span>
+                                                {getTotalItemCountExcludeOutStock()}
+                                            </span>
+                                        </div>
+                                        <div className=" d_flex">
+                                            <h4>Tạm tính :</h4>
+                                            {getCurrencyFormatComp(baseAmount)}
+                                        </div>
+                                        <div className=" d_flex">
+                                            <h4>Giảm giá : </h4>
+                                            {getCurrencyFormatComp(
+                                                Cart.discount,
+                                            )}
+                                            {/* <h3>${getBaseAmount}.00</h3> */}
+                                        </div>
+                                        <h3 className="d_flex cart-total-last">
+                                            <span className="cart-total-title">
+                                                Tổng tiền:
+                                            </span>
+                                            {getCurrencyFormatComp(Cart.total)}
+                                        </h3>
+                                        {Cart.isAnonymous ? (
+                                            <>
+                                                <LoginPromptNotification>
+                                                    {' '}
+                                                </LoginPromptNotification>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    disabled={
+                                                        disableCheckoutBtn
+                                                    }
+                                                    onClick={onCheckoutHandler}
+                                                    className="btn-primary w-100"
+                                                >
+                                                    Thanh toán
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+        </>
         // </Wrapper>
     );
 };
