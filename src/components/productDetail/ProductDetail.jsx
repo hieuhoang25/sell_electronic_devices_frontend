@@ -92,16 +92,15 @@ const ProductDetail = ({ isAuth }) => {
     });
     const handleBuy = async () => {
         if (isAuthenticated) {
-            await handleAddToCart().then(res => {
-             if(res === 'pass') {
-                Navigate('/cart');
-            }
-        })
+            await handleAddToCart().then((res) => {
+                if (res === 'pass') {
+                    Navigate('/cart');
+                }
+            });
         } else {
-            await handleAddToCart().then(res => {
+            await handleAddToCart().then((res) => {
                 // Navigate('/login')
-            })
-           
+            });
         }
     };
     const productBody = useRef({
@@ -329,73 +328,94 @@ const ProductDetail = ({ isAuth }) => {
     };
     //End
     const handleAddToCart = async () => {
-         return    fetchInventory().then((res) => {
-            const mess_message = productDetail.display_name;
+        return fetchInventory()
+            .then((res) => {
+                const mess_message = productDetail.display_name;
 
-            const mess_title = 'Thêm vào giỏ hàng';
-            console.log('handlemessage', mess_message);
-            console.log('title:', cartAddedNotif.title);
-            console.log('cart: ', Cart);
+                const mess_title = 'Thêm vào giỏ hàng';
+                console.log('handlemessage', mess_message);
+                console.log('title:', cartAddedNotif.title);
+                console.log('cart: ', Cart);
 
-            const item_id = productDetail.id;
-            console.log('item_id: ', item_id);
-            const { items } = Cart;
+                const item_id = productDetail.id;
+                console.log('item_id: ', item_id);
+                const { items } = Cart;
 
-            console.log('%cITEMS: ', 'color:red', items);
-            let {
-                current_inventory: currentInv,
-                need_changed,
-                outOfStock,
-                max_quantity: MAX_QTY,
-            } = res;
-            const request = {
-                cart_id: Cart.id,
-                id: item_id,
-                product_variant_id: item_id,
-                quantity: cartQty,
-            };
-            // console.log('items: ', items);
-            let cartIndex = items.findIndex(
-                (item) => item.productVariant.id === item_id,
-            );
-            // console.log('cartIndex', cartIndex);
-            // console.log('san pham trong gio? ', cartIndex);
-            // sản phẩm có trong giỏ
-            if (cartIndex >= 0) {
-                const { quantity: c_qty } = items[cartIndex];
-                console.log('current quty; ', c_qty);
-                console.log('red: ', res);
-                if (c_qty >= MAX_QTY && MAX_QTY < 5 && c_qty < QTY_MAX) {
-                    setCartAddedNotif((prev) => {
-                        return {
-                            ...prev,
-                            message: `Chỉ còn ${MAX_QTY} sản phẩm. Bạn đã có ${c_qty} sản phẩm trong giỏ`,
-                            title: 'Số lượng sản phẩm không đủ để thêm vào giỏ',
-                            isSuccess: false,
-                        };
-                    });
-                    return 'failed'
-                } else if (c_qty >= QTY_MAX) {
-                    console.log('failed');
-                    setCartAddedNotif((prev) => {
-                        return {
-                            ...prev,
-                            message: `Số lượng sản phẩm trong giỏ không quá ${QTY_MAX} sản phẩm`,
-                            title: 'Không thể thêm vào giỏ',
-                            isSuccess: false,
-                        };
-                    });
-                    return 'failed';
+                console.log('%cITEMS: ', 'color:red', items);
+                let {
+                    current_inventory: currentInv,
+                    need_changed,
+                    outOfStock,
+                    max_quantity: MAX_QTY,
+                } = res;
+                const request = {
+                    cart_id: Cart.id,
+                    id: item_id,
+                    product_variant_id: item_id,
+                    quantity: cartQty,
+                };
+                // console.log('items: ', items);
+                let cartIndex = items.findIndex(
+                    (item) => item.productVariant.id === item_id,
+                );
+                // console.log('cartIndex', cartIndex);
+                // console.log('san pham trong gio? ', cartIndex);
+                // sản phẩm có trong giỏ
+                if (cartIndex >= 0) {
+                    const { quantity: c_qty } = items[cartIndex];
+                    console.log('current quty; ', c_qty);
+                    console.log('red: ', res);
+                    if (c_qty >= MAX_QTY && MAX_QTY < 5 && c_qty < QTY_MAX) {
+                        setCartAddedNotif((prev) => {
+                            return {
+                                ...prev,
+                                message: `Chỉ còn ${MAX_QTY} sản phẩm. Bạn đã có ${c_qty} sản phẩm trong giỏ`,
+                                title: 'Số lượng sản phẩm không đủ để thêm vào giỏ',
+                                isSuccess: false,
+                            };
+                        });
+                        return 'failed';
+                    } else if (c_qty >= QTY_MAX) {
+                        console.log('failed');
+                        setCartAddedNotif((prev) => {
+                            return {
+                                ...prev,
+                                message: `Số lượng sản phẩm trong giỏ không quá ${QTY_MAX} sản phẩm`,
+                                title: 'Không thể thêm vào giỏ',
+                                isSuccess: false,
+                            };
+                        });
+                        return 'failed';
+                    } else {
+                        const currentItem = items.find;
+                        let fixedQty =
+                            c_qty + cartQty > MAX_QTY
+                                ? MAX_QTY - c_qty
+                                : cartQty;
+
+                        const requestItem = getCartDetailRequest(
+                            { ...request, quantity: fixedQty },
+                            CartRequestTYPE.ADD,
+                        );
+                        console.log(' requestItem', requestItem);
+                        setCartAddedNotif((prev) => {
+                            return {
+                                ...prev,
+                                message: mess_message,
+                                title: mess_title,
+                                isSuccess: true,
+                            };
+                        });
+                        dispatch(addItemToCart(requestItem));
+                        return true;
+                    }
                 } else {
-                    const currentItem = items.find;
-                    let fixedQty =
-                        c_qty + cartQty > MAX_QTY ? MAX_QTY - c_qty : cartQty;
-
                     const requestItem = getCartDetailRequest(
-                        { ...request, quantity: fixedQty },
+                        request,
                         CartRequestTYPE.ADD,
                     );
                     console.log(' requestItem', requestItem);
+                    dispatch(addItemToCart(requestItem));
                     setCartAddedNotif((prev) => {
                         return {
                             ...prev,
@@ -404,29 +424,15 @@ const ProductDetail = ({ isAuth }) => {
                             isSuccess: true,
                         };
                     });
-                    dispatch(addItemToCart(requestItem));
                     return true;
                 }
-            } else {
-                const requestItem = getCartDetailRequest(
-                    request,
-                    CartRequestTYPE.ADD,
-                );
-                console.log(' requestItem', requestItem);
-                dispatch(addItemToCart(requestItem));
-                setCartAddedNotif((prev) => {
-                    return {
-                        ...prev,
-                        message: mess_message,
-                        title: mess_title,
-                        isSuccess: true,
-                    };
-                });
-                return true;
-            }
-        }).then(res =>  new Promise((resovle, reject) => {
-            resovle({result: res});
-        }) )
+            })
+            .then(
+                (res) =>
+                    new Promise((resovle, reject) => {
+                        resovle({ result: res });
+                    }),
+            );
     };
 
     const setSuccessNull = () => {
@@ -556,10 +562,10 @@ const ProductDetail = ({ isAuth }) => {
                             <div
                                 style={{
                                     display: 'flex',
-                                    flexDirection:"column",
+                                    flexDirection: 'column',
                                     p: 1,
                                     padding: '0px',
-                                    // css 
+                                    // css
                                     // flexDirection: {
                                     //     xs: 'column', // mobile
                                     //     sm: 'row', // tablet and up
@@ -943,7 +949,7 @@ const ProductDetail = ({ isAuth }) => {
                                     style={{ width: '90%' }}
                                 /> */}
                                                 </div>
-                                                {!cartButtonDisabled && (
+                                                {/* {!cartButtonDisabled && (
                                                     <div
                                                         className="btn_buy"
                                                         onClick={handleBuy}
@@ -957,7 +963,7 @@ const ProductDetail = ({ isAuth }) => {
                                                             Mua Ngay
                                                         </button>
                                                     </div>
-                                                )}
+                                                )} */}
                                             </div>
                                         </div>
                                     </div>

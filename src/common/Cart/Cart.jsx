@@ -89,13 +89,12 @@ const Cart = () => {
         });
     };
     // showPromiseConfirm('Sản phẩm sẽ bị xoá khỏi giỏ');
-    const removeItemHandler = (id) => {};
 
     function onCheckoutHandler() {
         if (Cart.isAnonymous) {
         } else {
             dispatch(updateGuestCartState()).then((r) => {
-                console.log('return: ', r);
+                // console.log('return: ', r);
                 let { status } = r;
                 if (r === 409) {
                     openNotificationWithIcon('info', 'Giỏ hàng có thay đổi', 'top', 2);
@@ -123,7 +122,7 @@ const Cart = () => {
                 });
 
                 return Promise.all(f).then(function (results) {
-                    console.log(results);
+                    // console.log(results);
                     setInventory((prev) => results);
                     return results;
                 });
@@ -137,10 +136,10 @@ const Cart = () => {
     });
 
     const fetchInventory = useCallback(async (item, qty = -1) => {
-        console.log('fetch inventory of item');
+        // console.log('fetch inventory of item');
         const reQty = qty == -1 ? item.quantity : qty;
         const variantId = item.productVariant.id;
-        console.log('variant id: ', variantId);
+        // console.log('variant id: ', variantId);
         const request = {
             product_variant_id: variantId,
             request_quantity: reQty,
@@ -148,7 +147,7 @@ const Cart = () => {
         return await axios
             .post(`${BASE}${PRODUCT_INVENTORY}`, request)
             .then((res) => {
-                console.log('return current inventory of item:', res.data);
+                // console.log('return current inventory of item:', res.data);
                 return res.data;
                 // setInventory(res.data);
             })
@@ -172,7 +171,7 @@ const Cart = () => {
                 let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
-                console.log('cur item invent', inventory[inventOfItemIndex]);
+                // console.log('cur item invent', inventory[inventOfItemIndex]);
                 const request = getCartDetailRequest(
                     {
                         cart_id: Cart.id,
@@ -183,7 +182,7 @@ const Cart = () => {
                     CartRequestTYPE.UPDATE,
                 );
 
-                console.log('increment request:', request);
+                // console.log('increment request:', request);
                 dispatch(incrementItemQuantity(request));
             })
 
@@ -204,8 +203,8 @@ const Cart = () => {
                 let inventOfItemIndex = inventory.findIndex((i) => i.id === item.id);
                 // console.log('needed_change', res.need_changed);
                 // console.log('item s id: ', item.id);
-                console.log('cur item invent', inventory[inventOfItemIndex]);
-                console.log('needed_change', res.need_changed);
+                // console.log('cur item invent', inventory[inventOfItemIndex]);
+                // console.log('needed_change', res.need_changed);
                 const request = getCartDetailRequest(
                     {
                         cart_id: Cart.id,
@@ -297,19 +296,6 @@ const Cart = () => {
             } else openNotificationWithIcon('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
         }
     });
-
-    // const handleFavoriteClick = () => {
-    //     if (isAuth) {
-    //         if (isFavorite) {
-    //             removeWishlists(productId);
-    //             setFavorite(false);
-    //         } else {
-    //             addWishlists(productId);
-    //             setFavorite(true);
-    //         }
-    //     } else return history('/login');
-    // };
-
     //add wishlist
     function addWishlists(product_id) {
         axios({
@@ -392,7 +378,7 @@ const Cart = () => {
             console.log('index; ', index);
             if (index != -1) {
                 // alert('need_dhn')
-                openNotificationWithIcon('info', 'Số lượng giỏ hàng thay đổi', '', 3);
+                openNotificationWithIcon('info', 'Số lượng giỏ hàng thay đổi', '', 2);
                 dispatch(updateGuestCartState());
                 fetchAllItemInventory().catch((e) => console.log(e.message));
                 setIsLoading(false);
