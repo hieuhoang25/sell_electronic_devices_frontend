@@ -79,7 +79,7 @@ const FlashCard = () => {
                 return (
                     <span>
                         Bắt đầu sau: {days > 0 && zeroPad(days) + ' Ngày'}{' '}
-                         {zeroPad(hours)} Giờ {zeroPad(minutes)}:{zeroPad(seconds)}
+                         {zeroPad(hours)} : {zeroPad(minutes)}:{zeroPad(seconds)}
                     </span>
                 );
             }
